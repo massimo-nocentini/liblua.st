@@ -10,13 +10,16 @@ Class {
 { #category : #tests }
 LibLuaTest >> testLoadThenPCall [
 
-	| seven |
-	seven := LibLua withOpenLibsOn: [ :state | 
-		         state luaL_loadstring:
-			         'a = 3 + 4; print("The result is: ", a)'.
-		         state lua_pcall ].
+	| code seven |
+	LibLua withOpenLibsOn: [ :state | 
+		state luaL_loadstring:
+			'do a = 3 + 4; print("The result is: ", a); return tostring(a) end'.
+		code := state lua_pcallNargs: 0 nresults: 1.
+		seven := state lua_tostring: -1 ].
 
-	self assert: seven equals: 0
+	self
+		assert: code equals: 0;
+		assert: seven equals: '7'
 ]
 
 { #category : #tests }
