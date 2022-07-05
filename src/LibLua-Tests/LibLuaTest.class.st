@@ -43,13 +43,13 @@ LibLuaTest >> testLoadThenPCallWithReturn [
 	| code seven |
 	LibLua withOpenLibsOn: [ :state | 
 		state luaL_loadstring:
-			'do a = 3 + 4; print("The result is: ", a); return tostring(a) end'.
+			'do a = 3 + 4; print("The result is: ", a); return tostring(a) .. " hello " end'.
 		code := state lua_pcallNargs: 0 nresults: 1.
 		seven := state lua_tostring: -1 ].
 
 	self
 		assert: code equals: 0;
-		assert: seven equals: '7'
+		assert: seven equals: '7 hello '
 ]
 
 { #category : #tests }

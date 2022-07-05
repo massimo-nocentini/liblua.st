@@ -104,6 +104,25 @@ LibLua >> lua_to: L string: idx [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> macLibraryName [
+
+	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-as-a-mac-os-x-dynamic-library/, 
+	
+	$ make macosx test MYCFLAGS=""-arch x86_64""
+	$ echo 'liblua5.4.0.dylib: $(CORE_O) $(LIB_O)' >> src/makefile
+	$ echo -e '\t$(CC) -dynamiclib -o $@ $^ $(LIBS) -arch x86_64 -compatibility_version 5.4.0 -current_version 5.4.0 -install_name @rpath/$@' >> src/makefile
+	$ make -C src liblua5.4.0.dylib
+	
+	then adjust the install variable to also copy the dylib, then 
+	
+	$ sudo make install
+
+	"
+
+	^ 'liblua5.4.4.dylib'
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> unix64LibraryName [
 
 	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-for-linux-as-a-shared-library/
