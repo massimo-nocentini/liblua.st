@@ -135,9 +135,9 @@ $(LUA_A): $(BASE_O)
 	
 	 and compile with:
 	
-	make ""MYCFLAGS=-fPIC"" 
+	make ""MYCFLAGS=-fPIC"" ""R=5.4.0""
 	
 	"
 
-	^ 'liblua.so'
+	^ 'liblua5.4.4.so'
 ]
