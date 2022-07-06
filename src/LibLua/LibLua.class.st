@@ -89,6 +89,15 @@ LibLua >> lua_pcallk: L nargs: nargs nresults: nresults errfunc: errfunc lua_KCo
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua_to: L integer: idx x: isnum [
+
+	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
+
+	^ self ffiCall:
+		  #( long lua_tointegerx #( void * L , int idx , void * isnum ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua_to: L l: idx string: len [
 
 	"const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);"

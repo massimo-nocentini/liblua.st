@@ -38,7 +38,54 @@ LibLuaTest >> testLoadThenPCallThenToString [
 ]
 
 { #category : #tests }
-LibLuaTest >> testLoadThenPCallWithReturn [
+LibLuaTest >> testLoadThenPCallWithReturnInteger [
+
+	| code seven |
+	LibLua withOpenLibsOn: [ :state | 
+		state luaL_loadstring:
+			'do a = 3 + 4; print("The result is: ", a); return a + 1 end'.
+		code := state lua_pcallNargs: 0 nresults: 1.
+		seven := state lua_tointegerx: -1 ifNotInteger: [ Error signal ] ].
+
+	self
+		assert: code equals: 0;
+		assert: seven equals: 8
+]
+
+{ #category : #tests }
+LibLuaTest >> testLoadThenPCallWithReturnIntegerFail [
+
+	| code seven witness |
+	witness := Object new.
+
+	LibLua withOpenLibsOn: [ :state | 
+		state luaL_loadstring:
+			'do a = 3 + 4; print("The result is: ", a); return "just a simple string" end'.
+		code := state lua_pcallNargs: 0 nresults: 1.
+		seven := state lua_tointegerx: -1 ifNotInteger: [ witness ] ].
+
+	self
+		assert: code equals: 0;
+		assert: seven equals: witness
+]
+
+{ #category : #tests }
+LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
+
+	| code seven |
+	LibLua withOpenLibsOn: [ :state | 
+		state luaL_loadstring:
+			'do a = 3 + 4; print("The result is: ", a); return tostring(a + 1) end'.
+		code := state lua_pcallNargs: 0 nresults: 1.
+		seven := state lua_tointegerx: -1 ifNotInteger: [ Error signal ] ].
+
+	self
+		assert: code equals: 0;
+		assert: seven equals: 8
+]
+
+{ #category : #tests }
+LibLuaTest >> testLoadThenPCallWithReturnString [
 
 	| code seven |
 	LibLua withOpenLibsOn: [ :state | 

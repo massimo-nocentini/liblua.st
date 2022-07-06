@@ -55,6 +55,20 @@ LibLuaState >> lua_pcallNargs: nargs nresults: nresults [
 ]
 
 { #category : #'as yet unclassified' }
+LibLuaState >> lua_tointegerx: idx ifNotInteger: aBlock [
+
+	| pointer value |
+	pointer := ExternalAddress newPointer.
+
+	^ [ 
+	  value := liblua lua_to: state integer: idx x: pointer.
+
+	  (pointer boolean8AtOffset: 0)
+		  ifTrue: [ value ]
+		  ifFalse: aBlock ] ensure: [ pointer free ]
+]
+
+{ #category : #'as yet unclassified' }
 LibLuaState >> lua_tostring: s [
 
 	^ liblua lua_to: state string: s
