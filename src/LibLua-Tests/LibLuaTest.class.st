@@ -120,3 +120,34 @@ LibLuaTest >> testNewWithOpenLibs [
 
 	self assert: three equals: 3
 ]
+
+{ #category : #tests }
+LibLuaTest >> testSetGlobal [
+
+	| code result called |
+	called := false.
+
+	LibLua withOpenLibsOn: [ :state | 
+		| cb |
+		cb := state liblua
+			      ffiCallback: [ :ongoingState | 
+				      | d |
+				      called := true.
+				      self assert: ongoingState equals: state state.
+
+				      d := state liblua luaL: state state checknumber: 1.
+				      state liblua lua_push: state state number: d sin ]
+			      nresults: 1.
+
+		state liblua lua_push: state state cfunction: cb.
+		state liblua lua_set: state state global: 'mysin'.
+
+		state luaL_loadstring: 'return mysin(3)'.
+		code := state lua_pcallNargs: 0 nresults: 1.
+		result := state lua_tonumberx: -1 ifNotNumber: [ Error signal ] ].
+
+	self
+		assert: code equals: 0;
+		assert: called;
+		assert: result equals: 3 sin
+]

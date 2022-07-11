@@ -69,6 +69,20 @@ LibLuaState >> lua_tointegerx: idx ifNotInteger: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
+LibLuaState >> lua_tonumberx: idx ifNotNumber: aBlock [
+
+	| pointer value |
+	pointer := ExternalAddress newPointer.
+
+	^ [ 
+	  value := liblua lua_to: state number: idx x: pointer.
+
+	  (pointer boolean8AtOffset: 0)
+		  ifTrue: [ value ]
+		  ifFalse: aBlock ] ensure: [ pointer free ]
+]
+
+{ #category : #'as yet unclassified' }
 LibLuaState >> lua_tostring: s [
 
 	^ liblua lua_to: state string: s

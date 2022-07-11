@@ -26,6 +26,25 @@ LibLua class >> withOpenLibsOn: aBlock [
 		  aBlock value: state ]
 ]
 
+{ #category : #'as yet unclassified' }
+LibLua >> ffiCallback: aBlock nresults: n [
+
+	^ FFICallback
+		  signature: #( int #( const void * a ) )
+		  block: [ :aLuaState | 
+			  aBlock value: aLuaState.
+
+			  n "number of results" ]
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> luaL: L checknumber: arg [
+
+	"lua_Number luaL_checknumber (lua_State *L, int arg)"
+
+	^ self ffiCall: #( double luaL_checknumber #( void * L , int arg ) )
+]
+
 { #category : #'accessing - platform' }
 LibLua >> luaL: L loadstring: s [
 
@@ -89,6 +108,46 @@ LibLua >> lua_pcallk: L nargs: nargs nresults: nresults errfunc: errfunc lua_KCo
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua_push: L c: fn closure: n [
+
+	"void lua_pushcclosure (lua_State *L, lua_CFunction fn, int n)"
+
+	^ self ffiCall:
+		  #( void lua_pushcclosure #( void * L , void * fn , int n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_push: L cfunction: fn [
+
+	^ self lua_push: L c: fn closure: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_push: L integer: n [
+
+	"void lua_pushinteger (lua_State *L, lua_Integer n) "
+
+	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_push: L number: n [
+
+	"void lua_pushnumber (lua_State *L, lua_Number n) "
+
+	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_set: L global: name [
+
+	"void lua_setglobal (lua_State *L, const char *name)"
+
+	^ self ffiCall:
+		  #( void lua_setglobal #( void * L , const char * name ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua_to: L integer: idx x: isnum [
 
 	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
@@ -104,6 +163,15 @@ LibLua >> lua_to: L l: idx string: len [
 
 	^ self ffiCall:
 		  #( const char * lua_tolstring #( void * L , int idx , void * len ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_to: L number: idx x: isnum [
+
+	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
+
+	^ self ffiCall:
+		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
 ]
 
 { #category : #'accessing - platform' }
