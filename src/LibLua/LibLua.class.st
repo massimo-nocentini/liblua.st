@@ -4,29 +4,7 @@ Class {
 	#category : #LibLua
 }
 
-{ #category : #'instance creation' }
-LibLua class >> on: aBlock [
-
-	| lualib state |
-	lualib := self uniqueInstance.
-
-	state := LibLuaState new
-		         liblua: lualib;
-		         state: lualib luaL_newstate;
-		         yourself.
-
-	^ [ aBlock value: state ] ensure: [ state lua_close ]
-]
-
-{ #category : #'instance creation' }
-LibLua class >> withOpenLibsOn: aBlock [
-
-	^ self on: [ :state | 
-		  state luaL_openlibs.
-		  aBlock value: state ]
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 LibLua >> ffiCallback: aBlock nresults: n [
 
 	^ FFICallback
@@ -35,6 +13,28 @@ LibLua >> ffiCallback: aBlock nresults: n [
 			  aBlock value: aLuaState.
 
 			  n "number of results" ]
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pcallnargs: nargs nresults: nresults [
+
+	^ self
+		  lua: L
+		  pcallnargs: nargs
+		  nresults: nresults
+		  errfunc: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pcallnargs: nargs nresults: nresults errfunc: errfunc [
+
+	^ self
+		  lua_pcallk: L
+		  nargs: nargs
+		  nresults: nresults
+		  errfunc: errfunc
+		  lua_KContext: 0
+		  lua_KFunction: ExternalAddress null
 ]
 
 { #category : #'accessing - platform' }
@@ -104,6 +104,34 @@ LibLua >> lua: L to: idx numberx: isnum [
 		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
 ]
 
+{ #category : #API }
+LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
+
+	| pointer value |
+	pointer := ExternalAddress newPointer.
+
+	^ [ 
+	  value := self lua: state to: idx integerx: pointer.
+
+	  (pointer boolean8AtOffset: 0)
+		  ifTrue: [ value ]
+		  ifFalse: aBlock ] ensure: [ pointer free ]
+]
+
+{ #category : #API }
+LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
+
+	| pointer value |
+	pointer := ExternalAddress newPointer.
+
+	^ [ 
+	  value := self lua: state to: idx numberx: pointer.
+
+	  (pointer boolean8AtOffset: 0)
+		  ifTrue: [ value ]
+		  ifFalse: aBlock ] ensure: [ pointer free ]
+]
+
 { #category : #'accessing - platform' }
 LibLua >> lua: L tostring: idx [
 
@@ -151,22 +179,10 @@ LibLua >> lua_close: L [
 LibLua >> lua_pcall: L [
 
 	^ self
-		  lua_pcall: L
-		  nargs: 0
+		  lua: L
+		  pcallnargs: 0
 		  nresults: 0
 		  errfunc: 0
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_pcall: L nargs: nargs nresults: nresults errfunc: errfunc [
-
-	^ self
-		  lua_pcallk: L
-		  nargs: nargs
-		  nresults: nresults
-		  errfunc: errfunc
-		  lua_KContext: 0
-		  lua_KFunction: ExternalAddress null
 ]
 
 { #category : #'accessing - platform' }
@@ -217,4 +233,21 @@ $(LUA_A): $(BASE_O)
 	"
 
 	^ 'liblua5.4.4.so'
+]
+
+{ #category : #API }
+LibLua >> withOpenedLibsStateDo: aBlock [
+
+	^ self withStateDo: [ :state | 
+		  self luaL_openlibs: state.
+		  aBlock value: state ]
+]
+
+{ #category : #API }
+LibLua >> withStateDo: aBlock [
+
+	| state |
+	state := self luaL_newstate.
+
+	^ [ aBlock value: state ] ensure: [ self lua_close: state ]
 ]

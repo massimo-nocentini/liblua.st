@@ -8,13 +8,20 @@ Class {
 }
 
 { #category : #tests }
+LibLuaTest >> liblua [
+
+	^ LibLua uniqueInstance
+]
+
+{ #category : #tests }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |
-	LibLua withOpenLibsOn: [ :state | 
-		state luaL_loadstring:
-			'do a = 3 + 4; print("The result is: ", a) end'.
-		code := state lua_pcallNargs: 0 nresults: 0 ].
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring: 'do a = 3 + 4; print("The result is: ", a) end'.
+		code := self liblua lua: state pcallnargs: 0 nresults: 0 ].
 
 	self assert: code equals: 0
 ]
@@ -23,11 +30,12 @@ LibLuaTest >> testLoadThenPCall [
 LibLuaTest >> testLoadThenPCallThenToString [
 
 	| error code |
-	LibLua withOpenLibsOn: [ :state | 
-		state luaL_loadstring:
-			'(function (a, b) return error("hello") end) (3, 4)'.
-		code := state lua_pcall.
-		error := state lua_tostring: -1 ].
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring: '(function (a, b) return error("hello") end) (3, 4)'.
+		code := self liblua lua_pcall: state.
+		error := self liblua lua: state tostring: -1 ].
 
 	self assert: code equals: 2.
 
@@ -41,11 +49,16 @@ LibLuaTest >> testLoadThenPCallThenToString [
 LibLuaTest >> testLoadThenPCallWithReturnInteger [
 
 	| code seven |
-	LibLua withOpenLibsOn: [ :state | 
-		state luaL_loadstring:
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return a + 1 end'.
-		code := state lua_pcallNargs: 0 nresults: 1.
-		seven := state lua_tointegerx: -1 ifNotInteger: [ Error signal ] ].
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+		seven := self liblua
+			         lua: state
+			         tointegerx: -1
+			         ifNotInteger: [ Error signal ] ].
 
 	self
 		assert: code equals: 0;
@@ -58,11 +71,16 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerFail [
 	| code seven witness |
 	witness := Object new.
 
-	LibLua withOpenLibsOn: [ :state | 
-		state luaL_loadstring:
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return "just a simple string" end'.
-		code := state lua_pcallNargs: 0 nresults: 1.
-		seven := state lua_tointegerx: -1 ifNotInteger: [ witness ] ].
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+		seven := self liblua
+			         lua: state
+			         tointegerx: -1
+			         ifNotInteger: [ witness ] ].
 
 	self
 		assert: code equals: 0;
@@ -73,11 +91,16 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerFail [
 LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
 
 	| code seven |
-	LibLua withOpenLibsOn: [ :state | 
-		state luaL_loadstring:
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return tostring(a + 1) end'.
-		code := state lua_pcallNargs: 0 nresults: 1.
-		seven := state lua_tointegerx: -1 ifNotInteger: [ Error signal ] ].
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+		seven := self liblua
+			         lua: state
+			         tointegerx: -1
+			         ifNotInteger: [ Error signal ] ].
 
 	self
 		assert: code equals: 0;
@@ -88,11 +111,13 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
 LibLuaTest >> testLoadThenPCallWithReturnString [
 
 	| code seven |
-	LibLua withOpenLibsOn: [ :state | 
-		state luaL_loadstring:
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return tostring(a) .. " hello " end'.
-		code := state lua_pcallNargs: 0 nresults: 1.
-		seven := state lua_tostring: -1 ].
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+		seven := self liblua lua: state tostring: -1 ].
 
 	self
 		assert: code equals: 0;
@@ -103,8 +128,8 @@ LibLuaTest >> testLoadThenPCallWithReturnString [
 LibLuaTest >> testNewCloseState [
 
 	| three |
-	three := LibLua on: [ :state | 
-		         self deny: state state equals: ExternalAddress null.
+	three := self liblua withStateDo: [ :state | 
+		         self deny: state equals: ExternalAddress null.
 		         3 ].
 
 	self assert: three equals: 3
@@ -114,37 +139,41 @@ LibLuaTest >> testNewCloseState [
 LibLuaTest >> testNewWithOpenLibs [
 
 	| three |
-	three := LibLua withOpenLibsOn: [ :state | 
-		         self deny: state state equals: ExternalAddress null.
+	three := self liblua withOpenedLibsStateDo: [ :state | 
+		         self deny: state equals: ExternalAddress null.
 		         3 ].
 
 	self assert: three equals: 3
 ]
 
 { #category : #tests }
-LibLuaTest >> testSetGlobal [
+LibLuaTest >> testSetGlobalMySinViaCallback [
 
 	| code result called |
 	called := false.
 
-	LibLua withOpenLibsOn: [ :state | 
+	self liblua withOpenedLibsStateDo: [ :state | 
 		| cb |
-		cb := state liblua
+		cb := self liblua
 			      ffiCallback: [ :ongoingState | 
 				      | d |
 				      called := true.
-				      self assert: ongoingState equals: state state.
+				      self assert: ongoingState equals: state.
 
-				      d := state liblua luaL: state state checknumber: 1.
-				      state liblua lua: state state pushnumber: d sin ]
+				      d := self liblua luaL: state checknumber: 1.
+				      self liblua lua: state pushnumber: d sin ]
 			      nresults: 1.
 
-		state liblua lua: state state pushcfunction: cb.
-		state liblua lua: state state setglobal: 'mysin'.
+		self liblua lua: state pushcfunction: cb.
+		self liblua lua: state setglobal: 'mysin'.
 
-		state luaL_loadstring: 'return mysin(3)'.
-		code := state lua_pcallNargs: 0 nresults: 1.
-		result := state lua_tonumberx: -1 ifNotNumber: [ Error signal ] ].
+		self liblua luaL: state loadstring: 'return mysin(3)'.
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+
+		result := self liblua
+			          lua: state
+			          tonumberx: -1
+			          ifNotNumber: [ Error signal ] ].
 
 	self
 		assert: code equals: 0;
