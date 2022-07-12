@@ -147,7 +147,7 @@ LibLuaTest >> testNewWithOpenLibs [
 ]
 
 { #category : #tests }
-LibLuaTest >> testSetGlobalMySinViaCallback [
+LibLuaTest >> testSetGlobalMySinAsCallback [
 
 	| code result called |
 	called := false.
@@ -156,12 +156,13 @@ LibLuaTest >> testSetGlobalMySinViaCallback [
 		| cb |
 		cb := self liblua
 			      ffiCallback: [ :ongoingState | 
-				      | d |
+				      | number |
 				      called := true.
 				      self assert: ongoingState equals: state.
 
-				      d := self liblua luaL: state checknumber: 1.
-				      self liblua lua: state pushnumber: d sin ]
+				      number := self liblua luaL: state checknumber: 1.
+
+				      number sin pushOnLua: state ]
 			      nresults: 1.
 
 		self liblua lua: state pushcfunction: cb.
