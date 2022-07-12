@@ -1,13 +1,63 @@
 Class {
 	#name : #LibLua,
 	#superclass : #FFILibrary,
+	#classVars : [
+		'Types'
+	],
 	#category : #LibLua
 }
+
+{ #category : #initialization }
+LibLua class >> initialize [
+
+	"
+#define LUA_TNONE		(-1)
+
+#define LUA_TNIL		0
+#define LUA_TBOOLEAN		1
+#define LUA_TLIGHTUSERDATA	2
+#define LUA_TNUMBER		3
+#define LUA_TSTRING		4
+#define LUA_TTABLE		5
+#define LUA_TFUNCTION		6
+#define LUA_TUSERDATA		7
+#define LUA_TTHREAD		8
+"
+
+	Types := Dictionary new
+		         at: #LUA_TNIL put: 0;
+		         at: #LUA_TBOOLEAN put: 1;
+		         at: #LUA_TLIGHTUSERDATA put: 2;
+		         at: #LUA_TNUMBER put: 3;
+		         at: #LUA_TSTRING put: 4;
+		         at: #LUA_TTABLE put: 5;
+		         at: #LUA_TFUNCTION put: 6;
+		         at: #LUA_TUSERDATA put: 7;
+		         at: #LUA_TTHREAD put: 8;
+		         yourself
+]
 
 { #category : #API }
 LibLua >> ffiCallback: aBlock [
 
 	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L create: narray table: nrec [
+
+	"void lua_createtable (lua_State *L, int narray, int nrec)"
+
+	^ self ffiCall:
+		  #( void lua_createtable #( void * L , int narray , int nrec ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L get: idx i: n [
+
+	"int lua_geti (lua_State *L, int idx, lua_Integer n)"
+
+	^ self ffiCall: #( int lua_geti #( void * L , int idx , long n ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -61,6 +111,24 @@ LibLua >> lua: L pushnumber: n [
 	"void lua_pushnumber (lua_State *L, lua_Number n) "
 
 	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pushstring: s [
+
+	"const char *lua_pushstring (lua_State *L, const char *s)"
+
+	^ self ffiCall:
+		  #( const char * lua_pushstring #( void * L , const char * s ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L set: idx field: k [
+
+	"void lua_setfield (lua_State *L, int idx, const char *k)"
+
+	^ self ffiCall:
+		  #( void lua_setfield #( void * L , int idx , const char * k ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -134,6 +202,15 @@ LibLua >> lua: L tostring: idx [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> luaL: L check: arg type: t [
+
+	"void luaL_checktype (lua_State *L, int arg, int t)"
+
+	^ self ffiCall:
+		  #( void luaL_checktype #( void * L , int arg , int t ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> luaL: L checknumber: arg [
 
 	"lua_Number luaL_checknumber (lua_State *L, int arg)"
@@ -192,6 +269,14 @@ LibLua >> lua_pcallk: L nargs: nargs nresults: nresults errfunc: errfunc lua_KCo
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua_pushnil: L [
+
+	" void lua_pushnil (lua_State *L)"
+
+	^ self ffiCall: #( void lua_pushnil #( void * L ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> macLibraryName [
 
 	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-as-a-mac-os-x-dynamic-library/, 
@@ -208,6 +293,12 @@ LibLua >> macLibraryName [
 	"
 
 	^ 'liblua5.4.4.dylib'
+]
+
+{ #category : #API }
+LibLua >> typeAt: aTypeKey [
+
+	^ Types at: aTypeKey
 ]
 
 { #category : #'accessing - platform' }
