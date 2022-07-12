@@ -136,11 +136,11 @@ LibLuaTest >> testSetGlobal [
 				      self assert: ongoingState equals: state state.
 
 				      d := state liblua luaL: state state checknumber: 1.
-				      state liblua lua_push: state state number: d sin ]
+				      state liblua lua: state state pushnumber: d sin ]
 			      nresults: 1.
 
-		state liblua lua_push: state state cfunction: cb.
-		state liblua lua_set: state state global: 'mysin'.
+		state liblua lua: state state pushcfunction: cb.
+		state liblua lua: state state setglobal: 'mysin'.
 
 		state luaL_loadstring: 'return mysin(3)'.
 		code := state lua_pcallNargs: 0 nresults: 1.

@@ -61,7 +61,7 @@ LibLuaState >> lua_tointegerx: idx ifNotInteger: aBlock [
 	pointer := ExternalAddress newPointer.
 
 	^ [ 
-	  value := liblua lua_to: state integer: idx x: pointer.
+	  value := liblua lua: state to: idx integerx: pointer.
 
 	  (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
@@ -75,7 +75,7 @@ LibLuaState >> lua_tonumberx: idx ifNotNumber: aBlock [
 	pointer := ExternalAddress newPointer.
 
 	^ [ 
-	  value := liblua lua_to: state number: idx x: pointer.
+	  value := liblua lua: state to: idx numberx: pointer.
 
 	  (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
@@ -85,7 +85,7 @@ LibLuaState >> lua_tonumberx: idx ifNotNumber: aBlock [
 { #category : #'as yet unclassified' }
 LibLuaState >> lua_tostring: s [
 
-	^ liblua lua_to: state string: s
+	^ liblua lua: state tostring: s
 ]
 
 { #category : #accessing }

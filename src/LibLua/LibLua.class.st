@@ -38,6 +38,79 @@ LibLua >> ffiCallback: aBlock nresults: n [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L push: fn cclosure: n [
+
+	"void lua_pushcclosure (lua_State *L, lua_CFunction fn, int n)"
+
+	^ self ffiCall:
+		  #( void lua_pushcclosure #( void * L , void * fn , int n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pushcfunction: fn [
+
+	^ self lua: L push: fn cclosure: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pushinteger: n [
+
+	"void lua_pushinteger (lua_State *L, lua_Integer n) "
+
+	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pushnumber: n [
+
+	"void lua_pushnumber (lua_State *L, lua_Number n) "
+
+	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L setglobal: name [
+
+	"void lua_setglobal (lua_State *L, const char *name)"
+
+	^ self ffiCall:
+		  #( void lua_setglobal #( void * L , const char * name ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L to: idx integerx: isnum [
+
+	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
+
+	^ self ffiCall:
+		  #( long lua_tointegerx #( void * L , int idx , void * isnum ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L to: idx lstring: len [
+
+	"const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);"
+
+	^ self ffiCall:
+		  #( const char * lua_tolstring #( void * L , int idx , void * len ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L to: idx numberx: isnum [
+
+	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
+
+	^ self ffiCall:
+		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L tostring: idx [
+
+	^ self lua: L to: idx lstring: ExternalAddress null
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> luaL: L checknumber: arg [
 
 	"lua_Number luaL_checknumber (lua_State *L, int arg)"
@@ -105,79 +178,6 @@ LibLua >> lua_pcallk: L nargs: nargs nresults: nresults errfunc: errfunc lua_KCo
 	^ self ffiCall:
 		  #( int lua_pcallk #( void * L , int nargs , int nresults , int errfunc
 		        , int ctx , void * k ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_push: L c: fn closure: n [
-
-	"void lua_pushcclosure (lua_State *L, lua_CFunction fn, int n)"
-
-	^ self ffiCall:
-		  #( void lua_pushcclosure #( void * L , void * fn , int n ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_push: L cfunction: fn [
-
-	^ self lua_push: L c: fn closure: 0
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_push: L integer: n [
-
-	"void lua_pushinteger (lua_State *L, lua_Integer n) "
-
-	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_push: L number: n [
-
-	"void lua_pushnumber (lua_State *L, lua_Number n) "
-
-	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_set: L global: name [
-
-	"void lua_setglobal (lua_State *L, const char *name)"
-
-	^ self ffiCall:
-		  #( void lua_setglobal #( void * L , const char * name ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_to: L integer: idx x: isnum [
-
-	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
-
-	^ self ffiCall:
-		  #( long lua_tointegerx #( void * L , int idx , void * isnum ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_to: L l: idx string: len [
-
-	"const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);"
-
-	^ self ffiCall:
-		  #( const char * lua_tolstring #( void * L , int idx , void * len ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_to: L number: idx x: isnum [
-
-	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
-
-	^ self ffiCall:
-		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_to: L string: idx [
-
-	^ self lua_to: L l: idx string: ExternalAddress null
 ]
 
 { #category : #'accessing - platform' }
