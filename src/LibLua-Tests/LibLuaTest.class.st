@@ -18,44 +18,59 @@ LibLuaTest >> testCommands [
 
 	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
 
-	| code name followups a b random result |
+	| code name result random r |
 	random := Random seed: 541.
-
-	a := random next.
-	b := random next.
+	r := 0.0.
 
 	self liblua withOpenedLibsStateDo: [ :state | 
-		[ :ongoingState | "
+		self liblua
+			push: [ :ongoingState | 
+				| s |
+				"
 function command (tbl)
 	return {name = tbl[1], context=nil, followups=tbl[2] or {}, action=nil}
 end
 "
-		self liblua
-			luaL: state
-			check: 1
-			type: (self liblua typeAt: #LUA_TTABLE).
+				self liblua
+					luaL: state
+					check: 1
+					type: (self liblua typeAt: #LUA_TTABLE).
 
-		self liblua lua: state create: 0 table: 4.
+				self liblua lua: state create: 0 table: 4.
 
-		name := self liblua lua: state get: 2 i: 1.
-		self liblua lua: state set: -2 field: 'name'.
+				name := self liblua lua: state get: -2 i: 1.
+				self liblua lua: state set: -2 field: 'name'.
 
-		Float pi pushOnLua: state.
-		self liblua lua: state set: -2 field: 'context'.
+				s := random next.
+				r := r + s.
+				self liblua
+					push: s onLua: state;
+					lua: state set: -2 field: 'context'.
 
-		followups := self liblua lua: state get: 2 i: 2.
-		self liblua lua: state set: -2 field: 'followups'.
+				self liblua
+					lua: state get: -2 i: 2;
+					lua: state set: -2 field: 'followups'.
 
-		'noop' pushOnLua: state.
-		self liblua lua: state set: -2 field: 'action'.
+				self liblua
+					push: 'noop' onLua: state;
+					lua: state set: -2 field: 'action'.
 
-		1 "number of results" ] pushOnLua: state.
-
-		self liblua lua: state setglobal: 'command'.
+				1 "number of results" ]
+			onLua: state;
+			lua: state setglobal: 'command'.
 
 		self liblua luaL: state loadstring: '
 
-commands = {
+function recSum (tbl) 
+	r = 0.0
+	for _, c in ipairs(tbl) do
+		print(c.name)
+		r = r + c.context + recSum (c.followups or {})
+	end
+	return r
+end
+
+local commands = {
 	command { "create", 
 		{ command { "document" }, 
 		  command { "folder" }
@@ -64,16 +79,11 @@ commands = {
 	command { "delete" },
 }
 
-r = 0
-for _, v in ipairs(commands) do
-	print(v.action)
-	r = r + v.context
-end
-
-return r
+return recSum(commands)
 '.
 
 		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+
 		result := self liblua
 			          lua: state
 			          tonumberx: -1
@@ -81,9 +91,8 @@ return r
 
 	self
 		assert: code equals: 0;
-		assert: name equals: 0;
-		assert: followups equals: 0;
-		assert: result equals: Float pi * 2
+		assert: name equals: (self liblua typeAt: #LUA_TSTRING);
+		assert: result equals: r
 ]
 
 { #category : #tests }

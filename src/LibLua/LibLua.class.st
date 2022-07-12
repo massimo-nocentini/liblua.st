@@ -296,6 +296,12 @@ LibLua >> macLibraryName [
 ]
 
 { #category : #API }
+LibLua >> push: anObject onLua: state [
+
+	^ anObject pushOnLua: state
+]
+
+{ #category : #API }
 LibLua >> typeAt: aTypeKey [
 
 	^ Types at: aTypeKey
