@@ -5,14 +5,9 @@ Class {
 }
 
 { #category : #API }
-LibLua >> ffiCallback: aBlock nresults: n [
+LibLua >> ffiCallback: aBlock [
 
-	^ FFICallback
-		  signature: #( int #( const void * a ) )
-		  block: [ :aLuaState | 
-			  aBlock value: aLuaState.
-
-			  n "number of results" ]
+	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
 ]
 
 { #category : #'accessing - platform' }
