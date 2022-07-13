@@ -2,6 +2,8 @@ Class {
 	#name : #LibLua,
 	#superclass : #FFILibrary,
 	#classVars : [
+		'LUA_MULTRET',
+		'ThreadStatuses',
 		'Types'
 	],
 	#category : #LibLua
@@ -34,7 +36,28 @@ LibLua class >> initialize [
 		         at: #LUA_TFUNCTION put: 6;
 		         at: #LUA_TUSERDATA put: 7;
 		         at: #LUA_TTHREAD put: 8;
-		         yourself
+		         yourself.
+
+
+	"/* thread status */
+#define LUA_OK		0
+#define LUA_YIELD	1
+#define LUA_ERRRUN	2
+#define LUA_ERRSYNTAX	3
+#define LUA_ERRMEM	4
+#define LUA_ERRERR	5"
+
+	ThreadStatuses := Dictionary new
+		                  at: #LUA_OK put: 0;
+		                  at: #LUA_YIELD put: 1;
+		                  at: #LUA_ERRRUN put: 2;
+		                  at: #LUA_ERRSYNTAX put: 3;
+		                  at: #LUA_ERRMEM put: 4;
+		                  at: #LUA_ERRERR put: 5;
+		                  yourself.
+
+	"#define LUA_MULTRET	(-1)"
+	LUA_MULTRET := -1
 ]
 
 { #category : #API }
@@ -219,6 +242,25 @@ LibLua >> luaL: L checknumber: arg [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> luaL: L dostring: s [
+
+	"#define luaL_dostring(L, s) \
+	(luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))"
+
+	| status |
+	status := self luaL: L loadstring: s.
+
+	^ status = (self threadStatusAt: #LUA_OK)
+		  ifTrue: [ 
+			  self
+				  lua: L
+				  pcallnargs: 0
+				  nresults: LUA_MULTRET
+				  errfunc: 0 ]
+		  ifFalse: [ status ]
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> luaL: L loadstring: s [
 
 	"int (luaL_loadstring) (lua_State *L, const char *s);"
@@ -299,6 +341,12 @@ LibLua >> macLibraryName [
 LibLua >> push: anObject onLua: state [
 
 	^ anObject pushOnLua: state
+]
+
+{ #category : #API }
+LibLua >> threadStatusAt: aTypeKey [
+
+	^ ThreadStatuses at: aTypeKey
 ]
 
 { #category : #API }

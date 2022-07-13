@@ -59,7 +59,8 @@ end
 			onLua: state;
 			lua: state setglobal: 'command'.
 
-		self liblua luaL: state loadstring: '
+		self liblua
+			luaL: state dostring: '
 
 function recSum (tbl) 
 	r = 0.0
@@ -69,6 +70,9 @@ function recSum (tbl)
 	end
 	return r
 end
+
+';
+			luaL: state loadstring: '
 
 local commands = {
 	command { "create", 
@@ -80,6 +84,7 @@ local commands = {
 }
 
 return recSum(commands)
+
 '.
 
 		code := self liblua lua: state pcallnargs: 0 nresults: 1.
