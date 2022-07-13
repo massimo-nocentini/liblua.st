@@ -90,34 +90,31 @@ LibLuaTest >> testCommands [
 
 	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
 
-	| code result random r |
+	| result random r |
 	random := Random seed: 541.
+
+	"The following lookupkey is necessary to keep the sum of
+	 random numbers generated call after call."
 	r := LookupKey new
 		     key: 0.0;
 		     yourself.
 
-	self liblua withOpenedLibsStateDo: [ :state | 
-		self liblua
-			push: [ :ongoingState | 
-				self pushCommandTableOnLua: ongoingState random: random acc: r ]
-			onLua: state;
-			lua: state setglobal: 'command'.
+	result := self liblua withOpenedLibsStateDo: [ :state | 
+		          self liblua
+			          push: [ :ongoingState | 
+				          self
+					          pushCommandTableOnLua: ongoingState
+					          random: random
+					          acc: r ]
+			          onLua: state;
+			          lua: state setglobal: 'command';
+			          luaL: state dostring: self recSumLuaSource;
+			          luaL: state dostring: self commandsLuaSource;
+			          luaL: state loadstring: 'return recSum(commands)';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          lua: state tonumberx: -1 ifNotNumber: [ Error signal ] ].
 
-		self liblua
-			luaL: state dostring: self recSumLuaSource;
-			luaL: state dostring: self commandsLuaSource;
-			luaL: state loadstring: 'return recSum(commands)'.
-
-		code := self liblua lua: state pcallnargs: 0 nresults: 1.
-
-		result := self liblua
-			          lua: state
-			          tonumberx: -1
-			          ifNotNumber: [ Error signal ] ].
-
-	self
-		assert: code equals: 0;
-		assert: result equals: r key
+	self assert: result equals: r key
 ]
 
 { #category : #tests }
