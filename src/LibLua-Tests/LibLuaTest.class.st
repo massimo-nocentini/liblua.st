@@ -26,9 +26,10 @@ LibLuaTest >> commandsLuaSource [
 
 commands = {
 	command { "create", 
-		{ command { "document" }, 
-		  command { "folder" }
-	    } 
+		{ 
+			command { "document" }, 
+		  	command { "folder" }
+		} 
 	},
 	command { "delete" },
 }
