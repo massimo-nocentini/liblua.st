@@ -84,6 +84,17 @@ LibLua >> lua: L get: idx i: n [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L pcallknargs: nargs nresults: nresults errfunc: errfunc lua_KContext: ctx lua_KFunction: k [
+
+	" int   (lua_pcallk) (lua_State *L, int nargs, int nresults, int errfunc,
+                            intptr_t ctx, void * k);"
+
+	^ self ffiCall:
+		  #( int lua_pcallk #( void * L , int nargs , int nresults , int errfunc
+		        , int ctx , void * k ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L pcallnargs: nargs nresults: nresults [
 
 	^ self
@@ -97,8 +108,8 @@ LibLua >> lua: L pcallnargs: nargs nresults: nresults [
 LibLua >> lua: L pcallnargs: nargs nresults: nresults errfunc: errfunc [
 
 	^ self
-		  lua_pcallk: L
-		  nargs: nargs
+		  lua: L
+		  pcallknargs: nargs
 		  nresults: nresults
 		  errfunc: errfunc
 		  lua_KContext: 0
@@ -297,17 +308,6 @@ LibLua >> lua_pcall: L [
 		  pcallnargs: 0
 		  nresults: 0
 		  errfunc: 0
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua_pcallk: L nargs: nargs nresults: nresults errfunc: errfunc lua_KContext: ctx lua_KFunction: k [
-
-	" int   (lua_pcallk) (lua_State *L, int nargs, int nresults, int errfunc,
-                            intptr_t ctx, void * k);"
-
-	^ self ffiCall:
-		  #( int lua_pcallk #( void * L , int nargs , int nresults , int errfunc
-		        , int ctx , void * k ) )
 ]
 
 { #category : #'accessing - platform' }
