@@ -338,7 +338,7 @@ LibLua >> macLibraryName [
 ]
 
 { #category : #API }
-LibLua >> push: anObject onLua: state [
+LibLua >> push: anObject on: state [
 
 	^ anObject pushOnLua: state
 ]

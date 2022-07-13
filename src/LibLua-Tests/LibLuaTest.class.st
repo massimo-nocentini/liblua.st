@@ -64,7 +64,7 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 	aKey key: aKey key + s.
 
 	self liblua
-		push: s onLua: state;
+		push: s on: state;
 		lua: state set: -2 field: 'context'.
 
 	self liblua
@@ -72,7 +72,7 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 		lua: state set: -2 field: 'followups'.
 
 	self liblua
-		push: 'noop' onLua: state;
+		push: 'noop' on: state;
 		lua: state set: -2 field: 'action'.
 
 	^ 1 "number of results"
@@ -114,7 +114,7 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 					          pushCommandTableOnLua: ongoingState
 					          random: random
 					          acc: r ]
-			          onLua: state;
+			          on: state;
 			          lua: state setglobal: 'command';
 			          luaL: state dostring: self recSumLuaSource;
 			          luaL: state dostring: self commandsLuaSource;
@@ -281,16 +281,18 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 	called := false.
 
 	self liblua withOpenedLibsStateDo: [ :state | 
-		[ :ongoingState | 
-		| number |
-		called := true.
-		self assert: ongoingState equals: state.
+		self liblua
+			push: [ :ongoingState | 
+				| number |
+				called := true.
+				self assert: ongoingState equals: state.
 
-		number := self liblua luaL: state checknumber: 1.
+				number := self liblua luaL: state checknumber: 1.
 
-		number sin pushOnLua: state.
+				self liblua push: number sin on: ongoingState.
 
-		1 "number of results" ] pushOnLua: state.
+				1 "number of results" ]
+			on: state.
 
 		self liblua lua: state setglobal: 'mysin'.
 
