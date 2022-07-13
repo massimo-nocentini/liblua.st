@@ -7,60 +7,71 @@ Class {
 	#category : #'LibLua-Tests'
 }
 
-{ #category : #tests }
+{ #category : #'Lua chunks' }
+LibLuaTest >> commandsLuaSource [
+
+	^ '
+
+commands = {
+	command { "create", 
+		{ command { "document" }, 
+		  command { "folder" }
+	    } 
+	},
+	command { "delete" },
+}
+
+'
+]
+
+{ #category : #'ffi lib' }
 LibLuaTest >> liblua [
 
 	^ LibLua uniqueInstance
 ]
 
-{ #category : #tests }
-LibLuaTest >> testCommands [
+{ #category : #'Lua creation' }
+LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
-	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
-
-	| code name result random r |
-	random := Random seed: 541.
-	r := 0.0.
-
-	self liblua withOpenedLibsStateDo: [ :state | 
-		self liblua
-			push: [ :ongoingState | 
-				| s |
-				"
+	| s name |
+	"
 function command (tbl)
 	return {name = tbl[1], context=nil, followups=tbl[2] or {}, action=nil}
 end
 "
-				self liblua
-					luaL: state
-					check: 1
-					type: (self liblua typeAt: #LUA_TTABLE).
+	self liblua
+		luaL: state
+		check: 1
+		type: (self liblua typeAt: #LUA_TTABLE).
 
-				self liblua lua: state create: 0 table: 4.
+	self liblua lua: state create: 0 table: 4.
 
-				name := self liblua lua: state get: -2 i: 1.
-				self liblua lua: state set: -2 field: 'name'.
+	name := self liblua lua: state get: -2 i: 1.
+	self assert: name equals: (self liblua typeAt: #LUA_TSTRING).
+	self liblua lua: state set: -2 field: 'name'.
 
-				s := random next.
-				r := r + s.
-				self liblua
-					push: s onLua: state;
-					lua: state set: -2 field: 'context'.
+	s := random next.
+	aKey key: aKey key + s.
 
-				self liblua
-					lua: state get: -2 i: 2;
-					lua: state set: -2 field: 'followups'.
+	self liblua
+		push: s onLua: state;
+		lua: state set: -2 field: 'context'.
 
-				self liblua
-					push: 'noop' onLua: state;
-					lua: state set: -2 field: 'action'.
+	self liblua
+		lua: state get: -2 i: 2;
+		lua: state set: -2 field: 'followups'.
 
-				1 "number of results" ]
-			onLua: state;
-			lua: state setglobal: 'command'.
+	self liblua
+		push: 'noop' onLua: state;
+		lua: state set: -2 field: 'action'.
 
-		self liblua
-			luaL: state dostring: '
+	^ 1 "number of results"
+]
+
+{ #category : #'Lua chunks' }
+LibLuaTest >> recSumLuaSource [
+
+	^ '
 
 function recSum (tbl) 
 	r = 0.0
@@ -71,21 +82,31 @@ function recSum (tbl)
 	return r
 end
 
-';
-			luaL: state loadstring: '
+'
+]
 
-local commands = {
-	command { "create", 
-		{ command { "document" }, 
-		  command { "folder" }
-	    } 
-	},
-	command { "delete" },
-}
+{ #category : #tests }
+LibLuaTest >> testCommands [
 
-return recSum(commands)
+	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
 
-'.
+	| code result random r |
+	random := Random seed: 541.
+	r := LookupKey new
+		     key: 0.0;
+		     yourself.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			push: [ :ongoingState | 
+				self pushCommandTableOnLua: ongoingState random: random acc: r ]
+			onLua: state;
+			lua: state setglobal: 'command'.
+
+		self liblua
+			luaL: state dostring: self recSumLuaSource;
+			luaL: state dostring: self commandsLuaSource;
+			luaL: state loadstring: 'return recSum(commands)'.
 
 		code := self liblua lua: state pcallnargs: 0 nresults: 1.
 
@@ -96,8 +117,7 @@ return recSum(commands)
 
 	self
 		assert: code equals: 0;
-		assert: name equals: (self liblua typeAt: #LUA_TSTRING);
-		assert: result equals: r
+		assert: result equals: r key
 ]
 
 { #category : #tests }
