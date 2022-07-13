@@ -8,6 +8,18 @@ Class {
 }
 
 { #category : #'Lua chunks' }
+LibLuaTest >> commandDefLuaSource [
+
+	^ '
+
+function command (tbl)
+	return { name = tbl[1], context=1, followups=tbl[2] or {}, action=nil }
+end
+
+'
+]
+
+{ #category : #'Lua chunks' }
 LibLuaTest >> commandsLuaSource [
 
 	^ '
@@ -33,12 +45,9 @@ LibLuaTest >> liblua [
 { #category : #'Lua creation' }
 LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
+	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
+
 	| s name |
-	"
-function command (tbl)
-	return {name = tbl[1], context=nil, followups=tbl[2] or {}, action=nil}
-end
-"
 	self liblua
 		luaL: state
 		check: 1
@@ -86,9 +95,7 @@ end
 ]
 
 { #category : #tests }
-LibLuaTest >> testCommands [
-
-	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
+LibLuaTest >> testCommandsUsingLuaAPI [
 
 	| result random r |
 	random := Random seed: 541.
@@ -115,6 +122,22 @@ LibLuaTest >> testCommands [
 			          lua: state tonumberx: -1 ifNotNumber: [ Error signal ] ].
 
 	self assert: result equals: r key
+]
+
+{ #category : #tests }
+LibLuaTest >> testCommandsUsingLuaDefs [
+
+	| result |
+	result := self liblua withOpenedLibsStateDo: [ :state | 
+		          self liblua
+			          luaL: state dostring: self commandDefLuaSource;
+			          luaL: state dostring: self recSumLuaSource;
+			          luaL: state dostring: self commandsLuaSource;
+			          luaL: state loadstring: 'return recSum(commands)';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          lua: state tointegerx: -1 ifNotInteger: [ Error signal ] ].
+
+	self assert: result equals: 4
 ]
 
 { #category : #tests }
