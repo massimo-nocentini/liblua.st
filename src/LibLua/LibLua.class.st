@@ -126,6 +126,14 @@ LibLua >> lua: L push: fn cclosure: n [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L pushboolean: b [
+
+	" void lua_pushboolean (lua_State *L, int b)"
+
+	^ self ffiCall: #( void lua_pushboolean #( void * L , int b ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L pushcfunction: fn [
 
 	^ self lua: L push: fn cclosure: 0
