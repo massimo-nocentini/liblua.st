@@ -67,12 +67,30 @@ LibLua >> ffiCallback: aBlock [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L create: narray table: nrec [
+LibLua >> lua: L create: narr table: nrec [
 
-	"void lua_createtable (lua_State *L, int narray, int nrec)"
+	"void lua_createtable (lua_State *L, int narr, int nrec);
+	
+Creates a new empty table and pushes it onto the stack. The new table has space 
+pre-allocated for narr array elements and nrec non-array elements. This pre-allocation 
+is useful when you know exactly how many elements the table will have. 
+Otherwise you can use the function `#lua_newtable:`."
 
 	^ self ffiCall:
-		  #( void lua_createtable #( void * L , int narray , int nrec ) )
+		  #( void lua_createtable #( void * L , int narr , int nrec ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L get: idx field: k [
+
+	"void lua_getfield (lua_State *L, int index, const char *k);
+	
+	Pushes onto the stack the value t[k], where t is the value at the given valid index. 
+	As in Lua, this function may trigger a metamethod for the 'index' event 
+	(see http://www.lua.org/manual/5.1/manual.html#2.8)."
+
+	^ self ffiCall:
+		  #( int lua_getfield #( void * L , int idx , const char * k ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -81,6 +99,15 @@ LibLua >> lua: L get: idx i: n [
 	"int lua_geti (lua_State *L, int idx, lua_Integer n)"
 
 	^ self ffiCall: #( int lua_geti #( void * L , int idx , long n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L getglobal: name [
+
+	"void lua_getglobal (lua_State *L, const char *name);"
+
+	^ self ffiCall:
+		  #( void lua_getglobal #( void * L , const char * name ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -306,6 +333,17 @@ LibLua >> luaL_openlibs: L [
 LibLua >> lua_close: L [
 
 	^ self ffiCall: #( void lua_close #( void * L ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_newtable: L [
+
+	"void lua_newtable (lua_State *L);
+	
+Creates a new empty table and pushes it onto the stack. 
+It is equivalent to lua_createtable(L, 0, 0)."
+
+	^ self lua: L create: 0 table: 0
 ]
 
 { #category : #'accessing - platform' }

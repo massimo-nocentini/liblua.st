@@ -54,7 +54,7 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 		check: 1
 		type: (self liblua typeAt: #LUA_TTABLE).
 
-	self liblua lua: state create: 0 table: 4.
+	self liblua lua_newtable: state.
 
 	name := self liblua lua: state get: -2 i: 1.
 	self assert: name equals: (self liblua typeAt: #LUA_TSTRING).
@@ -139,6 +139,22 @@ LibLuaTest >> testCommandsUsingLuaDefs [
 			          lua: state tointegerx: -1 ifNotInteger: [ Error signal ] ].
 
 	self assert: result equals: 4
+]
+
+{ #category : #tests }
+LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
+
+	| result |
+	result := self liblua withOpenedLibsStateDo: [ :state | 
+		          self liblua
+			          luaL: state dostring: self commandDefLuaSource;
+			          luaL: state dostring: self commandsLuaSource;
+			          lua: state getglobal: 'commands';
+			          lua: state get: -1 i: 1;
+			          lua: state get: -1 field: 'name';
+			          lua: state tostring: -1 ].
+
+	self assert: result equals: 'create'
 ]
 
 { #category : #tests }
