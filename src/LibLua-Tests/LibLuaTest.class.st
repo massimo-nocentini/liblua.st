@@ -252,6 +252,48 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
 ]
 
 { #category : #tests }
+LibLuaTest >> testLoadThenPCallWithReturnNumber [
+
+	| code seven |
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring:
+			'do a = 3 + 4.2; print("The result is: ", a); return a + 1 end'.
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+		seven := self liblua
+			         lua: state
+			         tonumberx: -1
+			         ifNotNumber: [ Error signal ] ].
+
+	self
+		assert: code equals: 0;
+		assert: seven equals: 8.2
+]
+
+{ #category : #tests }
+LibLuaTest >> testLoadThenPCallWithReturnNumberFail [
+
+	| code seven witness |
+	witness := Object new.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			loadstring:
+			'do a = 3 + 4; print("The result is: ", a); return "just a simple string" end'.
+		code := self liblua lua: state pcallnargs: 0 nresults: 1.
+		seven := self liblua
+			         lua: state
+			         tonumberx: -1
+			         ifNotNumber: [ witness ] ].
+
+	self
+		assert: code equals: 0;
+		assert: seven equals: witness
+]
+
+{ #category : #tests }
 LibLuaTest >> testLoadThenPCallWithReturnString [
 
 	| code seven |

@@ -311,28 +311,26 @@ LibLua >> lua: L to: idx numberx: isnum [
 LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 
 	| pointer value |
-	pointer := ExternalAddress newPointer.
+	pointer := 0 pointer.
 
-	^ [ 
-	  value := self lua: state to: idx integerx: pointer.
+	value := self lua: state to: idx integerx: pointer.
 
-	  (pointer boolean8AtOffset: 0)
+	^ (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
-		  ifFalse: aBlock ] ensure: [ pointer free ]
+		  ifFalse: aBlock
 ]
 
 { #category : #API }
 LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 
 	| pointer value |
-	pointer := ExternalAddress newPointer.
+	pointer := 0.0 pointer.
 
-	^ [ 
-	  value := self lua: state to: idx numberx: pointer.
+	value := self lua: state to: idx numberx: pointer.
 
-	  (pointer boolean8AtOffset: 0)
+	^ (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
-		  ifFalse: aBlock ] ensure: [ pointer free ]
+		  ifFalse: aBlock
 ]
 
 { #category : #'accessing - platform' }
