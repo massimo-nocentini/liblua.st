@@ -69,42 +69,64 @@ LibLua >> ffiCallback: aBlock [
 { #category : #'accessing - platform' }
 LibLua >> lua: L create: narr table: nrec [
 
-	"void lua_createtable (lua_State *L, int narr, int nrec);
+	"From https://www.lua.org/manual/5.4/manual.html#lua_createtable,
 	
-Creates a new empty table and pushes it onto the stack. The new table has space 
-pre-allocated for narr array elements and nrec non-array elements. This pre-allocation 
-is useful when you know exactly how many elements the table will have. 
-Otherwise you can use the function `#lua_newtable:`."
+		void lua_createtable (lua_State *L, int narr, int nrec);
+	
+	Creates a new empty table and pushes it onto the stack. Parameter narr is a hint 
+	for how many elements the table will have as a sequence; parameter nrec is a hint 
+	for how many other elements the table will have. Lua may use these hints to preallocate 
+	memory for the new table. This preallocation may help performance when you know 
+	in advance how many elements the table will have. Otherwise you can use the function `#lua_newtable:`."
 
 	^ self ffiCall:
 		  #( void lua_createtable #( void * L , int narr , int nrec ) )
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L get: idx field: k [
+LibLua >> lua: L get: index field: k [
 
-	"void lua_getfield (lua_State *L, int index, const char *k);
+	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
 	
-	Pushes onto the stack the value t[k], where t is the value at the given valid index. 
-	As in Lua, this function may trigger a metamethod for the 'index' event 
-	(see http://www.lua.org/manual/5.1/manual.html#2.8)."
+		int lua_getfield (lua_State *L, int index, const char *k);
+	
+	Pushes onto the stack the value t[k], where t is the value at the given index. 
+	As in Lua, this function may trigger a metamethod for the ""index"" event 
+	(see https://www.lua.org/manual/5.4/manual.html#2.4).
+
+Returns the type of the pushed value.
+"
 
 	^ self ffiCall:
-		  #( int lua_getfield #( void * L , int idx , const char * k ) )
+		  #( int lua_getfield #( void * L , int index , const char * k ) )
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L get: idx i: n [
+LibLua >> lua: L get: index i: i [
 
-	"int lua_geti (lua_State *L, int idx, lua_Integer n)"
+	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
+	
+		int lua_geti (lua_State *L, int index, lua_Integer i);
+	
+	Pushes onto the stack the value t[i], where t is the value at the given index. 
+	As in Lua, this function may trigger a metamethod for the ""index"" event 
+	(see https://www.lua.org/manual/5.4/manual.html#2.4).
 
-	^ self ffiCall: #( int lua_geti #( void * L , int idx , long n ) )
+	Returns the type of the pushed value."
+
+	^ self ffiCall: #( int lua_geti #( void * L , int index , long i ) )
 ]
 
 { #category : #'accessing - platform' }
 LibLua >> lua: L getglobal: name [
 
-	"void lua_getglobal (lua_State *L, const char *name);"
+	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
+	
+		int lua_getglobal (lua_State *L, const char *name);
+	
+	Pushes onto the stack the value of the global name. 
+
+	Returns the type of that value."
 
 	^ self ffiCall:
 		  #( void lua_getglobal #( void * L , const char * name ) )
@@ -113,8 +135,17 @@ LibLua >> lua: L getglobal: name [
 { #category : #'accessing - platform' }
 LibLua >> lua: L pcallknargs: nargs nresults: nresults errfunc: errfunc lua_KContext: ctx lua_KFunction: k [
 
-	" int   (lua_pcallk) (lua_State *L, int nargs, int nresults, int errfunc,
-                            intptr_t ctx, void * k);"
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
+	
+		int lua_pcallk (lua_State *L,
+  		                int nargs,
+      			          int nresults,
+         			       int msgh,
+            			    lua_KContext ctx,
+               			 lua_KFunction k);
+			
+	This function behaves exactly like #lua_pcall:, except that it allows the called function to yield 
+	(see https://www.lua.org/manual/5.4/manual.html#4.5)."
 
 	^ self ffiCall:
 		  #( int lua_pcallk #( void * L , int nargs , int nresults , int errfunc
@@ -146,7 +177,35 @@ LibLua >> lua: L pcallnargs: nargs nresults: nresults errfunc: errfunc [
 { #category : #'accessing - platform' }
 LibLua >> lua: L push: fn cclosure: n [
 
-	"void lua_pushcclosure (lua_State *L, lua_CFunction fn, int n)"
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcclosure,
+	
+		void lua_pushcclosure (lua_State *L, lua_CFunction fn, int n);
+	
+	Pushes a new C closure onto the stack. 
+	
+	This function receives a pointer to a C function and pushes onto the 
+	stack a Lua value of type function that, when called, invokes the corresponding 
+	C function. The parameter n tells how many upvalues this function will have 
+	(see https://www.lua.org/manual/5.4/manual.html#4.2).
+
+	Any function to be callable by Lua must follow the correct protocol to receive 
+	its parameters and return its results (see 
+	https://www.lua.org/manual/5.4/manual.html#lua_CFunction).
+
+	When a C function is created, it is possible to associate some values with it, 
+	the so called upvalues; these upvalues are then accessible to the function whenever 
+	it is called. This association is called a C closure (see §4.2). To create a C 
+	closure, first the initial values for its upvalues must be pushed onto the stack. 
+	(When there are multiple upvalues, the first value is pushed first.) 
+	
+	Then lua_pushcclosure is called to create and push the C function onto the stack, 
+	with the argument n telling how many values will be associated with the function. 
+	lua_pushcclosure also pops these values from the stack.
+	
+	The maximum value for n is 255.
+
+	When n is zero, this function creates a light C function, which is just a pointer 
+	to the C function. In that case, it never raises a memory error."
 
 	^ self ffiCall:
 		  #( void lua_pushcclosure #( void * L , void * fn , int n ) )
@@ -155,13 +214,25 @@ LibLua >> lua: L push: fn cclosure: n [
 { #category : #'accessing - platform' }
 LibLua >> lua: L pushboolean: b [
 
-	" void lua_pushboolean (lua_State *L, int b)"
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
+	
+		void lua_pushboolean (lua_State *L, int b);
+	
+	Pushes a boolean value with value b onto the stack."
 
 	^ self ffiCall: #( void lua_pushboolean #( void * L , int b ) )
 ]
 
 { #category : #'accessing - platform' }
 LibLua >> lua: L pushcfunction: fn [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcfunction,
+	
+		void lua_pushcfunction (lua_State *L, lua_CFunction f);
+	
+	Pushes a C function onto the stack. 
+	
+	This function is equivalent to lua_pushcclosure with no upvalues."
 
 	^ self lua: L push: fn cclosure: 0
 ]
