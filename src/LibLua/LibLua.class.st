@@ -129,7 +129,7 @@ LibLua >> lua: L getglobal: name [
 	Returns the type of that value."
 
 	^ self ffiCall:
-		  #( void lua_getglobal #( void * L , const char * name ) )
+		  #( int lua_getglobal #( void * L , const char * name ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -240,7 +240,11 @@ LibLua >> lua: L pushcfunction: fn [
 { #category : #'accessing - platform' }
 LibLua >> lua: L pushinteger: n [
 
-	"void lua_pushinteger (lua_State *L, lua_Integer n) "
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
+	
+		void lua_pushinteger (lua_State *L, lua_Integer n);
+
+	Pushes an integer with value n onto the stack."
 
 	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
 ]
@@ -248,7 +252,11 @@ LibLua >> lua: L pushinteger: n [
 { #category : #'accessing - platform' }
 LibLua >> lua: L pushnumber: n [
 
-	"void lua_pushnumber (lua_State *L, lua_Number n) "
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
+	
+		void lua_pushnumber (lua_State *L, lua_Number n);
+		
+	Pushes a float with value n onto the stack.	"
 
 	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
 ]
