@@ -133,6 +133,40 @@ LibLua >> lua: L getglobal: name [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L next: idx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_next,
+	
+		int lua_next (lua_State *L, int idx);
+	
+	Pops a key from the stack, and pushes a key–value pair from the table at the given index, 
+	the ""next"" pair after the given key. If there are no more elements in the table, 
+	then lua_next returns 0 and pushes nothing.
+
+	A typical table traversal looks like this:
+
+     /* table is in the stack at index 't' */
+     lua_pushnil(L);  /* first key */
+     while (lua_next(L, t) != 0) {
+       /* uses 'key' (at index -2) and 'value' (at index -1) */
+       printf(""%s - %s\n"",
+              lua_typename(L, lua_type(L, -2)),
+              lua_typename(L, lua_type(L, -1)));
+       /* removes 'value'; keeps 'key' for next iteration */
+       lua_pop(L, 1);
+     }
+
+	While traversing a table, avoid calling lua_tolstring directly on a key, 
+	unless you know that the key is actually a string. Recall that lua_tolstring may change 
+	the value at the given index; this confuses the next call to lua_next.
+
+	This function may raise an error if the given key is neither nil nor present in the table. 
+	See function next for the caveats of modifying the table during its traversal."
+
+	^ self ffiCall: #( int lua_next #( void * L , int idx ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L pcallknargs: nargs nresults: nresults errfunc: errfunc lua_KContext: ctx lua_KFunction: k [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
@@ -172,6 +206,18 @@ LibLua >> lua: L pcallnargs: nargs nresults: nresults errfunc: errfunc [
 		  errfunc: errfunc
 		  lua_KContext: 0
 		  lua_KFunction: ExternalAddress null
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L pop: n [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
+	
+		void lua_pop (lua_State *L, int n);
+		
+	Pops n elements from the stack. It is implemented as a macro over lua_settop."
+
+	^ self lua: L settop: n negated - 1
 ]
 
 { #category : #'accessing - platform' }
@@ -289,6 +335,54 @@ LibLua >> lua: L setglobal: name [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L settop: idx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
+	
+		void lua_settop (lua_State *L, int idx);
+		
+	Accepts any index, or 0, and sets the stack top to this index. If the new top is 
+	greater than the old one, then the new elements are filled with nil. If index is 0, 
+	then all stack elements are removed.
+
+	This function can run arbitrary code when removing an index marked as to-be-closed from the stack."
+
+	^ self ffiCall: #( void lua_settop #( void * L , int idx ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L table: idx do: aBlock [
+
+	"A typical table traversal looks like this:
+
+     /* table is in the stack at index 't' */
+     lua_pushnil(L);  /* first key */
+     while (lua_next(L, t) != 0) {
+       /* uses 'key' (at index -2) and 'value' (at index -1) */
+       printf(""%s - %s\n"",
+              lua_typename(L, lua_type(L, -2)),
+              lua_typename(L, lua_type(L, -1)));
+       /* removes 'value'; keeps 'key' for next iteration */
+       lua_pop(L, 1);
+     }
+	"
+
+	self lua_pushnil: L.
+
+	[ (self lua: L next: idx) = 0 ] whileFalse: [ 
+		| keyType valueType |
+		keyType := self lua: L type: -2.
+		keyType := self lua: L typename: keyType.
+
+		valueType := self lua: L type: -1.
+		valueType := self lua: L typename: valueType.
+
+		aBlock value: keyType value: valueType.
+
+		self lua: L pop: 1 ]
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L to: idx integerx: isnum [
 
 	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
@@ -345,6 +439,34 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 LibLua >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L type: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
+	
+		int lua_type (lua_State *L, int index);
+	
+	Returns the type of the value in the given valid index, or LUA_TNONE 
+	for a non-valid but acceptable index. The types returned by lua_type are coded 
+	by the following constants defined in lua.h: LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, 
+	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
+
+	^ self ffiCall: #( int lua_type #( void * L , int index ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L typename: tp [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
+	
+		const char *lua_typename (lua_State *L, int tp);
+	
+	Returns the name of the type encoded by the value tp, which must 
+	be one the values returned by lua_type."
+
+	^ self ffiCall: #( const char * lua_typename #( void * L , int tp ) )
 ]
 
 { #category : #'accessing - platform' }
