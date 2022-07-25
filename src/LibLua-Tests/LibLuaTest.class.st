@@ -158,6 +158,25 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 ]
 
 { #category : #tests }
+LibLuaTest >> testCommandsUsingLuaDefsTableDo [
+
+	| result |
+	result := OrderedCollection new.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state dostring: self commandDefLuaSource;
+			luaL: state dostring: self commandsLuaSource;
+			lua: state getglobal: 'commands';
+			lua: state table: -1 do: [ :k :v | result add: k -> v ] ].
+
+	self
+		assert: result first equals: 'number' -> 'table';
+		assert: result second equals: 'number' -> 'table';
+		assert: result size equals: 2
+]
+
+{ #category : #tests }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |

@@ -369,7 +369,7 @@ LibLua >> lua: L table: idx do: aBlock [
 
 	self lua_pushnil: L.
 
-	[ (self lua: L next: idx) = 0 ] whileFalse: [ 
+	[ (self lua: L next: idx - 1) = 0 ] whileFalse: [ 
 		| keyType valueType |
 		keyType := self lua: L type: -2.
 		keyType := self lua: L typename: keyType.
