@@ -204,6 +204,28 @@ LibLuaTest >> testCopy [
 ]
 
 { #category : #tests }
+LibLuaTest >> testCopyCompare [
+
+	| outer inner |
+	self liblua withOpenedLibsStateDo: [ :state | 
+		outer := self liblua
+			         luaL: state dostring: 'tbl = { nested = { } }';
+			         lua: state getglobal: 'tbl';
+			         lua_pushnil: state;
+			         lua: state copy: -2 to: -1;
+			         lua: state compare: -2 eq: -1.
+
+		inner := self liblua
+			         lua: state get: -2 field: 'nested';
+			         lua: state get: -2 field: 'nested';
+			         lua: state compare: -2 eq: -1 ].
+
+	self
+		assert: outer equals: 1;
+		assert: inner equals: 1
+]
+
+{ #category : #tests }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |

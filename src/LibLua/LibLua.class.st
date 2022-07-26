@@ -67,6 +67,64 @@ LibLua >> ffiCallback: aBlock [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L compare: index1 eq: index2 [
+
+	"#define LUA_OPEQ	0"
+
+	^ self
+		  lua: L
+		  compare: index1
+		  with: index2
+		  op: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L compare: index1 le: index2 [
+
+	"#define LUA_OPLE	2"
+
+	^ self
+		  lua: L
+		  compare: index1
+		  with: index2
+		  op: 2
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L compare: index1 lt: index2 [
+
+	"#define LUA_OPLT	1"
+
+	^ self
+		  lua: L
+		  compare: index1
+		  with: index2
+		  op: 1
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L compare: index1 with: index2 op: op [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
+	
+		int lua_compare (lua_State *L, int index1, int index2, int op);
+	
+	Compares two Lua values. Returns 1 if the value at index index1 satisfies 
+	op when compared with the value at index index2, following the semantics of 
+	the corresponding Lua operator (that is, it may call metamethods). 
+	Otherwise returns 0. Also returns 0 if any of the indices is not valid.
+
+	The value of op must be one of the following constants:
+
+		• LUA_OPEQ: compares for equality (==)
+		• LUA_OPLT: compares for less than (<)
+		• LUA_OPLE: compares for less or equal (<=)"
+
+	^ self ffiCall:
+		  #( int lua_compare #( void * L , int index1 , int index2 , int op ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L copy: fromidx to: toidx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
