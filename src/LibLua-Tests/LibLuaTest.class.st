@@ -137,8 +137,16 @@ LibLuaTest >> testCFunctionAverage [
 		| average |
 		average := self liblua ffiCallback: [ :s | self average: s ].
 
+		self liblua lua: state register: 'foo' cfunction: average.
+
+		"We push here some values on the stack to test the behaviour of #lua_gettop: 
+		 when the stack contains some more values other than the arguments for the 
+		 function call."
 		self liblua
-			lua: state register: 'foo' cfunction: average;
+			lua_pushnil: state;
+			lua: state pushstring: 'hello'.
+
+		self liblua
 			luaL: state loadstring: 'return foo(12, 43, 43, 450)';
 			lua: state pcallnargs: 0 nresults: 2.
 
@@ -148,6 +156,26 @@ LibLuaTest >> testCFunctionAverage [
 	self
 		assert: avg equals: { 12. 43. 43. 450 } average;
 		assert: sum equals: { 12. 43. 43. 450 } sum
+]
+
+{ #category : #tests }
+LibLuaTest >> testCFunctionPCallCoroutine [
+
+	| s e |
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state
+			dostring:
+				'co = coroutine.create(function (...) print(pcall(coroutine.yield, ...)) end)';
+			luaL: state loadstring: 'return coroutine.resume(co, "hello")';
+			lua: state pcallnargs: 0 nresults: 2.
+
+		s := self liblua lua: state toboolean: -2.
+		e := self liblua lua: state tostring: -1 ].
+
+	self
+		assert: s equals: 1;
+		assert: e equals: 'hello'
 ]
 
 { #category : #tests }
