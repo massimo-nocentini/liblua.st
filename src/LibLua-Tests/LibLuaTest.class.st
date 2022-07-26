@@ -7,6 +7,40 @@ Class {
 	#category : #'LibLua-Tests'
 }
 
+{ #category : #'as yet unclassified' }
+LibLuaTest >> average: state [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_CFunction,
+
+	static int foo (lua_State *L) {
+       int n = lua_gettop(L);    /* number of arguments */
+       lua_Number sum = 0.0;
+       int i;
+       for (i = 1; i <= n; i++) {
+         if (!lua_isnumber(L, i)) {
+           lua_pushliteral(L, ""incorrect argument"");
+           lua_error(L);
+         }
+         sum += lua_tonumber(L, i);
+       }
+       lua_pushnumber(L, sum/n);        /* first result */
+       lua_pushnumber(L, sum);         /* second result */
+       return 2;                   /* number of results */
+     }"
+
+	| n sum |
+	n := self liblua lua_gettop: state.
+	sum := 0.0.
+
+	1 to: n do: [ :i | sum := sum + (self liblua lua: state tonumber: i) ].
+
+	self liblua
+		lua: state pushnumber: sum / n;
+		lua: state pushnumber: sum.
+
+	^ 2
+]
+
 { #category : #'Lua chunks' }
 LibLuaTest >> commandDefLuaSource [
 
@@ -93,6 +127,27 @@ function recSum (tbl)
 end
 
 '
+]
+
+{ #category : #tests }
+LibLuaTest >> testCFunctionAverage [
+
+	| avg sum |
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| average |
+		average := self liblua ffiCallback: [ :s | self average: s ].
+
+		self liblua
+			lua: state register: 'foo' cfunction: average;
+			luaL: state loadstring: 'return foo(12, 43, 43, 450)';
+			lua: state pcallnargs: 0 nresults: 2.
+
+		avg := self liblua lua: state tonumber: -2.
+		sum := self liblua lua: state tonumber: -1 ].
+
+	self
+		assert: avg equals: { 12. 43. 43. 450 } average;
+		assert: sum equals: { 12. 43. 43. 450 } sum
 ]
 
 { #category : #tests }

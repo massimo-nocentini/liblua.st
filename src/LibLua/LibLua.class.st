@@ -388,6 +388,22 @@ LibLua >> lua: L pushstring: s [
 		  #( const char * lua_pushstring #( void * L , const char * s ) )
 ]
 
+{ #category : #API }
+LibLua >> lua: state register: name cfunction: f [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
+	
+		void lua_register (lua_State *L, const char *name, lua_CFunction f);
+
+	Sets the C function f as the new value of global name. It is defined as a macro:
+
+  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
+
+	^ self
+		  lua: state pushcfunction: f;
+		  lua: state setglobal: name
+]
+
 { #category : #'accessing - platform' }
 LibLua >> lua: L set: idx field: k [
 
@@ -494,6 +510,12 @@ LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 	^ (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
 		  ifFalse: aBlock
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L tonumber: idx [
+
+	^ self lua: L to: idx numberx: ExternalAddress null
 ]
 
 { #category : #API }
@@ -606,6 +628,20 @@ LibLua >> luaL_openlibs: L [
 LibLua >> lua_close: L [
 
 	^ self ffiCall: #( void lua_close #( void * L ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_gettop: L [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_gettop,
+	
+		int lua_gettop (lua_State *L);
+		
+	Returns the index of the top element in the stack. Because indices start at 1, 
+	this result is equal to the number of elements in the stack; 
+	in particular, 0 means an empty stack."
+
+	^ self ffiCall: #( int lua_gettop #( void * L ) )
 ]
 
 { #category : #'accessing - platform' }
