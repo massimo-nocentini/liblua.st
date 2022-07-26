@@ -67,6 +67,20 @@ LibLua >> ffiCallback: aBlock [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L copy: fromidx to: toidx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
+	
+		void lua_copy (lua_State *L, int fromidx, int toidx);
+	
+	Copies the element at index fromidx into the valid index toidx, replacing the 
+	value at that position. Values at other positions are not affected."
+
+	^ self ffiCall:
+		  #( void lua_copy #( void * L , int fromidx , int toidx ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L create: narr table: nrec [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_createtable,
@@ -376,11 +390,8 @@ LibLua >> lua: L table: idx do: aBlock [
 
 	[ (self lua: L next: index) = 0 ] whileFalse: [ 
 		| keyType valueType |
-		keyType := self lua: L type: -2.
-		keyType := self lua: L typename: keyType.
-
-		valueType := self lua: L type: -1.
-		valueType := self lua: L typename: valueType.
+		keyType := self lua: L typename: (self lua: L type: -2).
+		valueType := self lua: L typename: (self lua: L type: -1).
 
 		aBlock value: keyType value: valueType.
 

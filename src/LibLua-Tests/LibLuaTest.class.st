@@ -177,6 +177,33 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 ]
 
 { #category : #tests }
+LibLuaTest >> testCopy [
+
+	| result original |
+	result := Set new.
+	original := Set new.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			luaL: state dostring: 'tbl = { hello = 3.14, "!" }';
+			luaL: state dostring: 'tbl[ { } ] = 2';
+			lua: state getglobal: 'tbl';
+			lua_pushnil: state;
+			lua: state copy: -2 to: -1;
+			lua: state table: -1 do: [ :k :v | result add: k -> v ];
+			lua: state table: -2 do: [ :k :v | original add: k -> v ] ].
+
+	self
+		assert: result equals: (Set new
+				 add: 'number' -> 'string';
+				 add: 'table' -> 'number';
+				 add: 'string' -> 'number';
+				 yourself);
+		assert: result equals: original;
+		assert: result size equals: 3
+]
+
+{ #category : #tests }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |
