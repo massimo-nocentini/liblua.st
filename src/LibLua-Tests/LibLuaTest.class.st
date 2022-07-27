@@ -568,14 +568,15 @@ LibLuaTest >> testSearchPath2 [
 		longFlag := self liblua
 			            luaL: state
 			            loadstring:
-				            'return package.loaded["io.github.massimo-nocentini.on-lua.heapq"] ~= nil';
+				            'return table.contains(package.loaded, "io.github.massimo-nocentini.on-lua.heapq")';
 			            lua: state pcallnargs: 0 nresults: 1;
 			            lua: state toboolean: -1.
 
 
 		shortFlag := self liblua
 			             luaL: state
-			             loadstring: 'return package.loaded["heapq"] ~= nil';
+			             loadstring:
+				             'return table.contains(package.loaded, "heapq")';
 			             lua: state pcallnargs: 0 nresults: 1;
 			             lua: state toboolean: -1.
 
