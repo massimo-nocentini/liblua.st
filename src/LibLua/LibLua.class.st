@@ -61,6 +61,15 @@ LibLua class >> initialize [
 ]
 
 { #category : #API }
+LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
+
+	^ self
+		  luaL: state
+		  dostring:
+		  'package.path = package.path .. ";./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua"'
+]
+
+{ #category : #API }
 LibLua >> ffiCallback: aBlock [
 
 	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
@@ -689,7 +698,7 @@ LibLua >> luaL: L dostring: s [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> luaL: L load: filename [
+LibLua >> luaL: L loadfile: filename [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfile,
 	
@@ -697,11 +706,11 @@ LibLua >> luaL: L load: filename [
 	
 	Equivalent to luaL_loadfilex with mode equal to NULL."
 
-	^ self luaL: L load: filename filex: ExternalAddress null
+	^ self luaL: L loadfile: filename x: ExternalAddress null
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> luaL: L load: filename filex: mode [
+LibLua >> luaL: L loadfile: filename x: mode [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfilex,
 	
@@ -817,6 +826,15 @@ LibLua >> macLibraryName [
 LibLua >> push: anObject on: state [
 
 	^ anObject pushOnLua: state
+]
+
+{ #category : #API }
+LibLua >> require: name heapq: state [
+
+	^ self
+		  luaL: state
+		  dostring:
+		  name , ' = require "io.github.massimo-nocentini.on-lua.heapq"'
 ]
 
 { #category : #API }

@@ -80,15 +80,25 @@ LibLuaTest >> liblua [
 { #category : #tests }
 LibLuaTest >> loadModuleOnLua: state [
 
-	| filename |
+	| filename moduleName |
 	"checkstring because we are in a function call"
-	filename := self liblua luaL: state checkstring: 1.
+	moduleName := self liblua luaL: state checkstring: 1.
+
+
+
+	filename := self liblua
+		            luaL: state
+		            loadstring: 'return package.searchpath("' , moduleName
+			            ,
+				            '", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
+		            lua: state pcallnargs: 0 nresults: 1;
+		            lua: state tostring: -1.
 
 	self liblua
-		luaL: state
-		loadstring:
-			'return package.searchpath("io.github.massimo-nocentini.on-lua.heapq", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
-		lua: state pcallnargs: 0 nresults: 1
+		luaL: state loadfile: filename;
+		lua: state pcallnargs: 0 nresults: 1.
+
+	^ 1
 ]
 
 { #category : #'Lua creation' }
@@ -519,30 +529,51 @@ LibLuaTest >> testSearchPath [
 { #category : #tests }
 LibLuaTest >> testSearchPath1 [
 
-	| pathName |
-	pathName := self liblua withOpenedLibsStateDo: [ :state | 
-		            | ffiCallback |
-		            ffiCallback := self liblua ffiCallback: [ :s | 
-			                           self loadModuleOnLua: state ].
+	| list |
+	list := self liblua withOpenedLibsStateDo: [ :state | 
+		        | ffiCallback |
+		        ffiCallback := self liblua ffiCallback: [ :s | 
+			                       self loadModuleOnLua: state ].
 
-		            self liblua
-			            lua: state
-			            requireGlobal:
-			            'io.github.massimo-nocentini.on-lua.heapq'
-			            f: ffiCallback.
+		        self liblua
+			        lua: state
+			        requireGlobal: 'io.github.massimo-nocentini.on-lua.heapq'
+			        f: ffiCallback.
 
-		            self liblua
-			            luaL: state
-			            loadstring:
-				            'return package.searchpath("io.github.massimo-nocentini.on-lua.heapq", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
-			            lua: state pcallnargs: 0 nresults: 1.
+		        "		        self liblua lua: state setglobal: 'heapq'.
+"
+		        self liblua
+			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
+			        luaL: state
+			        dostring:
+				        'print(package.loaded["io.github.massimo-nocentini.on-lua.heapq"])';
+			        luaL: state dostring: 'heapq.heapify(list)';
+			        luaL: state loadstring: 'return table.concat(list, ", ")';
+			        lua: state pcallnargs: 0 nresults: 1;
+			        lua: state tostring: -1 ].
 
-		            self liblua lua: state tostring: -1 ].
+	self assert: list equals: '5, 4, 3, 2, 1'
+]
 
-	self
-		assert: pathName
-		equals:
-		'./pharo-local/iceberg/massimo-nocentini/on-lua/src/io/github/massimo-nocentini/on-lua/heapq.lua'
+{ #category : #tests }
+LibLuaTest >> testSearchPath2 [
+
+	| list |
+	list := self liblua withOpenedLibsStateDo: [ :state | 
+		        self liblua
+			        appendOnLuaRepositoryOnPackagePathOf: state;
+			        require: 'heapq' heapq: state;
+			        luaL: state
+			        dostring:
+				        'print(package.loaded["io.github.massimo-nocentini.on-lua.heapq"])';
+			        luaL: state dostring: 'print(package.loaded["heapq"])';
+			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
+			        luaL: state dostring: 'heapq.heapify(list)';
+			        luaL: state loadstring: 'return table.concat(list, ", ")';
+			        lua: state pcallnargs: 0 nresults: 1;
+			        lua: state tostring: -1 ].
+
+	self assert: list equals: '1, 2, 3, 5, 4'
 ]
 
 { #category : #tests }
