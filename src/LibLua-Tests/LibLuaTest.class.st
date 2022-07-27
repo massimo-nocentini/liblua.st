@@ -631,3 +631,25 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 		assert: called;
 		assert: result equals: 3 sin
 ]
+
+{ #category : #tests }
+LibLuaTest >> testTableMap [
+
+	| list |
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			appendOnLuaRepositoryOnPackagePathOf: state;
+			require: 'op' operator: state;
+			require: 'extensions' extensions: state.
+
+		list := self liblua
+			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
+			        luaL: state
+			        dostring:
+				        'list = table.map(list, function (i) return op.add(i, 1) end)';
+			        luaL: state loadstring: 'return table.concat(list, ", ")';
+			        lua: state pcallnargs: 0 nresults: 1;
+			        lua: state tostring: -1 ].
+
+	self assert: list equals: '6, 5, 4, 3, 2'
+]
