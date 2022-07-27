@@ -405,6 +405,46 @@ LibLua >> lua: state register: name cfunction: f [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L require: modname f: openf [
+
+	^ self
+		  lua: L
+		  require: modname
+		  f: openf
+		  global: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L require: modname f: openf global: glb [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
+	
+		void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb);
+	
+	If package.loaded[modname] is not true, calls the function openf with the 
+	string modname as an argument and sets the call result to package.loaded[modname], 
+	as if that function has been called through require.
+
+	If glb is true, also stores the module into the global modname.
+
+	Leaves a copy of the module on the stack."
+
+	^ self ffiCall:
+		  #( void luaL_requiref #( void * L , const char * modname , void
+		        * openf , int glb ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L requireGlobal: modname f: openf [
+
+	^ self
+		  lua: L
+		  require: modname
+		  f: openf
+		  global: 1
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L set: idx field: k [
 
 	"void lua_setfield (lua_State *L, int idx, const char *k)"
@@ -581,6 +621,24 @@ LibLua >> lua: L typename: tp [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> luaL: L check: arg lstring: l [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_checklstring,
+	
+		const char *luaL_checklstring (lua_State *L, int arg, size_t *l);
+	
+	Checks whether the function argument arg is a string and returns this string; 
+	if l is not NULL fills its referent with the string's length.
+
+	This function uses lua_tolstring to get its result, so all conversions and 
+	caveats of that function apply here."
+
+	^ self ffiCall:
+		  #( const char * luaL_checklstring #( void * L , int arg , void
+		        * l ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> luaL: L check: arg type: t [
 
 	"void luaL_checktype (lua_State *L, int arg, int t)"
@@ -595,6 +653,20 @@ LibLua >> luaL: L checknumber: arg [
 	"lua_Number luaL_checknumber (lua_State *L, int arg)"
 
 	^ self ffiCall: #( double luaL_checknumber #( void * L , int arg ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> luaL: L checkstring: arg [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_checkstring,
+	
+		const char *luaL_checkstring (lua_State *L, int arg);
+	
+	Checks whether the function argument arg is a string and returns this string.
+
+	This function uses lua_tolstring to get its result, so all conversions and caveats of that function apply here."
+
+	^ self luaL: L check: arg lstring: ExternalAddress null
 ]
 
 { #category : #'accessing - platform' }
@@ -614,6 +686,40 @@ LibLua >> luaL: L dostring: s [
 				  nresults: LUA_MULTRET
 				  errfunc: 0 ]
 		  ifFalse: [ status ]
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> luaL: L load: filename [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfile,
+	
+		int luaL_loadfile (lua_State *L, const char *filename);
+	
+	Equivalent to luaL_loadfilex with mode equal to NULL."
+
+	^ self luaL: L load: filename filex: ExternalAddress null
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> luaL: L load: filename filex: mode [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfilex,
+	
+		int luaL_loadfilex (lua_State *L, const char *filename, const char *mode);
+	
+	Loads a file as a Lua chunk. This function uses lua_load to load the chunk in the 
+	file named filename. If filename is NULL, then it loads from the standard input. 
+	The first line in the file is ignored if it starts with a #.
+
+	The string mode works as in the function lua_load.
+
+	This function returns the same results as lua_load or LUA_ERRFILE for file-related errors.
+
+	As lua_load, this function only loads the chunk; it does not run it."
+
+	^ self ffiCall:
+		  #( int luaL_loadfilex #( void * L , const char * filename , const
+		        char * mode ) )
 ]
 
 { #category : #'accessing - platform' }

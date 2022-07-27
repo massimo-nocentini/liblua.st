@@ -77,6 +77,20 @@ LibLuaTest >> liblua [
 	^ LibLua uniqueInstance
 ]
 
+{ #category : #tests }
+LibLuaTest >> loadModuleOnLua: state [
+
+	| filename |
+	"checkstring because we are in a function call"
+	filename := self liblua luaL: state checkstring: 1.
+
+	self liblua
+		luaL: state
+		loadstring:
+			'return package.searchpath("io.github.massimo-nocentini.on-lua.heapq", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
+		lua: state pcallnargs: 0 nresults: 1
+]
+
 { #category : #'Lua creation' }
 LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
@@ -481,6 +495,54 @@ LibLuaTest >> testNewWithOpenLibs [
 		         3 ].
 
 	self assert: three equals: 3
+]
+
+{ #category : #tests }
+LibLuaTest >> testSearchPath [
+
+	| pathName |
+	pathName := self liblua withOpenedLibsStateDo: [ :state | 
+		            self liblua
+			            luaL: state
+			            loadstring:
+				            'return package.searchpath("io.github.massimo-nocentini.on-lua.heapq", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
+			            lua: state pcallnargs: 0 nresults: 1.
+
+		            self liblua lua: state tostring: -1 ].
+
+	self
+		assert: pathName
+		equals:
+		'./pharo-local/iceberg/massimo-nocentini/on-lua/src/io/github/massimo-nocentini/on-lua/heapq.lua'
+]
+
+{ #category : #tests }
+LibLuaTest >> testSearchPath1 [
+
+	| pathName |
+	pathName := self liblua withOpenedLibsStateDo: [ :state | 
+		            | ffiCallback |
+		            ffiCallback := self liblua ffiCallback: [ :s | 
+			                           self loadModuleOnLua: state ].
+
+		            self liblua
+			            lua: state
+			            requireGlobal:
+			            'io.github.massimo-nocentini.on-lua.heapq'
+			            f: ffiCallback.
+
+		            self liblua
+			            luaL: state
+			            loadstring:
+				            'return package.searchpath("io.github.massimo-nocentini.on-lua.heapq", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
+			            lua: state pcallnargs: 0 nresults: 1.
+
+		            self liblua lua: state tostring: -1 ].
+
+	self
+		assert: pathName
+		equals:
+		'./pharo-local/iceberg/massimo-nocentini/on-lua/src/io/github/massimo-nocentini/on-lua/heapq.lua'
 ]
 
 { #category : #tests }
