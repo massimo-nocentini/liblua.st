@@ -649,8 +649,7 @@ LibLuaTest >> testTableMap [
 			        luaL: state dostring: 'print(op.increment)';
 			        luaL: state dostring: 'print(coroutine.zip)';
 			        luaL: state
-			        dostring:
-				        'list = table.map(list, function (i) return op.add(i, 1) end)';
+			        dostring: 'list = table.map(list, op.increment)';
 			        luaL: state loadstring: 'return table.concat(list, ", ")';
 			        lua: state pcallnargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
