@@ -829,12 +829,31 @@ LibLua >> push: anObject on: state [
 ]
 
 { #category : #API }
+LibLua >> require: name extensions: state [
+
+	^ self
+		  luaL: state
+		  dostring:
+		  name
+		  , ' = require "io.github.massimo-nocentini.on-lua.extensions"'
+]
+
+{ #category : #API }
 LibLua >> require: name heapq: state [
 
 	^ self
 		  luaL: state
 		  dostring:
 		  name , ' = require "io.github.massimo-nocentini.on-lua.heapq"'
+]
+
+{ #category : #API }
+LibLua >> require: name operator: state [
+
+	^ self
+		  luaL: state
+		  dostring:
+		  name , ' = require "io.github.massimo-nocentini.on-lua.operator"'
 ]
 
 { #category : #API }

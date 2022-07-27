@@ -558,22 +558,42 @@ LibLuaTest >> testSearchPath1 [
 { #category : #tests }
 LibLuaTest >> testSearchPath2 [
 
-	| list |
-	list := self liblua withOpenedLibsStateDo: [ :state | 
-		        self liblua
-			        appendOnLuaRepositoryOnPackagePathOf: state;
-			        require: 'heapq' heapq: state;
-			        luaL: state
-			        dostring:
-				        'print(package.loaded["io.github.massimo-nocentini.on-lua.heapq"])';
-			        luaL: state dostring: 'print(package.loaded["heapq"])';
+	| list longFlag shortFlag |
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			appendOnLuaRepositoryOnPackagePathOf: state;
+			require: 'heapq' heapq: state;
+			require: 'extensions' extensions: state.
+
+		longFlag := self liblua
+			            luaL: state
+			            loadstring:
+				            'return package.loaded["io.github.massimo-nocentini.on-lua.heapq"] ~= nil';
+			            lua: state pcallnargs: 0 nresults: 1;
+			            lua: state toboolean: -1.
+
+
+		shortFlag := self liblua
+			             luaL: state
+			             loadstring: 'return package.loaded["heapq"] ~= nil';
+			             lua: state pcallnargs: 0 nresults: 1;
+			             lua: state toboolean: -1.
+
+		self liblua
+			luaL: state
+			dostring: 'for k, v in pairs(package.loaded) do print(k) end'.
+
+		list := self liblua
 			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
 			        luaL: state dostring: 'heapq.heapify(list)';
 			        luaL: state loadstring: 'return table.concat(list, ", ")';
 			        lua: state pcallnargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
-	self assert: list equals: '1, 2, 3, 5, 4'
+	self
+		assert: list equals: '1, 2, 3, 5, 4';
+		assert: longFlag equals: 1;
+		assert: shortFlag equals: 0
 ]
 
 { #category : #tests }
