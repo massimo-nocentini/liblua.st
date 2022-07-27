@@ -644,6 +644,9 @@ LibLuaTest >> testTableMap [
 
 		list := self liblua
 			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
+			        luaL: state dostring: 'print(table.contains)';
+			        luaL: state dostring: 'print(op.increment)';
+			        luaL: state dostring: 'print(coroutine.zip)';
 			        luaL: state
 			        dostring:
 				        'list = table.map(list, function (i) return op.add(i, 1) end)';
