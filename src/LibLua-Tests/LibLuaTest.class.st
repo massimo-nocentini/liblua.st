@@ -638,7 +638,7 @@ LibLuaTest >> testTableMap [
 		self liblua
 			appendOnLuaRepositoryOnPackagePathOf: state;
 			require: 'op' operator: state;
-			require: 'extensions' extensions: state.
+			require: '_' extensions: state.
 
 		list := self liblua
 			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
