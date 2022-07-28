@@ -84,8 +84,6 @@ LibLuaTest >> loadModuleOnLua: state [
 	"checkstring because we are in a function call"
 	moduleName := self liblua luaL: state checkstring: 1.
 
-
-
 	filename := self liblua
 		            luaL: state
 		            loadstring: 'return package.searchpath("' , moduleName
@@ -532,6 +530,8 @@ LibLuaTest >> testSearchPath1 [
 	| list |
 	list := self liblua withOpenedLibsStateDo: [ :state | 
 		        | ffiCallback |
+		        self liblua appendOnLuaRepositoryOnPackagePathOf: state.
+
 		        ffiCallback := self liblua ffiCallback: [ :s | 
 			                       self loadModuleOnLua: state ].
 
@@ -540,19 +540,16 @@ LibLuaTest >> testSearchPath1 [
 			        requireGlobal: 'io.github.massimo-nocentini.on-lua.heapq'
 			        f: ffiCallback.
 
-		        "		        self liblua lua: state setglobal: 'heapq'.
-"
+		        self liblua lua: state setglobal: 'heapq'.
+
 		        self liblua
 			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
-			        luaL: state
-			        dostring:
-				        'print(package.loaded["io.github.massimo-nocentini.on-lua.heapq"])';
 			        luaL: state dostring: 'heapq.heapify(list)';
 			        luaL: state loadstring: 'return table.concat(list, ", ")';
 			        lua: state pcallnargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
-	self assert: list equals: '5, 4, 3, 2, 1'
+	self assert: list equals: '1, 2, 3, 5, 4'
 ]
 
 { #category : #tests }
