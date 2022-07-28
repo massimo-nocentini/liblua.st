@@ -7,7 +7,7 @@ Class {
 	#category : #'LibLua-Tests'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'Lua creation' }
 LibLuaTest >> average: state [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_CFunction,
@@ -77,7 +77,7 @@ LibLuaTest >> liblua [
 	^ LibLua uniqueInstance
 ]
 
-{ #category : #tests }
+{ #category : #'Lua creation' }
 LibLuaTest >> loadModuleOnLua: state [
 
 	| filename moduleName |
