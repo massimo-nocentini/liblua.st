@@ -175,7 +175,7 @@ LibLua >> lua: L get: index field: k [
 	As in Lua, this function may trigger a metamethod for the ""index"" event 
 	(see https://www.lua.org/manual/5.4/manual.html#2.4).
 
-Returns the type of the pushed value.
+	Returns the type of the pushed value.
 "
 
 	^ self ffiCall:

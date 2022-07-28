@@ -346,6 +346,51 @@ LibLuaTest >> testHeapBench [
 			require: 'extensions' extensions: state.
 
 		self liblua
+			lua: state getglobal: 'heapq';
+			lua: state get: -1 field: 'heapify';
+			push: array on: state.
+
+		luaTimeToRun := [ 
+		                | code |
+		                code := self liblua
+			                        lua: state
+			                        pcallnargs: 1
+			                        nresults: 1.
+
+		                self assert: code equals: 0 ] timeToRun
+
+		"(self liblua
+			 lua: state setglobal: 'heapified';
+			 luaL: state dostring: 'return table.concat(heapified, "" "")';
+			 lua: state tostring: -1) inspect" ].
+
+
+	smalltalkTimeToRun := [ Heap withAll: array ] timeToRun.
+	pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun.
+
+	self
+		assert: luaTimeToRun < smalltalkTimeToRun;
+		assert: smalltalkTimeToRun < pythonTimeToRun
+]
+
+{ #category : #tests }
+LibLuaTest >> testHeapBenchWithDoString [
+
+	| random array luaTimeToRun smalltalkTimeToRun pythonTimeToRun |
+	self timeLimit: 1 minute.
+
+	random := Random seed: 541.
+	array := (1 to: 1e7) asArray shuffleBy: random.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			appendOnLuaRepositoryOnPackagePathOf: state;
+			require: 'heapq' heapq: state;
+			require: 'extensions' extensions: state.
+
+		self liblua lua: state pushstring: ''.
+
+		self liblua
 			push: array on: state;
 			lua: state setglobal: 'array'.
 
