@@ -245,6 +245,20 @@ LibLua >> lua: L isinteger: index [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L len: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_len,
+	
+		void lua_len (lua_State *L, int index);
+		
+	Returns the length of the value at the given index. It is equivalent to 
+	the '#' operator in Lua (see §3.4.7) and may trigger a metamethod for 
+	the ""length"" event (see §2.4). The result is pushed on the stack."
+
+	^ self ffiCall: #( void lua_len #( void * L , int index ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L next: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_next,
@@ -896,7 +910,10 @@ LibLua >> read: i from: state [
 		^ self lua: state tostring: i ].
 
 	typeid = (self typeAt: #LUA_TTABLE) ifTrue: [ 
-		| dict keysAreIntegers |
+		| dict keysAreIntegers length |
+		self lua: state len: i.
+		length := self lua: state tointeger: -1.
+		self lua: state pop: 1.
 		keysAreIntegers := true.
 		dict := Dictionary new.
 		self table: state at: i do: [ :k :v | 
@@ -904,7 +921,9 @@ LibLua >> read: i from: state [
 			key := self read: k from: state.
 			value := self read: v from: state.
 			dict at: key put: value.
-			keysAreIntegers := keysAreIntegers and: [ key isInteger ] ].
+			keysAreIntegers := keysAreIntegers and: [ 
+				                   key isInteger and: [ 
+					                   key between: 1 and: length ] ] ].
 
 		^ keysAreIntegers
 			  ifTrue: [ 

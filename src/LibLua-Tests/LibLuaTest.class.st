@@ -640,7 +640,19 @@ LibLuaTest >> testReadFromArray [
 			          loadstring: 'return {1, {1, 2, 3, 4, 5}, 3, 4, 5}';
 			          lua: state pcallnargs: 0 nresults: 1;
 			          read: -1 from: state.
-		self assert: result equals: #( 1 #( 1 2 3 4 5 ) 3 4 5 ) ]
+		self assert: result equals: #( 1 #( 1 2 3 4 5 ) 3 4 5 ).
+
+		result := self liblua
+			          luaL: state
+			          loadstring: 'return {[-1]=1, 2, nil, [100]=4, 5}';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: (Dictionary new
+				 at: -1 put: 1;
+				 at: 1 put: 2;
+				 at: 100 put: 4;
+				 at: 3 put: 5;
+				 yourself) ]
 ]
 
 { #category : #tests }
