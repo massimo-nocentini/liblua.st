@@ -273,7 +273,15 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 			luaL: state dostring: self commandDefLuaSource;
 			luaL: state dostring: self commandsLuaSource;
 			lua: state getglobal: 'commands';
-			lua: state table: -1 do: [ :k :v | result add: k -> v ] ].
+			table: state at: -1 do: [ :k :v | 
+				| keyType valueType |
+				keyType := self liblua
+					           lua: state
+					           typename: (self liblua lua: state type: k).
+				valueType := self liblua
+					             lua: state
+					             typename: (self liblua lua: state type: v).
+				result add: keyType -> valueType ] ].
 
 	self
 		assert: result first equals: 'number' -> 'table';
@@ -295,8 +303,24 @@ LibLuaTest >> testCopy [
 			lua: state getglobal: 'tbl';
 			lua_pushnil: state;
 			lua: state copy: -2 to: -1;
-			lua: state table: -1 do: [ :k :v | result add: k -> v ];
-			lua: state table: -2 do: [ :k :v | original add: k -> v ] ].
+			table: state at: -1 do: [ :k :v | 
+				| keyType valueType |
+				keyType := self liblua
+					           lua: state
+					           typename: (self liblua lua: state type: k).
+				valueType := self liblua
+					             lua: state
+					             typename: (self liblua lua: state type: v).
+				result add: keyType -> valueType ];
+			table: state at: -2 do: [ :k :v | 
+				| keyType valueType |
+				keyType := self liblua
+					           lua: state
+					           typename: (self liblua lua: state type: k).
+				valueType := self liblua
+					             lua: state
+					             typename: (self liblua lua: state type: v).
+				original add: keyType -> valueType ] ].
 
 	self
 		assert: result equals: (Set new
@@ -598,6 +622,111 @@ LibLuaTest >> testNewWithOpenLibs [
 		         3 ].
 
 	self assert: three equals: 3
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromArray [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state loadstring: 'return {1, 2, 3, 4, 5}';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: #( 1 2 3 4 5 ).
+
+		result := self liblua
+			          luaL: state
+			          loadstring: 'return {1, {1, 2, 3, 4, 5}, 3, 4, 5}';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: #( 1 #( 1 2 3 4 5 ) 3 4 5 ) ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromBoolean [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state loadstring: 'return false';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self deny: result.
+
+		result := self liblua
+			          luaL: state loadstring: 'return true';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromInteger [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state loadstring: 'return 12345';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: 12345 ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromNil [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state loadstring: 'return nil';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: nil ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromNumber [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state loadstring: 'return 12345.1';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: 12345.1 ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromString [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state loadstring: 'return "nil"';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: 'nil' ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testReadFromTable [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| result |
+		result := self liblua
+			          luaL: state dostring: 'tbl = {1, 4}';
+			          luaL: state dostring: 'tbl[{}] = "hello"';
+			          luaL: state dostring: 'tbl[true] = { 1 }';
+			          luaL: state loadstring: 'return tbl';
+			          lua: state pcallnargs: 0 nresults: 1;
+			          read: -1 from: state.
+		self assert: result equals: (Dictionary new
+				 at: 1 put: 1;
+				 at: 2 put: 4;
+				 at: #(  ) put: 'hello';
+				 at: true put: #( 1 );
+				 yourself) ]
 ]
 
 { #category : #tests }

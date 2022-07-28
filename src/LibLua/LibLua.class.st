@@ -232,6 +232,19 @@ LibLua >> lua: L gettable: index [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L isinteger: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_isinteger,
+	
+		int lua_isinteger (lua_State *L, int index);
+		
+	Returns 1 if the value at the given index is an integer 
+	(that is, the value is a number and is represented as an integer), and 0 otherwise."
+
+	^ self ffiCall: #( int lua_isinteger #( void * L , int index ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L next: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_next,
@@ -522,40 +535,6 @@ LibLua >> lua: L settop: idx [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L table: idx do: aBlock [
-
-	"A typical table traversal looks like this:
-
-     /* table is in the stack at index 't' */
-     lua_pushnil(L);  /* first key */
-     while (lua_next(L, t) != 0) {
-       /* uses 'key' (at index -2) and 'value' (at index -1) */
-       printf(""%s - %s\n"",
-              lua_typename(L, lua_type(L, -2)),
-              lua_typename(L, lua_type(L, -1)));
-       /* removes 'value'; keeps 'key' for next iteration */
-       lua_pop(L, 1);
-     }
-	"
-
-	| index |
-	self lua_pushnil: L.
-
-	index := idx negative
-		         ifTrue: [ idx - 1 ]
-		         ifFalse: [ idx ].
-
-	[ (self lua: L next: index) = 0 ] whileFalse: [ 
-		| keyType valueType |
-		keyType := self lua: L typename: (self lua: L type: -2).
-		valueType := self lua: L typename: (self lua: L type: -1).
-
-		aBlock value: keyType value: valueType.
-
-		self lua: L pop: 1 ]
-]
-
-{ #category : #'accessing - platform' }
 LibLua >> lua: L to: idx integerx: isnum [
 
 	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
@@ -597,6 +576,18 @@ LibLua >> lua: L toboolean: idx [
 	^ self ffiCall: #( int lua_toboolean #( void * L , int idx ) )
 ]
 
+{ #category : #'accessing - platform' }
+LibLua >> lua: L tointeger: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
+	
+		lua_Integer lua_tointeger (lua_State *L, int index);
+		
+	Equivalent to lua_tointegerx with isnum equal to NULL."
+
+	^ self lua: L to: index integerx: ExternalAddress null
+]
+
 { #category : #API }
 LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 
@@ -633,6 +624,20 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 LibLua >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua: L touserdata: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
+	
+		void *lua_touserdata (lua_State *L, int index);
+	
+	If the value at the given index is a full userdata, returns its 
+	memory-block address. If the value is a light userdata, returns 
+	its value (a pointer). Otherwise, returns NULL."
+
+	^ self ffiCall: #( void * lua_touserdata #( void * L , int index ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -867,6 +872,51 @@ LibLua >> push: anObject on: state [
 	^ anObject pushOnLua: state
 ]
 
+{ #category : #affecting }
+LibLua >> read: i from: state [
+
+	| typeid |
+	typeid := self lua: state type: i.
+
+	typeid = (self typeAt: #LUA_TNIL) ifTrue: [ ^ nil ].
+
+	typeid = (self typeAt: #LUA_TBOOLEAN) ifTrue: [ 
+		^ (self lua: state toboolean: i) = 1 ].
+
+	(typeid = (self typeAt: #LUA_TLIGHTUSERDATA) or: [ 
+		 typeid = (self typeAt: #LUA_TUSERDATA) ]) ifTrue: [ 
+		^ self lua: state touserdata: i ].
+
+	typeid = (self typeAt: #LUA_TNUMBER) ifTrue: [ 
+		^ (self lua: state isinteger: i) = 1
+			  ifTrue: [ self lua: state tointeger: i ]
+			  ifFalse: [ self lua: state tonumber: i ] ].
+
+	typeid = (self typeAt: #LUA_TSTRING) ifTrue: [ 
+		^ self lua: state tostring: i ].
+
+	typeid = (self typeAt: #LUA_TTABLE) ifTrue: [ 
+		| dict keysAreIntegers |
+		keysAreIntegers := true.
+		dict := Dictionary new.
+		self table: state at: i do: [ :k :v | 
+			| key value |
+			key := self read: k from: state.
+			value := self read: v from: state.
+			dict at: key put: value.
+			keysAreIntegers := keysAreIntegers and: [ key isInteger ] ].
+
+		^ keysAreIntegers
+			  ifTrue: [ 
+				  | array |
+				  array := Array new: dict size.
+				  dict keysAndValuesDo: [ :k :v | array at: k put: v ].
+				  array ]
+			  ifFalse: [ dict ] ].
+
+	self shouldBeImplemented
+]
+
 { #category : #API }
 LibLua >> require: name extensions: state [
 
@@ -893,6 +943,36 @@ LibLua >> require: name operator: state [
 		  luaL: state
 		  dostring:
 		  name , ' = require "io.github.massimo-nocentini.on-lua.operator"'
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> table: L at: idx do: aBlock [
+
+	"A typical table traversal looks like this:
+
+     /* table is in the stack at index 't' */
+     lua_pushnil(L);  /* first key */
+     while (lua_next(L, t) != 0) {
+       /* uses 'key' (at index -2) and 'value' (at index -1) */
+       printf(""%s - %s\n"",
+              lua_typename(L, lua_type(L, -2)),
+              lua_typename(L, lua_type(L, -1)));
+       /* removes 'value'; keeps 'key' for next iteration */
+       lua_pop(L, 1);
+     }
+	"
+
+	| index |
+	self lua_pushnil: L.
+
+	index := idx negative
+		         ifTrue: [ idx - 1 ]
+		         ifFalse: [ idx ].
+
+	[ (self lua: L next: index) = 0 ] whileFalse: [ 
+		aBlock value: -2 value: -1.
+
+		self lua: L pop: 1 ]
 ]
 
 { #category : #API }
