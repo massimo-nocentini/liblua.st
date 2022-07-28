@@ -214,6 +214,24 @@ LibLua >> lua: L getglobal: name [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L gettable: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_gettable,
+	
+		int lua_gettable (lua_State *L, int index);
+	
+	Pushes onto the stack the value t[k], where t is the value at 
+	the given index and k is the value on the top of the stack.
+
+	This function pops the key from the stack, pushing the resulting value 
+	in its place. As in Lua, this function may trigger a metamethod for the 'index' event (see §2.4).
+
+	Returns the type of the pushed value."
+
+	^ self ffiCall: #( int lua_gettable #( void * L , int index ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L next: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_next,
@@ -463,6 +481,22 @@ LibLua >> lua: L set: idx field: k [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L set: index i: i [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
+	
+		void lua_seti (lua_State *L, int index, lua_Integer i);
+	
+	Does the equivalent to t[n] = v, where t is the value at the given 
+	index and v is the value on the top of the stack.
+
+	This function pops the value from the stack. As in Lua, this function may 
+	trigger a metamethod for the 'newindex' event (see §2.4)."
+
+	^ self ffiCall: #( void lua_seti #( void * L , int index , long i ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L setglobal: name [
 
 	"void lua_setglobal (lua_State *L, const char *name)"
@@ -650,7 +684,12 @@ LibLua >> luaL: L check: arg lstring: l [
 { #category : #'accessing - platform' }
 LibLua >> luaL: L check: arg type: t [
 
-	"void luaL_checktype (lua_State *L, int arg, int t)"
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_checktype,
+	
+		void luaL_checktype (lua_State *L, int arg, int t)
+		
+	Checks whether the function argument arg has type t. 
+	See lua_type for the encoding of types for t."
 
 	^ self ffiCall:
 		  #( void luaL_checktype #( void * L , int arg , int t ) )

@@ -331,6 +331,38 @@ LibLuaTest >> testCopyCompare [
 ]
 
 { #category : #tests }
+LibLuaTest >> testHeapBench [
+
+	| random array luaTimeToRun smalltalkTimeToRun pythonTimeToRun |
+	self timeLimit: 1 minute.
+
+	random := Random seed: 541.
+	array := (1 to: 1e7) asArray shuffleBy: random.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		self liblua
+			appendOnLuaRepositoryOnPackagePathOf: state;
+			require: 'heapq' heapq: state;
+			require: 'extensions' extensions: state.
+
+		self liblua
+			push: array on: state;
+			lua: state setglobal: 'array'.
+
+		luaTimeToRun := [ 
+		                self liblua
+			                luaL: state
+			                dostring: 'heapq.heapify(array)' ] timeToRun ].
+
+	smalltalkTimeToRun := [ Heap withAll: array ] timeToRun.
+	pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun.
+
+	self
+		assert: luaTimeToRun < smalltalkTimeToRun;
+		assert: smalltalkTimeToRun < pythonTimeToRun
+]
+
+{ #category : #tests }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |
@@ -481,6 +513,24 @@ LibLuaTest >> testLoadThenPCallWithReturnString [
 	self
 		assert: code equals: 0;
 		assert: seven equals: '7 hello '
+]
+
+{ #category : #tests }
+LibLuaTest >> testLuaSeti [
+
+	| list random array |
+	random := Random seed: 541.
+	array := (1 to: 100) asArray shuffleBy: random.
+
+	list := self liblua withOpenedLibsStateDo: [ :state | 
+		        self liblua
+			        push: array on: state;
+			        lua: state setglobal: 'array';
+			        luaL: state loadstring: 'return  table.concat(array, " ")';
+			        lua: state pcallnargs: 0 nresults: 1;
+			        lua: state tostring: -1 ].
+
+	self assert: '#(' , list , ')' equals: array asString
 ]
 
 { #category : #tests }
