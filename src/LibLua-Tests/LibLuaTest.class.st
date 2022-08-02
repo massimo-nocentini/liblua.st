@@ -788,9 +788,10 @@ LibLuaTest >> testSearchPath [
 		            self liblua lua: state tostring: -1 ].
 
 	self
-		assert: pathName
+		assert: pathName asFileReference
 		equals:
-		'./pharo-local/iceberg/massimo-nocentini/on-lua/src/io/github/massimo-nocentini/on-lua/heapq.lua'
+			'./pharo-local/iceberg/massimo-nocentini/on-lua/src/io/github/massimo-nocentini/on-lua/heapq.lua'
+				asFileReference
 ]
 
 { #category : #tests }
