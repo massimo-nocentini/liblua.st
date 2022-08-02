@@ -368,7 +368,7 @@ LibLuaTest >> testHeapBench [
 		self liblua
 			appendOnLuaRepositoryOnPackagePathOf: state;
 			require: 'heapq' heapq: state;
-			require: 'heapkt' heapq: state;
+			require: 'heapkt' heapkt: state;
 			require: 'extensions' extensions: state.
 
 		c := self liblua

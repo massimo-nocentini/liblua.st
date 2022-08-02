@@ -947,6 +947,15 @@ LibLua >> require: name extensions: state [
 ]
 
 { #category : #API }
+LibLua >> require: name heapkt: state [
+
+	^ self
+		  luaL: state
+		  dostring:
+		  name , ' = require "io.github.massimo-nocentini.on-lua.heapkt"'
+]
+
+{ #category : #API }
 LibLua >> require: name heapq: state [
 
 	^ self
