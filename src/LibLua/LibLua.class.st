@@ -1026,6 +1026,12 @@ $(LUA_A): $(BASE_O)
 	^ 'liblua5.4.4.so'
 ]
 
+{ #category : #'accessing platform' }
+LibLua >> win32LibraryName [
+
+	^ FFIWindowsLibraryFinder findAnyLibrary: #( 'lua54.dll' )
+]
+
 { #category : #API }
 LibLua >> withOpenedLibsStateDo: aBlock [
 
