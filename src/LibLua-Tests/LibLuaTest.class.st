@@ -357,22 +357,33 @@ LibLuaTest >> testCopyCompare [
 { #category : #tests }
 LibLuaTest >> testHeapBench [
 
-	| random array luaTimeToRun smalltalkTimeToRun pythonTimeToRun |
+	| random array luaTimeToRun smalltalkTimeToRun pythonTimeToRun kleinbergTardosTimeToRun |
 	self timeLimit: 1 minute.
 
 	random := Random seed: 541.
 	array := (1 to: 1e7) asArray shuffleBy: random.
 
 	self liblua withOpenedLibsStateDo: [ :state | 
+		| c |
 		self liblua
 			appendOnLuaRepositoryOnPackagePathOf: state;
 			require: 'heapq' heapq: state;
+			require: 'heapkt' heapq: state;
 			require: 'extensions' extensions: state.
 
+		c := self liblua
+			     lua: state getglobal: 'heapq';
+			     lua: state get: -1 field: 'new';
+			     push: array on: state;
+			     lua: state pcallnargs: 1 nresults: 1.
+
+		self assert: c equals: 0.
+
 		self liblua
+			lua: state setglobal: 'H';
 			lua: state getglobal: 'heapq';
 			lua: state get: -1 field: 'heapify';
-			push: array on: state.
+			lua: state getglobal: 'H'.
 
 		luaTimeToRun := [ 
 		                | code |
@@ -381,7 +392,30 @@ LibLuaTest >> testHeapBench [
 			                        pcallnargs: 1
 			                        nresults: 1.
 
-		                self assert: code equals: 0 ] timeToRun
+		                self assert: code equals: 0 ] timeToRun.
+
+		c := self liblua
+			     lua: state getglobal: 'heapkt';
+			     lua: state get: -1 field: 'new';
+			     push: array on: state;
+			     lua: state pcallnargs: 1 nresults: 1.
+
+		self assert: c equals: 0.
+
+		self liblua
+			lua: state setglobal: 'H';
+			lua: state getglobal: 'heapkt';
+			lua: state get: -1 field: 'heapify';
+			lua: state getglobal: 'H'.
+
+		kleinbergTardosTimeToRun := [ 
+		                            | code |
+		                            code := self liblua
+			                                    lua: state
+			                                    pcallnargs: 1
+			                                    nresults: 1.
+
+		                            self assert: code equals: 0 ] timeToRun
 
 		"(self liblua
 			 lua: state setglobal: 'heapified';
@@ -390,11 +424,10 @@ LibLuaTest >> testHeapBench [
 
 
 	smalltalkTimeToRun := [ Heap withAll: array ] timeToRun.
-	pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun.
+	"pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun."
 
-	self
-		assert: luaTimeToRun < smalltalkTimeToRun;
-		assert: smalltalkTimeToRun < pythonTimeToRun
+	self assert: luaTimeToRun < smalltalkTimeToRun ";
+		assert: smalltalkTimeToRun < pythonTimeToRun"
 ]
 
 { #category : #tests }
