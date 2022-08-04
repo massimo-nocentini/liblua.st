@@ -357,7 +357,7 @@ LibLuaTest >> testCopyCompare [
 { #category : #tests }
 LibLuaTest >> testHeapBench [
 
-	| random array luaTimeToRun smalltalkTimeToRun pythonTimeToRun kleinbergTardosTimeToRun |
+	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun |
 	self timeLimit: 1 minute.
 
 	random := Random seed: 541.
@@ -426,42 +426,10 @@ LibLuaTest >> testHeapBench [
 	smalltalkTimeToRun := [ Heap withAll: array ] timeToRun.
 	"pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun."
 
-	self assert: luaTimeToRun < smalltalkTimeToRun ";
-		assert: smalltalkTimeToRun < pythonTimeToRun"
-]
-
-{ #category : #tests }
-LibLuaTest >> testHeapBenchWithDoString [
-
-	| random array luaTimeToRun smalltalkTimeToRun pythonTimeToRun |
-	self timeLimit: 1 minute.
-
-	random := Random seed: 541.
-	array := (1 to: 1e7) asArray shuffleBy: random.
-
-	self liblua withOpenedLibsStateDo: [ :state | 
-		self liblua
-			appendOnLuaRepositoryOnPackagePathOf: state;
-			require: 'heapq' heapq: state;
-			require: 'extensions' extensions: state.
-
-		self liblua lua: state pushstring: ''.
-
-		self liblua
-			push: array on: state;
-			lua: state setglobal: 'array'.
-
-		luaTimeToRun := [ 
-		                self liblua
-			                luaL: state
-			                dostring: 'heapq.heapify(array)' ] timeToRun ].
-
-	smalltalkTimeToRun := [ Heap withAll: array ] timeToRun.
-	pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun.
-
 	self
 		assert: luaTimeToRun < smalltalkTimeToRun;
-		assert: smalltalkTimeToRun < pythonTimeToRun
+		assert: luaTimeToRun < kleinbergTardosTimeToRun ";
+		assert: smalltalkTimeToRun < pythonTimeToRun"
 ]
 
 { #category : #tests }
