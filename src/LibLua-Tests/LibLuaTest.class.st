@@ -357,7 +357,7 @@ LibLuaTest >> testCopyCompare [
 { #category : #tests }
 LibLuaTest >> testHeapBench [
 
-	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun |
+	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun heap position indexer code |
 	self timeLimit: 1 minute.
 
 	random := Random seed: 541.
@@ -386,13 +386,14 @@ LibLuaTest >> testHeapBench [
 			lua: state getglobal: 'H'.
 
 		luaTimeToRun := [ 
-		                | code |
 		                code := self liblua
 			                        lua: state
 			                        pcallnargs: 1
 			                        nresults: 1.
 
 		                self assert: code equals: 0 ] timeToRun.
+
+		self assert: code equals: 0.
 
 		c := self liblua
 			     lua: state getglobal: 'heapkt';
@@ -409,26 +410,30 @@ LibLuaTest >> testHeapBench [
 			lua: state getglobal: 'H'.
 
 		kleinbergTardosTimeToRun := [ 
-		                            | code |
 		                            code := self liblua
 			                                    lua: state
 			                                    pcallnargs: 1
-			                                    nresults: 1.
+			                                    nresults: 1 ] timeToRun.
 
-		                            self assert: code equals: 0 ] timeToRun
+		self assert: code equals: 0 ].
 
-		"(self liblua
-			 lua: state setglobal: 'heapified';
-			 luaL: state dostring: 'return table.concat(heapified, "" "")';
-			 lua: state tostring: -1) inspect" ].
+	position := Dictionary new.
+	indexer := [ :anObject :index | position at: anObject put: index ].
 
+	array withIndexDo: indexer.
+	heap := Heap new
+		        indexUpdateBlock: indexer;
+		        sortBlock: [ :a :b | a < b ];
+		        setCollection: array copy tally: array size;
+		        yourself.
 
-	smalltalkTimeToRun := [ Heap withAll: array ] timeToRun.
+	smalltalkTimeToRun := [ heap reSort ] timeToRun.
 	"pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun."
 
 	self
 		assert: luaTimeToRun < smalltalkTimeToRun;
-		assert: luaTimeToRun < kleinbergTardosTimeToRun ";
+		assert: kleinbergTardosTimeToRun < smalltalkTimeToRun;
+		assert: position size equals: array size ";
 		assert: smalltalkTimeToRun < pythonTimeToRun"
 ]
 
