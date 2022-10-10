@@ -371,8 +371,6 @@ LibLuaTest >> testHeapBench [
 
 		                self assert: code equals: 0 ] timeToRun.
 
-		self halt.
-
 		self assert: code equals: 0.
 
 		c := self liblua
@@ -409,11 +407,11 @@ LibLuaTest >> testHeapBench [
 
 	smalltalkTimeToRun := [ heap reSort ] timeToRun.
 	"pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun."
-
-	self
+	self halt.
+	"self
 		assert: luaTimeToRun < smalltalkTimeToRun;
 		assert: kleinbergTardosTimeToRun < smalltalkTimeToRun;
-		assert: position size equals: array size ";
+		assert: position size equals: array size ;
 		assert: smalltalkTimeToRun < pythonTimeToRun"
 ]
 
