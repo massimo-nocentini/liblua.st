@@ -730,26 +730,6 @@ LibLuaTest >> testReadFromTable [
 { #category : #tests }
 LibLuaTest >> testSearchPath [
 
-	| pathName |
-	pathName := self liblua withOpenedLibsStateDo: [ :state | 
-		            self liblua
-			            luaL: state
-			            loadstring:
-				            'return package.searchpath("io.github.massimo-nocentini.on-lua.heapq", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
-			            lua: state pcallnargs: 0 nresults: 1.
-
-		            self liblua lua: state tostring: -1 ].
-
-	self
-		assert: pathName asFileReference
-		equals:
-			'./pharo-local/iceberg/massimo-nocentini/on-lua/src/io/github/massimo-nocentini/on-lua/heapq.lua'
-				asFileReference
-]
-
-{ #category : #tests }
-LibLuaTest >> testSearchPath2 [
-
 	| list longFlag |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
