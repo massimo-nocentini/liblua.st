@@ -66,7 +66,7 @@ LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 	^ self
 		  luaL: state
 		  dostring:
-		  'package.path = package.path .. ";./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua"'
+		  'package.path = package.path .. ";/usr/local/share/lua/5.4/?.lua"'
 ]
 
 { #category : #API }
@@ -937,40 +937,21 @@ LibLua >> read: i from: state [
 ]
 
 { #category : #API }
-LibLua >> require: name extensions: state [
-
-	^ self
-		  luaL: state
-		  dostring:
-		  name
-		  , ' = require "io.github.massimo-nocentini.on-lua.extensions"'
-]
-
-{ #category : #API }
 LibLua >> require: name heapkt: state [
 
-	^ self
-		  luaL: state
-		  dostring:
-		  name , ' = require "io.github.massimo-nocentini.on-lua.heapkt"'
+	^ self luaL: state dostring: name , ' = require "heapkt"'
 ]
 
 { #category : #API }
 LibLua >> require: name heapq: state [
 
-	^ self
-		  luaL: state
-		  dostring:
-		  name , ' = require "io.github.massimo-nocentini.on-lua.heapq"'
+	^ self luaL: state dostring: name , ' = require "heapq"'
 ]
 
 { #category : #API }
 LibLua >> require: name operator: state [
 
-	^ self
-		  luaL: state
-		  dostring:
-		  name , ' = require "io.github.massimo-nocentini.on-lua.operator"'
+	^ self luaL: state dostring: name , ' = require "operator"'
 ]
 
 { #category : #'accessing - platform' }

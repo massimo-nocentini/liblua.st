@@ -78,28 +78,6 @@ LibLuaTest >> liblua [
 ]
 
 { #category : #'Lua creation' }
-LibLuaTest >> loadModuleOnLua: state [
-
-	| filename moduleName |
-	"checkstring because we are in a function call"
-	moduleName := self liblua luaL: state checkstring: 1.
-
-	filename := self liblua
-		            luaL: state
-		            loadstring: 'return package.searchpath("' , moduleName
-			            ,
-				            '", "./pharo-local/iceberg/massimo-nocentini/on-lua/src/?.lua")';
-		            lua: state pcallnargs: 0 nresults: 1;
-		            lua: state tostring: -1.
-
-	self liblua
-		luaL: state loadfile: filename;
-		lua: state pcallnargs: 0 nresults: 1.
-
-	^ 1
-]
-
-{ #category : #'Lua creation' }
 LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
 	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
@@ -358,7 +336,9 @@ LibLuaTest >> testCopyCompare [
 LibLuaTest >> testHeapBench [
 
 	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun heap position indexer code |
-	self timeLimit: 1 minute.
+	self
+		skip;
+		timeLimit: 1 minute.
 
 	random := Random seed: 541.
 	array := (1 to: 1e7) asArray shuffleBy: random.
@@ -366,10 +346,8 @@ LibLuaTest >> testHeapBench [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| c |
 		self liblua
-			appendOnLuaRepositoryOnPackagePathOf: state;
 			require: 'heapq' heapq: state;
-			require: 'heapkt' heapkt: state;
-			require: 'extensions' extensions: state.
+			require: 'heapkt' heapkt: state.
 
 		c := self liblua
 			     lua: state getglobal: 'heapq';
@@ -392,6 +370,8 @@ LibLuaTest >> testHeapBench [
 			                        nresults: 1.
 
 		                self assert: code equals: 0 ] timeToRun.
+
+		self halt.
 
 		self assert: code equals: 0.
 
@@ -768,57 +748,21 @@ LibLuaTest >> testSearchPath [
 ]
 
 { #category : #tests }
-LibLuaTest >> testSearchPath1 [
-
-	| list |
-	list := self liblua withOpenedLibsStateDo: [ :state | 
-		        | ffiCallback |
-		        self liblua appendOnLuaRepositoryOnPackagePathOf: state.
-
-		        ffiCallback := self liblua ffiCallback: [ :s | 
-			                       self loadModuleOnLua: state ].
-
-		        self liblua
-			        lua: state
-			        requireGlobal: 'io.github.massimo-nocentini.on-lua.heapq'
-			        f: ffiCallback.
-
-		        self liblua lua: state setglobal: 'heapq'.
-
-		        self liblua
-			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
-			        luaL: state dostring: 'heapq.heapify(list)';
-			        luaL: state loadstring: 'return table.concat(list, ", ")';
-			        lua: state pcallnargs: 0 nresults: 1;
-			        lua: state tostring: -1 ].
-
-	self assert: list equals: '1, 2, 3, 5, 4'
-]
-
-{ #category : #tests }
 LibLuaTest >> testSearchPath2 [
 
-	| list longFlag shortFlag |
+	| list longFlag |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
 			appendOnLuaRepositoryOnPackagePathOf: state;
 			require: 'heapq' heapq: state;
-			require: 'extensions' extensions: state.
+			require: 'operator' operator: state.
 
 		longFlag := self liblua
 			            luaL: state
 			            loadstring:
-				            'return table.contains(package.loaded, "io.github.massimo-nocentini.on-lua.heapq")';
+				            'return table.contains(package.loaded, "heapq")';
 			            lua: state pcallnargs: 0 nresults: 1;
 			            lua: state toboolean: -1.
-
-
-		shortFlag := self liblua
-			             luaL: state
-			             loadstring:
-				             'return table.contains(package.loaded, "heapq")';
-			             lua: state pcallnargs: 0 nresults: 1;
-			             lua: state toboolean: -1.
 
 		self liblua
 			luaL: state
@@ -831,10 +775,7 @@ LibLuaTest >> testSearchPath2 [
 			        lua: state pcallnargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
-	self
-		assert: list equals: '1, 2, 3, 5, 4';
-		assert: longFlag equals: 1;
-		assert: shortFlag equals: 0
+	self assert: longFlag equals: 1
 ]
 
 { #category : #tests }
@@ -880,8 +821,7 @@ LibLuaTest >> testTableMap [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
 			appendOnLuaRepositoryOnPackagePathOf: state;
-			require: 'op' operator: state;
-			require: '_' extensions: state.
+			require: 'op' operator: state.
 
 		list := self liblua
 			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
