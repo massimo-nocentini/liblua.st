@@ -351,7 +351,7 @@ LibLuaTest >> testHeapBench [
 
 		c := self liblua
 			     lua: state getglobal: 'heapq';
-			     lua: state get: -1 field: 'new';
+			     lua: state get: -1 field: 'create';
 			     push: array on: state;
 			     lua: state pcallnargs: 1 nresults: 1.
 
