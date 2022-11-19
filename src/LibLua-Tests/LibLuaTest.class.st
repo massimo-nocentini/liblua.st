@@ -909,7 +909,6 @@ LibLuaTest >> testTreeLayout1 [
 
 	| table canvas |
 	"2012-175 Aqua Zuro"
-
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| c |
 		self liblua luaL: state loadstring: '
@@ -923,7 +922,7 @@ LibLuaTest >> testTreeLayout1 [
 
         [1] = {w = 70, h = 30, c = {2, -3, 4, 8}},
         [2] = {w = 10, h = 50, c = {}},
-        [-3] = {w = 100, h = 100, c = { 3 } },
+        [-3] = {w = 10, h = 100, c = { 3 } },
         [3] = {w = 20, h = 30, c = {}},
         [4] = {w = 30, h = 30, c = {5, 7}},
         [5] = {w = 20, h = 50, c = {6}},
@@ -974,7 +973,7 @@ LibLuaTest >> testTreeLayout1 [
 				       cornerRadius: Float goldenRatio;
 				       color: Color white;
 				       extent: extent;
-				       position: (v at: #x) @ (v at: #y) "+ (extent / 2)";
+				       position: (v at: #x) @ (v at: #y);
 				       yourself.
 
 			k < 0 ifTrue: [ box border dashArray: { Float goldenRatio } ].
