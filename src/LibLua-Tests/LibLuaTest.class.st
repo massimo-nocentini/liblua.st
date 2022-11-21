@@ -844,37 +844,26 @@ LibLuaTest >> testTreeLayout [
 
     }
 
-    local root = tree[1]
+    local r = tree[1]
 
     tidy.layout { 
-		root = tree[1],
-		vertically = true,
+		root = r,
+		vertically = false,
 		centeredxy = true,
 	 }
 
-    local result = {}
+    local result = tidy.dbindrec (itree)
 
-    for k, t in pairs (tree) do
-
-        local tbl = tidy.dbind (t)
-
-		  local c = {  }
-		  for i, ud in pairs (tbl.c) do
-		     c[i] = itree[ud]
-		  end
-		  tbl.c = c
-
-        result[k] = tbl
-    end
-
-	 return result, root
+	 tidy.free(r)
+	
+	 return result
 	'.
 
-		c := self liblua lua: state pcallnargs: 0 nresults: 2.
+		c := self liblua lua: state pcallnargs: 0 nresults: 1.
 
 		self assert: c equals: 0.
 
-		table := self liblua read: -2 from: state.
+		table := self liblua read: -1 from: state.
 
 		canvas := RSCanvas new
 			          @ RSCanvasController;
