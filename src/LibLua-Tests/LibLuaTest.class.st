@@ -1044,7 +1044,7 @@ LibLuaTest >> testTreeLayout2 [
 
 		dbindtime := [ 
 		             self liblua luaL: state loadstring: '
-    local result = tidy.dbindrec (itree)
+    local result = tidy.positions (itree)
 
 	 tidy.free(r)
 	
