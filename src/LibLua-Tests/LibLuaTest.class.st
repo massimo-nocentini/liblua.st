@@ -819,95 +819,6 @@ LibLuaTest >> testTableMap [
 LibLuaTest >> testTreeLayout [
 
 	| table canvas |
-	self liblua withOpenedLibsStateDo: [ :state | 
-		| c |
-		self liblua luaL: state loadstring: '
-		
-		local tidy = require "non-layered-tidy-trees"
-		
-		local tree = tidy.trees {
-        addspacers = false,
-        [1] = {w = 70, h = 30, c = {2, 3, 4, 8}},
-        [2] = {w = 10, h = 50, c = {}},
-        [3] = {w = 20, h = 30, c = {}, y = 200},
-        [4] = {w = 30, h = 30, c = {5, 7}},
-        [5] = {w = 20, h = 50, c = {6}},
-        [6] = {w = 40, h = 10, c = {}},
-        [7] = {w = 20, h = 20, c = {}},
-        [8] = {w = 30, h = 50, c = {9, 10}},
-        [9] = {w = 30, h = 20, c = {}},
-        [10] = {w = 10, h = 10, c = {}},
-
-    }
-
-    local root = tree[1]
-
-    tidy.layout (root, true)
-
-    local result = {}
-
-    for k, t in pairs (tree) do
-
-        local tbl = tidy.dbind (t)
-
-        result[k] = tbl
-
-    end
-
-	 return result, root
-	'.
-
-		c := self liblua lua: state pcallnargs: 0 nresults: 2.
-
-		self assert: c equals: 0.
-
-		table := self liblua read: -2 from: state.
-
-		table inspect.
-
-		canvas := RSCanvas new
-			          @ RSCanvasController;
-			          yourself.
-
-		table keysAndValuesDo: [ :k :v | 
-			| box label composite extent |
-			k > 0 ifTrue: [ 
-				extent := (v at: #w) @ (v at: #h).
-
-				box := RSNote new
-					       model: k;
-					       withBorder;
-					       cornerRadius: Float goldenRatio;
-					       color: Color white;
-					       extent: extent;
-					       position: (v at: #x) @ (v at: #y) + (extent / 2);
-					       yourself.
-
-				label := RSLabel new
-					         model: k;
-					         useDefaultCodeFont;
-					         fontSizeSilverRatio;
-					         yourself.
-
-				RSLocation new
-					center;
-					stick: label on: box.
-
-				composite := RSComposite new
-					             shapes: { 
-							             box.
-							             label };
-					             yourself.
-
-				canvas addShape: composite ] ].
-
-		canvas open ]
-]
-
-{ #category : #tests }
-LibLuaTest >> testTreeLayout1 [
-
-	| table canvas |
 	"2012-175 Aqua Zuro"
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| c |
@@ -915,10 +826,9 @@ LibLuaTest >> testTreeLayout1 [
 		
 		local tidy = require "non-layered-tidy-trees"
 		
-		local tree = tidy.trees {
+		local tree, itree = tidy.trees {
 		
         addspacers = false,
-
 
         [1] = {w = 70, h = 30, c = {2, -3, 4, 8}},
         [2] = {w = 10, h = 50, c = {}},
@@ -936,7 +846,11 @@ LibLuaTest >> testTreeLayout1 [
 
     local root = tree[1]
 
-    tidy.layout (root, true)
+    tidy.layout { 
+		root = tree[1],
+		vertically = true,
+		centeredxy = true,
+	 }
 
     local result = {}
 
@@ -944,8 +858,13 @@ LibLuaTest >> testTreeLayout1 [
 
         local tbl = tidy.dbind (t)
 
-        result[k] = tbl
+		  local c = {  }
+		  for i, ud in pairs (tbl.c) do
+		     c[i] = itree[ud]
+		  end
+		  tbl.c = c
 
+        result[k] = tbl
     end
 
 	 return result, root
