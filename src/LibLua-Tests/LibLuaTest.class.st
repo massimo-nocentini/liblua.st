@@ -906,3 +906,204 @@ LibLuaTest >> testTreeLayout [
 
 		canvas open ]
 ]
+
+{ #category : #tests }
+LibLuaTest >> testTreeLayout1 [
+
+	| table canvas |
+	"2012-175 Aqua Zuro"
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| c |
+		self liblua luaL: state loadstring: '
+		
+		local tidy = require "non-layered-tidy-trees"
+		
+		local tree, itree = tidy.trees {
+		
+["doC6dnl"] = { w = 84.09333333333333, h = 21, c = {}, },
+["doC6eyv"] = { w = 328.0, h = 32.9, c = {}, },
+["doCh0k5"] = { w = 185.94666666666663, h = 21, c = {}, },
+["foCcmsslw7m"] = { w = 88.696, h = 25, c = {"doC6eyv","doCh0k5",}, },
+["foCcmsslw7o"] = { w = 107.41600000000001, h = 25, c = {}, },
+["foCcmsslw7p"] = { w = 97.70400000000001, h = 25, c = {}, },
+["doC87sh"] = { w = 259.32, h = 21, c = {}, },
+["doC87si"] = { w = 285.84000000000003, h = 21, c = {}, },
+["doC87u6"] = { w = 87.88000000000001, h = 21, c = {}, },
+["doC87ug"] = { w = 225.81333333333333, h = 21, c = {}, },
+["doC87uv"] = { w = 186.0533333333333, h = 21, c = {}, },
+["doC87vr"] = { w = 178.34666666666666, h = 21, c = {}, },
+["foCcmsslw7q"] = { w = 161.56, h = 25, c = {}, },
+["foCcmsslw7n"] = { w = 255.19200000000004, h = 25, c = {"doC87sh","doC87si","doC87u6","doC87ug","doC87uv","doC87vr","foCcmsslw7q",}, },
+["foCcmssi4sv"] = { w = 337.8666666666666, h = 46, c = {"doC6dnl","foCcmsslw7m","foCcmsslw7o","foCcmsslw7p","foCcmsslw7n",}, },
+
+
+    }
+
+    local r = tree.foCcmssi4sv
+
+    tidy.layout { 
+		root = r,
+		vertically = false,
+		centeredxy = true,
+	 }
+
+
+    local result = tidy.dbindrec (itree)
+
+	 tidy.free(r)
+	
+	 return result
+	'.
+
+		c := self liblua lua: state pcallnargs: 0 nresults: 1.
+
+		self assert: c equals: 0.
+
+		table := self liblua read: -1 from: state.
+		
+
+		canvas := RSCanvas new
+			          @ RSCanvasController;
+			          yourself.
+
+		table inspect.
+
+		table keysAndValuesDo: [ :k :v | 
+			| box label composite extent |
+			extent := (v at: #w) @ (v at: #h).
+
+			box := RSNote new
+				       model: k;
+				       withBorder;
+				       cornerRadius: Float goldenRatio;
+				       color: Color white;
+				       extent: extent;
+				       position: (v at: #x) @ (v at: #y);
+				       yourself.
+
+			"k < 0 ifTrue: [ box border dashArray: { Float goldenRatio } ]."
+
+			label := RSLabel new
+				         model: k;
+				         useDefaultCodeFont;
+				         fontSizeSilverRatio;
+				         yourself.
+
+			RSLocation new
+				center;
+				stick: label on: box.
+
+			composite := RSComposite new
+				             shapes: { 
+						             box.
+						             label };
+				             yourself.
+
+			canvas addShape: composite ].
+
+		canvas open ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testTreeLayout2 [
+
+	| table canvas |
+	"2012-175 Aqua Zuro"
+	self timeLimit: 1 minute.
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| c loadtime layouttime readtime drawingtime dbindtime |
+		c := self liblua
+			     luaL: state
+			     dostring: 'tidy = require "non-layered-tidy-trees"'.
+
+		self assert: c equals: 0.
+
+		loadtime := [ 
+		            c := self liblua
+			                 luaL: state
+			                 dostring:
+				                 '/home/mn/Developer/working-copies/luas/non-layered-tidy-trees.lua/test/big-tree.lua'
+					                 asFileReference contents.
+		            self assert: c equals: 0.
+
+		            self liblua
+			            luaL: state
+			            dostring: 'tree, itree = tidy.trees (spec)' ] timeToRun.
+
+		self liblua luaL: state dostring: 'r = tree.foAcmssi2tj'.
+
+		layouttime := [ 
+		              self liblua luaL: state dostring: '
+    tidy.layout { 
+		root = r,
+		vertically = false,
+		centeredxy = true,
+	 }
+' ] timeToRun.
+
+		dbindtime := [ 
+		             self liblua luaL: state loadstring: '
+    local result = tidy.dbindrec (itree)
+
+	 tidy.free(r)
+	
+	 return result
+	'.
+
+		             c := self liblua lua: state pcallnargs: 0 nresults: 1.
+		             self assert: c equals: 0 ] timeToRun.
+
+		readtime := [ table := self liblua read: -1 from: state ] timeToRun.
+
+		drawingtime := [ 
+		               canvas := RSCanvas new
+			                         @ RSCanvasController;
+			                         yourself.
+
+
+		               table keysAndValuesDo: [ :k :v | 
+			               | box label composite extent |
+			               extent := (v at: #w) @ (v at: #h).
+
+			               box := RSBox new
+				                      model: k;
+				                      withBorder;
+				                      "cornerRadius: Float goldenRatio;"
+				                      color: Color white;
+				                      extent: extent;
+				                      position: (v at: #x) @ (v at: #y);
+				                      yourself.
+
+			               "k < 0 ifTrue: [ box border dashArray: { Float goldenRatio } ]."
+
+			               label := RSLabel new
+				                        model: k;
+				                        useDefaultCodeFont;
+				                        fontSizeSilverRatio;
+				                        yourself.
+
+			               RSLocation new
+				               center;
+				               stick: label on: box.
+
+			               composite := RSComposite new
+				                            shapes: { 
+						                            box.
+						                            label };
+				                            yourself.
+
+			               canvas addShape: composite ].
+
+		               canvas exportToSVG ] timeToRun.
+
+
+		Dictionary new
+			at: #table put: table;
+			at: #loadtime put: loadtime;
+			at: #layouttime put: layouttime;
+			at: #readtime put: readtime;
+			at: #dbindtime put: dbindtime;
+			at: #drawingtime put: drawingtime;
+			inspect ]
+]
