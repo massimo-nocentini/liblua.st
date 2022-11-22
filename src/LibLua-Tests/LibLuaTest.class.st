@@ -1114,11 +1114,12 @@ LibLuaTest >> testTreeLayout3 [
 	self timeLimit: 1 minute.
 
 	self liblua withOpenedLibsStateDo: [ :state | 
-		| c loadtime layouttime drawingtime dbindtime nodesCount externalArray contents canvas |
+		| c loadtime layouttime drawingtime dbindtime nodesCount externalAddress contents canvas |
 		contents := '/home/mn/Developer/working-copies/luas/non-layered-tidy-trees.lua/test/big-tree.lua'
 			            asFileReference contents.
 		nodesCount := contents lines size - 2.
-		externalArray := ExternalAddress allocate: 8 * nodesCount * 4.
+
+		externalAddress := ExternalAddress allocate: 8 * 4 * nodesCount.
 
 		c := self liblua
 			     luaL: state
@@ -1145,23 +1146,18 @@ LibLuaTest >> testTreeLayout3 [
 	 }
 ' ] timeToRun.
 
+		self liblua lua: state getglobal: 'tidy'.
+		self liblua lua: state get: -1 field: 'flatcoordinatesinto'.
+		self liblua lua: state getglobal: 'r'.
+		self liblua lua_pushlightuserdata: state pointer: externalAddress.
+
 		dbindtime := [ 
-		             self liblua lua: state getglobal: 'tidy'.
-		             self liblua
-			             lua: state
-			             get: -1
-			             field: 'flatcoordinatesinto'.
-		             self liblua lua: state remove: -2. "pops the table `tidy`."
-		             self liblua lua: state getglobal: 'r'.
-		             self liblua
-			             lua_pushlightuserdata: state
-			             pointer: externalArray.
+		             c := self liblua lua: state pcallnargs: 2 nresults: 0. "self liblua read:-1 from: state."
+		             self assert: c equals: 0 ] timeToRun.
 
-		             c := self liblua lua: state pcallnargs: 0 nresults: 0.
-		             self assert: c equals: 0.
+		self liblua lua: state pop: 1. "to remove the global `tidy` table."
 
-		             self liblua luaL: state dostring: 'tidy.free(r)' ]
-			             timeToRun.
+		self liblua luaL: state dostring: 'tidy.free(r)'.
 
 
 		drawingtime := [ 
@@ -1172,11 +1168,12 @@ LibLuaTest >> testTreeLayout3 [
 
 		               1 to: nodesCount do: [ :k | 
 			               | kk box label composite extent x y w h |
-			               kk := k - 1 * 4.
-			               x := externalArray doubleAt: kk.
-			               y := externalArray doubleAt: kk + 1.
-			               w := externalArray doubleAt: kk + 2.
-			               h := externalArray doubleAt: kk + 3.
+			               kk := k - 1 * 32.
+
+			               x := externalAddress float64AtOffset: kk.
+			               y := externalAddress float64AtOffset: kk + 8.
+			               w := externalAddress float64AtOffset: kk + 16.
+			               h := externalAddress float64AtOffset: kk + 24.
 
 			               extent := w @ h.
 
@@ -1218,7 +1215,7 @@ LibLuaTest >> testTreeLayout3 [
 			at: #drawingtime put: drawingtime;
 			inspect.
 
-		externalArray free ]
+		externalAddress free ]
 ]
 
 { #category : #tests }
@@ -1227,11 +1224,12 @@ LibLuaTest >> testTreeLayout3_small [
 	self timeLimit: 1 minute.
 
 	self liblua withOpenedLibsStateDo: [ :state | 
-		| c loadtime layouttime drawingtime dbindtime nodesCount externalArray contents canvas |
+		| c loadtime layouttime drawingtime dbindtime nodesCount externalAddress contents canvas |
 		contents := '/home/mn/Developer/working-copies/luas/non-layered-tidy-trees.lua/test/small-tree.lua'
 			            asFileReference contents.
 		nodesCount := contents lines size - 2.
-		externalArray := ExternalAddress allocate: 8 * nodesCount * 4.
+
+		externalAddress := ExternalAddress allocate: 8 * 4 * nodesCount.
 
 		c := self liblua
 			     luaL: state
@@ -1247,7 +1245,7 @@ LibLuaTest >> testTreeLayout3_small [
 			            luaL: state
 			            dostring: 'tree, itree = tidy.trees (spec)' ] timeToRun.
 
-		self liblua luaL: state dostring: 'r = tree.foAcmssi2tj'.
+		self liblua luaL: state dostring: 'r = tree.foCcmssi4sv'.
 
 		layouttime := [ 
 		              self liblua luaL: state dostring: '
@@ -1264,14 +1262,15 @@ LibLuaTest >> testTreeLayout3_small [
 			             lua: state
 			             get: -1
 			             field: 'flatcoordinatesinto'.
-		             self liblua lua: state remove: -2. "pops the table `tidy`."
 		             self liblua lua: state getglobal: 'r'.
 		             self liblua
 			             lua_pushlightuserdata: state
-			             pointer: externalArray.
+			             pointer: externalAddress.
 
-		             c := self liblua lua: state pcallnargs: 0 nresults: 0.
+		             c := self liblua lua: state pcallnargs: 2 nresults: 0. "self liblua read:-1 from: state."
 		             self assert: c equals: 0.
+
+		             self liblua lua: state pop: 1. "to remove the global `tidy` table."
 
 		             self liblua luaL: state dostring: 'tidy.free(r)' ]
 			             timeToRun.
@@ -1285,11 +1284,12 @@ LibLuaTest >> testTreeLayout3_small [
 
 		               1 to: nodesCount do: [ :k | 
 			               | kk box label composite extent x y w h |
-			               kk := k - 1 * 4.
-			               x := externalArray doubleAt: kk.
-			               y := externalArray doubleAt: kk + 1.
-			               w := externalArray doubleAt: kk + 2.
-			               h := externalArray doubleAt: kk + 3.
+			               kk := k - 1 * 32.
+
+			               x := externalAddress float64AtOffset: kk.
+			               y := externalAddress float64AtOffset: kk + 8.
+			               w := externalAddress float64AtOffset: kk + 16.
+			               h := externalAddress float64AtOffset: kk + 24.
 
 			               extent := w @ h.
 
@@ -1331,5 +1331,7 @@ LibLuaTest >> testTreeLayout3_small [
 			at: #drawingtime put: drawingtime;
 			inspect.
 
-		externalArray free ]
+		externalAddress free.
+
+		canvas open ]
 ]
