@@ -1153,12 +1153,12 @@ LibLuaTest >> testTreeLayout3 [
 
 		dbindtime := [ 
 		             c := self liblua lua: state pcallnargs: 2 nresults: 0. "self liblua read:-1 from: state."
-		             self assert: c equals: 0 ] timeToRun.
+		             self assert: c equals: 0.
 
-		self liblua lua: state pop: 1. "to remove the global `tidy` table."
+		             self liblua lua: state pop: 1. "to remove the global `tidy` table."
 
-		self liblua luaL: state dostring: 'tidy.free(r)'.
-
+		             self liblua luaL: state dostring: 'tidy.free(r)' ]
+			             timeToRun.
 
 		drawingtime := [ 
 		               canvas := RSCanvas new
@@ -1332,6 +1332,177 @@ LibLuaTest >> testTreeLayout3_small [
 			inspect.
 
 		externalAddress free.
+
+		canvas open ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testTreeLayoutIssue [
+
+	| table canvas |
+	"https://github.com/Klortho/d3-flextree/issues/1#issuecomment-369856820"
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| c |
+		self liblua luaL: state loadstring: '
+		
+		local tidy = require "non-layered-tidy-trees"
+		
+		local tree, itree = tidy.trees {
+		
+        addspacers = false,
+
+        [0] = {w = 40, h = 40, c = {1, 2}},
+        [1] = {w = 40, h = 40, c = {}},
+        [2] = {w = 40, h = 40, c = { 3, 4 } },
+        [3] = {w = 100, h = 40, c = {}},
+        [4] = {w = 200, h = 40, c = {}},
+    }
+
+    local r = tree[0]
+
+    tidy.layout { 
+		root = r,
+		vertically = true,
+		centeredxy = true,
+	 }
+
+    local result = tidy.dbindrec (itree)
+
+	 tidy.free(r)
+	
+	 return result
+	'.
+
+		c := self liblua lua: state pcallnargs: 0 nresults: 1.
+
+		self assert: c equals: 0.
+
+		table := self liblua read: -1 from: state.
+
+		canvas := RSCanvas new
+			          @ RSCanvasController;
+			          yourself.
+
+		table inspect.
+
+		table keysAndValuesDo: [ :k :v | 
+			| box label composite extent |
+			extent := (v at: #w) @ (v at: #h).
+
+			box := RSNote new
+				       model: k;
+				       withBorder;
+				       cornerRadius: Float goldenRatio;
+				       color: Color white;
+				       extent: extent;
+				       position: (v at: #x) @ (v at: #y);
+				       yourself.
+
+			k < 0 ifTrue: [ box border dashArray: { Float goldenRatio } ].
+
+			label := RSLabel new
+				         model: k;
+				         useDefaultCodeFont;
+				         fontSizeSilverRatio;
+				         yourself.
+
+			RSLocation new
+				center;
+				stick: label on: box.
+
+			composite := RSComposite new
+				             shapes: { 
+						             box.
+						             label };
+				             yourself.
+
+			canvas addShape: composite ].
+
+		canvas open ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testTreeLayoutIssue1 [
+
+	| table canvas |
+	"https://github.com/Klortho/d3-flextree/issues/1#issuecomment-369856820"
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| c |
+		self liblua luaL: state loadstring: '
+		
+		local tidy = require "non-layered-tidy-trees"
+		
+		local tree, itree = tidy.trees {
+		
+        addspacers = false,
+
+        [0] = {w = 40, h = 40, c = {1, 2}},
+        [1] = {w = 40, h = 40, c = {}},
+        [2] = {w = 40, h = 40, c = { 3 } },
+        [3] = {w = 40, h = 40, c = { 4, 5 } },
+        [4] = {w = 100, h = 40, c = {}},
+        [5] = {w = 200, h = 40, c = {}},
+    }
+
+    local r = tree[0]
+
+    tidy.layout { 
+		root = r,
+		vertically = true,
+		centeredxy = true,
+	 }
+
+    local result = tidy.dbindrec (itree)
+
+	 tidy.free(r)
+	
+	 return result
+	'.
+
+		c := self liblua lua: state pcallnargs: 0 nresults: 1.
+
+		self assert: c equals: 0.
+
+		table := self liblua read: -1 from: state.
+
+		canvas := RSCanvas new
+			          @ RSCanvasController;
+			          yourself.
+
+		table inspect.
+
+		table keysAndValuesDo: [ :k :v | 
+			| box label composite extent |
+			extent := (v at: #w) @ (v at: #h).
+
+			box := RSNote new
+				       model: k;
+				       withBorder;
+				       cornerRadius: Float goldenRatio;
+				       color: Color white;
+				       extent: extent;
+				       position: (v at: #x) @ (v at: #y);
+				       yourself.
+
+			k < 0 ifTrue: [ box border dashArray: { Float goldenRatio } ].
+
+			label := RSLabel new
+				         model: k;
+				         useDefaultCodeFont;
+				         fontSizeSilverRatio;
+				         yourself.
+
+			RSLocation new
+				center;
+				stick: label on: box.
+
+			composite := RSComposite new
+				             shapes: { 
+						             box.
+						             label };
+				             yourself.
+
+			canvas addShape: composite ].
 
 		canvas open ]
 ]
