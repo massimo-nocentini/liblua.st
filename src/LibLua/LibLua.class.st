@@ -459,6 +459,21 @@ LibLua >> lua: state register: name cfunction: f [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua: L remove: idx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
+	
+		void lua_remove (lua_State *L, int index);
+	
+	Removes the element at the given valid index, shifting down the 
+	elements above this index to fill the gap. This function cannot be 
+	called with a pseudo-index, because a pseudo-index is not an actual 
+	stack position."
+
+	^ self ffiCall: #( void lua_remove #( void * L , int idx ) )
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua: L require: modname f: openf [
 
 	^ self
@@ -851,6 +866,15 @@ LibLua >> lua_pcall: L [
 		  pcallnargs: 0
 		  nresults: 0
 		  errfunc: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_pushlightuserdata: L pointer: p [
+
+	"void lua_pushlightuserdata (lua_State *L, void *p)"
+
+	^ self ffiCall:
+		  #( void lua_pushlightuserdata #( void * L , void * p ) )
 ]
 
 { #category : #'accessing - platform' }
