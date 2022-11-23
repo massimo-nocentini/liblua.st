@@ -1146,10 +1146,20 @@ LibLuaTest >> testTreeLayout3 [
 	 }
 ' ] timeToRun.
 
-		self liblua lua: state getglobal: 'tidy'.
+		"(MessageSend receiver: #_ENV selector: #r)."
+		self liblua
+			push: (MessageSend
+					 receiver: #tidy
+					 selector: #flatcoordinatesinto
+					 arguments: { 
+							 #r.
+							 externalAddress })
+			on: state.
+
+		"self liblua lua: state getglobal: 'tidy'.
 		self liblua lua: state get: -1 field: 'flatcoordinatesinto'.
 		self liblua lua: state getglobal: 'r'.
-		self liblua lua_pushlightuserdata: state pointer: externalAddress.
+		self liblua lua_pushlightuserdata: state pointer: externalAddress."
 
 		dbindtime := [ 
 		             c := self liblua lua: state pcallnargs: 2 nresults: 0. "self liblua read:-1 from: state."
@@ -1177,17 +1187,17 @@ LibLuaTest >> testTreeLayout3 [
 
 			               extent := w @ h.
 
-			               box := RSBox new
+			               box := RSNote new
 				                      withBorder;
-				                      "cornerRadius: Float goldenRatio;"color:
-					                      Color white;
+				                      cornerRadius: Float goldenRatio;
+				                      color: Color white;
 				                      extent: extent;
 				                      position: x @ y;
 				                      yourself.
 
 			               "k < 0 ifTrue: [ box border dashArray: { Float goldenRatio } ]."
 
-			               label := RSLabel new
+			               "label := RSLabel new
 				                        model: k;
 				                        useDefaultCodeFont;
 				                        fontSizeSilverRatio;
@@ -1201,12 +1211,13 @@ LibLuaTest >> testTreeLayout3 [
 				                            shapes: { 
 						                            box.
 						                            label };
-				                            yourself.
+				                            yourself."
 
-			               canvas addShape: composite ].
+			               canvas addShape: box ].
+		
+		               canvas open ] timeToRun.
 
-		               canvas exportToSVG ] timeToRun.
-
+		canvas exportToSVG.
 
 		Dictionary new
 			at: #loadtime put: loadtime;
