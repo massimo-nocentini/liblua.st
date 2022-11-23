@@ -1165,7 +1165,7 @@ LibLuaTest >> testTreeLayout3 [
 		             c := self liblua lua: state pcallnargs: 2 nresults: 0. "self liblua read:-1 from: state."
 		             self assert: c equals: 0.
 
-		             self liblua lua: state pop: 1. "to remove the global `tidy` table."
+		             "self liblua lua_pop: state elements: 1." "to remove the global `tidy` table."
 
 		             self liblua luaL: state dostring: 'tidy.free(r)' ]
 			             timeToRun.
@@ -1281,7 +1281,7 @@ LibLuaTest >> testTreeLayout3_small [
 		             c := self liblua lua: state pcallnargs: 2 nresults: 0. "self liblua read:-1 from: state."
 		             self assert: c equals: 0.
 
-		             self liblua lua: state pop: 1. "to remove the global `tidy` table."
+		             self liblua lua_pop: state elements: 1. "to remove the global `tidy` table."
 
 		             self liblua luaL: state dostring: 'tidy.free(r)' ]
 			             timeToRun.

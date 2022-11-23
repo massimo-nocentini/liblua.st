@@ -335,18 +335,6 @@ LibLua >> lua: L pcallnargs: nargs nresults: nresults errfunc: errfunc [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L pop: n [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
-	
-		void lua_pop (lua_State *L, int n);
-		
-	Pops n elements from the stack. It is implemented as a macro over lua_settop."
-
-	^ self lua: L settop: n negated - 1
-]
-
-{ #category : #'accessing - platform' }
 LibLua >> lua: L push: fn cclosure: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcclosure,
@@ -459,21 +447,6 @@ LibLua >> lua: state register: name cfunction: f [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L remove: idx [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
-	
-		void lua_remove (lua_State *L, int index);
-	
-	Removes the element at the given valid index, shifting down the 
-	elements above this index to fill the gap. This function cannot be 
-	called with a pseudo-index, because a pseudo-index is not an actual 
-	stack position."
-
-	^ self ffiCall: #( void lua_remove #( void * L , int idx ) )
-]
-
-{ #category : #'accessing - platform' }
 LibLua >> lua: L require: modname f: openf [
 
 	^ self
@@ -545,22 +518,6 @@ LibLua >> lua: L setglobal: name [
 
 	^ self ffiCall:
 		  #( void lua_setglobal #( void * L , const char * name ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L settop: idx [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
-	
-		void lua_settop (lua_State *L, int idx);
-		
-	Accepts any index, or 0, and sets the stack top to this index. If the new top is 
-	greater than the old one, then the new elements are filled with nil. If index is 0, 
-	then all stack elements are removed.
-
-	This function can run arbitrary code when removing an index marked as to-be-closed from the stack."
-
-	^ self ffiCall: #( void lua_settop #( void * L , int idx ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -828,7 +785,7 @@ LibLua >> luaL_openlibs: L [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua_absindex: L idx: idx [
+LibLua >> lua_absindex: L index: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_absindex,
 	
@@ -882,6 +839,18 @@ LibLua >> lua_pcall: L [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua_pop: L elements: n [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pop,
+	
+		void lua_pop (lua_State *L, int n);
+		
+	Pops n elements from the stack. It is implemented as a macro over lua_settop."
+
+	^ self lua_settop: L index: n negated - 1
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua_pushlightuserdata: L pointer: p [
 
 	"void lua_pushlightuserdata (lua_State *L, void *p)"
@@ -896,6 +865,55 @@ LibLua >> lua_pushnil: L [
 	" void lua_pushnil (lua_State *L)"
 
 	^ self ffiCall: #( void lua_pushnil #( void * L ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_remove: L index: idx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
+	
+		void lua_remove (lua_State *L, int index);
+	
+	Removes the element at the given valid index, shifting down the 
+	elements above this index to fill the gap. This function cannot be 
+	called with a pseudo-index, because a pseudo-index is not an actual 
+	stack position."
+
+	^ self
+		  lua_rotate: L index: idx positions: -1;
+		  lua_pop: L elements: 1
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_rotate: L index: idx positions: n [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_rotate,
+	
+		void lua_rotate (lua_State *L, int idx, int n);
+	
+	Rotates the stack elements between the valid index idx and the top of the stack. 
+	The elements are rotated n positions in the direction of the top, for a positive n, 
+	or -n positions in the direction of the bottom, for a negative n. The absolute value 
+	of n must not be greater than the size of the slice being rotated. This function 
+	cannot be called with a pseudo-index, because a pseudo-index is not an actual stack position."
+
+	^ self ffiCall: #( void lua_rotate #( void * L , int idx , int n ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_settop: L index: idx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
+	
+		void lua_settop (lua_State *L, int idx);
+		
+	Accepts any index, or 0, and sets the stack top to this index. If the new top is 
+	greater than the old one, then the new elements are filled with nil. If index is 0, 
+	then all stack elements are removed.
+
+	This function can run arbitrary code when removing an index marked as to-be-closed from the stack."
+
+	^ self ffiCall: #( void lua_settop #( void * L , int idx ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -950,7 +968,7 @@ LibLua >> read: i from: state [
 		| dict keysAreIntegers length |
 		self lua: state len: i.
 		length := self lua: state tointeger: -1.
-		self lua: state pop: 1.
+		self lua_pop: state elements: 1.
 		keysAreIntegers := true.
 		dict := Dictionary new.
 		self table: state at: i do: [ :k :v | 
@@ -1018,7 +1036,7 @@ LibLua >> table: L at: idx do: aBlock [
 	[ (self lua: L next: index) = 0 ] whileFalse: [ 
 		aBlock value: -2 value: -1.
 
-		self lua: L pop: 1 ]
+		self lua_pop: L elements: 1 ]
 ]
 
 { #category : #API }
