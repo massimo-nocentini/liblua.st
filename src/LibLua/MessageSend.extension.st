@@ -1,13 +1,10 @@
 Extension { #name : #MessageSend }
 
 { #category : #'*LibLua' }
-MessageSend >> pushOnLua: state [
+MessageSend >> pushOnLua: state liblua: liblua [
 
-	| lib |
-	lib := LibLua uniqueInstance.
-
-	self receiver pushOnLua: state.
-	lib lua: state get: -1 field: self selector asString.
-	lib lua_remove: state index: -2.
-	self arguments do: [ :arg | arg pushOnLua: state ]
+	self receiver pushOnLua: state liblua: liblua.
+	liblua lua: state get: -1 field: self selector asString.
+	liblua lua_remove: state index: -2.
+	self arguments do: [ :arg | arg pushOnLua: state liblua: liblua ]
 ]

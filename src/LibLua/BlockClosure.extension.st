@@ -1,10 +1,10 @@
 Extension { #name : #BlockClosure }
 
 { #category : #'*LibLua' }
-BlockClosure >> pushOnLua: state [
+BlockClosure >> pushOnLua: state liblua: liblua [
 
 	| cb |
-	cb := LibLua uniqueInstance ffiCallback: self.
+	cb := liblua ffiCallback: self.
 
-	^ LibLua uniqueInstance lua: state pushcfunction: cb
+	^ liblua lua: state pushcfunction: cb
 ]

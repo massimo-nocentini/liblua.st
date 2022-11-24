@@ -1,7 +1,7 @@
 Extension { #name : #String }
 
 { #category : #'*LibLua' }
-String >> pushOnLua: state [
+String >> pushOnLua: state liblua: liblua [
 
-	^ LibLua uniqueInstance lua: state pushstring: self
+	^ liblua lua: state pushstring: self
 ]
