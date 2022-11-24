@@ -448,6 +448,12 @@ LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 ]
 
 { #category : #API }
+LibLua >> assert: aBlock [
+
+	^ super assert: [ (aBlock cull: self) = self LUA_OK ]
+]
+
+{ #category : #API }
 LibLua >> ffiCallback: aBlock [
 
 	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
@@ -1035,7 +1041,7 @@ LibLua >> luaL: L dostring: s [
 	(luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))"
 
 	| status |
-	status := self luaL: L loadstring: s.
+	status := self luaL_loadstring: L string: s.
 
 	^ status = (self threadStatusAt: #LUA_OK)
 		  ifTrue: [ 
@@ -1082,9 +1088,18 @@ LibLua >> luaL: L loadfile: filename x: mode [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> luaL: L loadstring: s [
+LibLua >> luaL_loadstring: L string: s [
 
-	"int (luaL_loadstring) (lua_State *L, const char *s);"
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadstring,
+	
+		int luaL_loadstring (lua_State *L, const char *s);
+		
+	Loads a string as a Lua chunk. This function uses lua_load to load the 
+	chunk in the zero-terminated string s.
+
+	This function returns the same results as lua_load.
+
+Also as lua_load, this function only loads the chunk; it does not run it."
 
 	^ self ffiCall:
 		  #( int luaL_loadstring #( void * L , const char * s ) )
