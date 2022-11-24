@@ -124,6 +124,72 @@ LibLua >> LUA_ERRSYNTAX [
 	^ 3
 ]
 
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCCOLLECT [
+
+	^ 2
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCCOUNT [
+
+	^ 3
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCCOUNTB [
+
+	^ 4
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCGEN [
+
+	^ 10
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCINC [
+
+	^ 11
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCISRUNNING [
+
+	^ 9
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCRESTART [
+
+	^ 1
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCSETPAUSE [
+
+	^ 6
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCSETSTEPMUL [
+
+	^ 7
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCSTEP [
+
+	^ 5
+]
+
+{ #category : #'constants - gc' }
+LibLua >> LUA_GCSTOP [
+
+	^ 0
+]
+
 { #category : #'constants - event codes' }
 LibLua >> LUA_HOOKCALL [
 
