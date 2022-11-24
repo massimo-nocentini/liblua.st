@@ -2,7 +2,24 @@ Class {
 	#name : #LibLua,
 	#superclass : #FFILibrary,
 	#classVars : [
+		'LUA_ERRERR',
+		'LUA_ERRMEM',
+		'LUA_ERRRUN',
+		'LUA_ERRSYNTAX',
 		'LUA_MULTRET',
+		'LUA_NUMTYPES',
+		'LUA_OK',
+		'LUA_TBOOLEAN',
+		'LUA_TFUNCTION',
+		'LUA_TLIGHTUSERDATA',
+		'LUA_TNIL',
+		'LUA_TNONE',
+		'LUA_TNUMBER',
+		'LUA_TSTRING',
+		'LUA_TTABLE',
+		'LUA_TTHREAD',
+		'LUA_TUSERDATA',
+		'LUA_YIELD',
 		'ThreadStatuses',
 		'Types'
 	],
@@ -57,7 +74,164 @@ LibLua class >> initialize [
 		                  yourself.
 
 	"#define LUA_MULTRET	(-1)"
-	LUA_MULTRET := -1
+	LUA_MULTRET := -1.
+
+	"thread status"
+	LUA_OK := 0.
+	LUA_YIELD := 1.
+	LUA_ERRRUN := 2.
+	LUA_ERRSYNTAX := 3.
+	LUA_ERRMEM := 4.
+	LUA_ERRERR := 5.
+
+	"basic types"
+	LUA_TNONE := -1.
+
+	LUA_TNIL := 0.
+	LUA_TBOOLEAN := 1.
+	LUA_TLIGHTUSERDATA := 2.
+	LUA_TNUMBER := 3.
+	LUA_TSTRING := 4.
+	LUA_TTABLE := 5.
+	LUA_TFUNCTION := 6.
+	LUA_TUSERDATA := 7.
+	LUA_TTHREAD := 8.
+
+	LUA_NUMTYPES := 9
+]
+
+{ #category : #'constants - thread status' }
+LibLua >> LUA_ERRERR [
+
+	^ 5
+]
+
+{ #category : #'constants - thread status' }
+LibLua >> LUA_ERRMEM [
+
+	^ 4
+]
+
+{ #category : #'constants - thread status' }
+LibLua >> LUA_ERRRUN [
+
+	^ 2
+]
+
+{ #category : #'constants - thread status' }
+LibLua >> LUA_ERRSYNTAX [
+
+	^ 3
+]
+
+{ #category : #'constants - generic' }
+LibLua >> LUA_MINSTACK [
+
+	^ 20
+]
+
+{ #category : #'constants - generic' }
+LibLua >> LUA_MULTRET [
+
+	"option for multiple returns in 'lua_pcall' and 'lua_call'"
+
+	^ -1
+]
+
+{ #category : #'constants - generic' }
+LibLua >> LUA_NUMTYPES [
+
+	^ 9
+]
+
+{ #category : #'constants - thread status' }
+LibLua >> LUA_OK [
+
+	^ 0
+]
+
+{ #category : #'constants - comparison' }
+LibLua >> LUA_OPEQ [
+
+	^ 0
+]
+
+{ #category : #'constants - comparison' }
+LibLua >> LUA_OPLE [
+
+	^ 2
+]
+
+{ #category : #'constants - comparison' }
+LibLua >> LUA_OPLT [
+
+	^ 1
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TBOOLEAN [
+
+	^ 1
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TFUNCTION [
+
+	^ 6
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TLIGHTUSERDATA [
+
+	^ 2
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TNIL [
+
+	^ 0
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TNONE [
+
+	^ -1
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TNUMBER [
+
+	^ 3
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TSTRING [
+
+	^ 4
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TTABLE [
+
+	^ 5
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TTHREAD [
+
+	^ 8
+]
+
+{ #category : #'constants - types' }
+LibLua >> LUA_TUSERDATA [
+
+	^ 7
+]
+
+{ #category : #'constants - thread status' }
+LibLua >> LUA_YIELD [
+
+	^ 1
 ]
 
 { #category : #API }
@@ -73,64 +247,6 @@ LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 LibLua >> ffiCallback: aBlock [
 
 	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L compare: index1 eq: index2 [
-
-	"#define LUA_OPEQ	0"
-
-	^ self
-		  lua: L
-		  compare: index1
-		  with: index2
-		  op: 0
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L compare: index1 le: index2 [
-
-	"#define LUA_OPLE	2"
-
-	^ self
-		  lua: L
-		  compare: index1
-		  with: index2
-		  op: 2
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L compare: index1 lt: index2 [
-
-	"#define LUA_OPLT	1"
-
-	^ self
-		  lua: L
-		  compare: index1
-		  with: index2
-		  op: 1
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L compare: index1 with: index2 op: op [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
-	
-		int lua_compare (lua_State *L, int index1, int index2, int op);
-	
-	Compares two Lua values. Returns 1 if the value at index index1 satisfies 
-	op when compared with the value at index index2, following the semantics of 
-	the corresponding Lua operator (that is, it may call metamethods). 
-	Otherwise returns 0. Also returns 0 if any of the indices is not valid.
-
-	The value of op must be one of the following constants:
-
-		• LUA_OPEQ: compares for equality (==)
-		• LUA_OPLT: compares for less than (<)
-		• LUA_OPLE: compares for less or equal (<=)"
-
-	^ self ffiCall:
-		  #( int lua_compare #( void * L , int index1 , int index2 , int op ) )
 ]
 
 { #category : #'accessing - platform' }
@@ -804,6 +920,64 @@ LibLua >> lua_close: L [
 ]
 
 { #category : #'accessing - platform' }
+LibLua >> lua_compare: L index: index1 anotherIndex: index2 operator: op [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
+	
+		int lua_compare (lua_State *L, int index1, int index2, int op);
+	
+	Compares two Lua values. Returns 1 if the value at index index1 satisfies 
+	op when compared with the value at index index2, following the semantics of 
+	the corresponding Lua operator (that is, it may call metamethods). 
+	Otherwise returns 0. Also returns 0 if any of the indices is not valid.
+
+	The value of op must be one of the following constants:
+
+		• LUA_OPEQ: compares for equality (==)
+		• LUA_OPLT: compares for less than (<)
+		• LUA_OPLE: compares for less or equal (<=)"
+
+	^ self ffiCall:
+		  #( int lua_compare #( void * L , int index1 , int index2 , int op ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_compare_eq: L index: index1 anotherIndex: index2 [
+
+	"#define LUA_OPEQ	0"
+
+	^ self
+		  lua_compare: L
+		  index: index1
+		  anotherIndex: index2
+		  operator: 0
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_compare_le: L index: index1 anotherIndex: index2 [
+
+	"#define LUA_OPLE	2"
+
+	^ self
+		  lua_compare: L
+		  index: index1
+		  anotherIndex: index2
+		  operator: 2
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_compare_lt: L index: index1 anotherIndex: index2 [
+
+	"#define LUA_OPLT	1"
+
+	^ self
+		  lua_compare: L
+		  index: index1
+		  anotherIndex: index2
+		  operator: 1
+]
+
+{ #category : #'accessing - platform' }
 LibLua >> lua_gettop: L [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_gettop,
@@ -938,7 +1112,7 @@ LibLua >> macLibraryName [
 { #category : #API }
 LibLua >> push: anObject on: state [
 
-	^ anObject pushOnLua: state
+	^ anObject pushOnLua: state liblua: self
 ]
 
 { #category : #affecting }

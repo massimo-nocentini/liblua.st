@@ -320,12 +320,12 @@ LibLuaTest >> testCopyCompare [
 			         lua: state getglobal: 'tbl';
 			         lua_pushnil: state;
 			         lua: state copy: -2 to: -1;
-			         lua: state compare: -2 eq: -1.
+			         lua_compare_eq: state index: -2 anotherIndex: -1.
 
 		inner := self liblua
 			         lua: state get: -2 field: 'nested';
 			         lua: state get: -2 field: 'nested';
-			         lua: state compare: -2 eq: -1 ].
+			         lua_compare_eq: state index: -2 anotherIndex: -1 ].
 
 	self
 		assert: outer equals: 1;

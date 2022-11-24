@@ -1,7 +1,7 @@
 Extension { #name : #Integer }
 
 { #category : #'*LibLua' }
-Integer >> pushOnLua: state [
+Integer >> pushOnLua: state liblua: liblua [
 
-	^ LibLua uniqueInstance lua: state pushinteger: self
+	^ liblua lua: state pushinteger: self
 ]

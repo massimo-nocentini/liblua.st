@@ -1,7 +1,7 @@
 Extension { #name : #True }
 
 { #category : #'*LibLua' }
-True >> pushOnLua: state [
+True >> pushOnLua: state liblua: liblua [
 
-	^ LibLua uniqueInstance lua: state pushboolean: 1
+	^ liblua lua: state pushboolean: 1
 ]

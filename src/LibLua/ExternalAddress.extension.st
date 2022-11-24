@@ -1,7 +1,7 @@
 Extension { #name : #ExternalAddress }
 
 { #category : #'*LibLua' }
-ExternalAddress >> pushOnLua: state [
+ExternalAddress >> pushOnLua: state liblua: liblua [
 
-	^ LibLua uniqueInstance lua_pushlightuserdata: state pointer: self
+	^ liblua lua_pushlightuserdata: state pointer: self
 ]
