@@ -124,6 +124,60 @@ LibLua >> LUA_ERRSYNTAX [
 	^ 3
 ]
 
+{ #category : #'constants - event codes' }
+LibLua >> LUA_HOOKCALL [
+
+	^ 0
+]
+
+{ #category : #'constants - event codes' }
+LibLua >> LUA_HOOKCOUNT [
+
+	^ 3
+]
+
+{ #category : #'constants - event codes' }
+LibLua >> LUA_HOOKLINE [
+
+	^ 2
+]
+
+{ #category : #'constants - event codes' }
+LibLua >> LUA_HOOKRET [
+
+	^ 1
+]
+
+{ #category : #'constants - event codes' }
+LibLua >> LUA_HOOKTAILCALL [
+
+	^ 4
+]
+
+{ #category : #'constants - event masks' }
+LibLua >> LUA_MASKCALL [
+
+	^ 1 << self LUA_HOOKCALL
+]
+
+{ #category : #'constants - event masks' }
+LibLua >> LUA_MASKCOUNT [
+
+	^ 1 << self LUA_HOOKCOUNT
+]
+
+{ #category : #'constants - event masks' }
+LibLua >> LUA_MASKLINE [
+
+	^ 1 << self LUA_HOOKLINE
+]
+
+{ #category : #'constants - event masks' }
+LibLua >> LUA_MASKRET [
+
+	^ 1 << self LUA_HOOKRET
+]
+
 { #category : #'constants - generic' }
 LibLua >> LUA_MINSTACK [
 
@@ -150,10 +204,52 @@ LibLua >> LUA_OK [
 	^ 0
 ]
 
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPADD [
+
+	^ 0
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPBAND [
+
+	^ 7
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPBNOT [
+
+	^ 13
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPBOR [
+
+	^ 8
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPBXOR [
+
+	^ 9
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPDIV [
+
+	^ 5
+]
+
 { #category : #'constants - comparison' }
 LibLua >> LUA_OPEQ [
 
 	^ 0
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPIDIV [
+
+	^ 6
 ]
 
 { #category : #'constants - comparison' }
@@ -166,6 +262,48 @@ LibLua >> LUA_OPLE [
 LibLua >> LUA_OPLT [
 
 	^ 1
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPMOD [
+
+	^ 3
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPMUL [
+
+	^ 2
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPPOW [
+
+	^ 4
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPSHL [
+
+	^ 10
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPSHR [
+
+	^ 11
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPSUB [
+
+	^ 1
+]
+
+{ #category : #'constants - arith functions' }
+LibLua >> LUA_OPUNM [
+
+	^ 12
 ]
 
 { #category : #'constants - types' }
