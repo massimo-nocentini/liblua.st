@@ -4,7 +4,7 @@ Extension { #name : #BlockClosure }
 BlockClosure >> pushOnLua: state liblua: liblua [
 
 	| cb |
-	cb := liblua ffiCallback: self.
+	cb := liblua fficallbackOnBlock: self.
 
 	^ liblua lua: state pushcfunction: cb
 ]

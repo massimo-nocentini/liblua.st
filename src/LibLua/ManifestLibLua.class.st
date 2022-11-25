@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #'code-critics' }
+ManifestLibLua class >> ruleReTemporaryVariableCapitalizationRuleV1FalsePositive [
+	^ #(#(#(#RGPackageDefinition #(#LibLua)) #'2022-11-25T11:16:30.099511+01:00') )
+]
+
+{ #category : #'code-critics' }
 ManifestLibLua class >> ruleUncommonMessageSendRuleV1FalsePositive [
 	^ #(#(#(#RGPackageDefinition #(#LibLua)) #'2022-11-24T15:40:54.349641+01:00') )
 ]

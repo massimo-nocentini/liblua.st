@@ -2,24 +2,6 @@ Class {
 	#name : #LibLua,
 	#superclass : #FFILibrary,
 	#classVars : [
-		'LUA_ERRERR',
-		'LUA_ERRMEM',
-		'LUA_ERRRUN',
-		'LUA_ERRSYNTAX',
-		'LUA_MULTRET',
-		'LUA_NUMTYPES',
-		'LUA_OK',
-		'LUA_TBOOLEAN',
-		'LUA_TFUNCTION',
-		'LUA_TLIGHTUSERDATA',
-		'LUA_TNIL',
-		'LUA_TNONE',
-		'LUA_TNUMBER',
-		'LUA_TSTRING',
-		'LUA_TTABLE',
-		'LUA_TTHREAD',
-		'LUA_TUSERDATA',
-		'LUA_YIELD',
 		'ThreadStatuses',
 		'Types'
 	],
@@ -71,33 +53,7 @@ LibLua class >> initialize [
 		                  at: #LUA_ERRSYNTAX put: 3;
 		                  at: #LUA_ERRMEM put: 4;
 		                  at: #LUA_ERRERR put: 5;
-		                  yourself.
-
-	"#define LUA_MULTRET	(-1)"
-	LUA_MULTRET := -1.
-
-	"thread status"
-	LUA_OK := 0.
-	LUA_YIELD := 1.
-	LUA_ERRRUN := 2.
-	LUA_ERRSYNTAX := 3.
-	LUA_ERRMEM := 4.
-	LUA_ERRERR := 5.
-
-	"basic types"
-	LUA_TNONE := -1.
-
-	LUA_TNIL := 0.
-	LUA_TBOOLEAN := 1.
-	LUA_TLIGHTUSERDATA := 2.
-	LUA_TNUMBER := 3.
-	LUA_TSTRING := 4.
-	LUA_TTABLE := 5.
-	LUA_TFUNCTION := 6.
-	LUA_TUSERDATA := 7.
-	LUA_TTHREAD := 8.
-
-	LUA_NUMTYPES := 9
+		                  yourself
 ]
 
 { #category : #'constants - thread status' }
@@ -442,8 +398,8 @@ LibLua >> LUA_YIELD [
 LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 
 	^ self
-		  luaL: state
-		  dostring:
+		  luaL_dostring: state
+		  string:
 		  'package.path = package.path .. ";/usr/local/share/lua/5.4/?.lua"'
 ]
 
@@ -454,7 +410,7 @@ LibLua >> assert: aBlock [
 ]
 
 { #category : #API }
-LibLua >> ffiCallback: aBlock [
+LibLua >> fficallbackOnBlock: aBlock [
 
 	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
 ]
@@ -1035,25 +991,6 @@ LibLua >> luaL: L checkstring: arg [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> luaL: L dostring: s [
-
-	"#define luaL_dostring(L, s) \
-	(luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))"
-
-	| status |
-	status := self luaL_loadstring: L string: s.
-
-	^ status = (self threadStatusAt: #LUA_OK)
-		  ifTrue: [ 
-			  self
-				  lua: L
-				  pcallnargs: 0
-				  nresults: LUA_MULTRET
-				  errfunc: 0 ]
-		  ifFalse: [ status ]
-]
-
-{ #category : #'accessing - platform' }
 LibLua >> luaL: L loadfile: filename [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfile,
@@ -1085,6 +1022,32 @@ LibLua >> luaL: L loadfile: filename x: mode [
 	^ self ffiCall:
 		  #( int luaL_loadfilex #( void * L , const char * filename , const
 		        char * mode ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> luaL_dostring: L string: s [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
+	
+		int luaL_dostring (lua_State *L, const char *str);
+	
+	Loads and runs the given string. It is defined as the following macro:
+
+     (luaL_loadstring(L, str) || lua_pcall(L, 0, LUA_MULTRET, 0))
+
+	It returns LUA_OK if there are no errors, or an error code in case of errors (see §4.4.1)."
+
+	| status |
+	status := self luaL_loadstring: L string: s.
+
+	^ status = self LUA_OK
+		  ifTrue: [ 
+			  self
+				  lua: L
+				  pcallnargs: 0
+				  nresults: self LUA_MULTRET
+				  errfunc: 0 ]
+		  ifFalse: [ status ]
 ]
 
 { #category : #'accessing - platform' }
@@ -1387,19 +1350,19 @@ LibLua >> read: i from: state [
 { #category : #API }
 LibLua >> require: name heapkt: state [
 
-	^ self luaL: state dostring: name , ' = require "heapkt"'
+	^ self luaL_dostring: state string: name , ' = require "heapkt"'
 ]
 
 { #category : #API }
 LibLua >> require: name heapq: state [
 
-	^ self luaL: state dostring: name , ' = require "heapq"'
+	^ self luaL_dostring: state string: name , ' = require "heapq"'
 ]
 
 { #category : #API }
 LibLua >> require: name operator: state [
 
-	^ self luaL: state dostring: name , ' = require "operator"'
+	^ self luaL_dostring: state string: name , ' = require "operator"'
 ]
 
 { #category : #'accessing - platform' }

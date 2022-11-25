@@ -135,7 +135,7 @@ LibLuaTest >> testCFunctionAverage [
 	| avg sum |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| average |
-		average := self liblua ffiCallback: [ :s | self average: s ].
+		average := self liblua fficallbackOnBlock: [ :s | self average: s ].
 
 		self liblua lua: state register: 'foo' cfunction: average.
 
@@ -164,8 +164,8 @@ LibLuaTest >> testCFunctionPCallCoroutine [
 	| s e |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL: state
-			dostring:
+			luaL_dostring: state
+			string:
 				'co = coroutine.create(function (...) print(pcall(coroutine.yield, ...)) end)';
 			luaL_loadstring: state string: 'return coroutine.resume(co, "hello")';
 			lua: state pcallnargs: 0 nresults: 2.
@@ -199,8 +199,8 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 					          acc: r ]
 			          on: state;
 			          lua: state setglobal: 'command';
-			          luaL: state dostring: self recSumLuaSource;
-			          luaL: state dostring: self commandsLuaSource;
+			          luaL_dostring: state string: self recSumLuaSource;
+			          luaL_dostring: state string: self commandsLuaSource;
 			          luaL_loadstring: state string: 'return recSum(commands)';
 			          lua: state pcallnargs: 0 nresults: 1;
 			          lua: state tonumberx: -1 ifNotNumber: [ Error signal ] ].
@@ -214,9 +214,9 @@ LibLuaTest >> testCommandsUsingLuaDefs [
 	| result |
 	result := self liblua withOpenedLibsStateDo: [ :state | 
 		          self liblua
-			          luaL: state dostring: self commandDefLuaSource;
-			          luaL: state dostring: self recSumLuaSource;
-			          luaL: state dostring: self commandsLuaSource;
+			          luaL_dostring: state string: self commandDefLuaSource;
+			          luaL_dostring: state string: self recSumLuaSource;
+			          luaL_dostring: state string: self commandsLuaSource;
 			          luaL_loadstring: state string: 'return recSum(commands)';
 			          lua: state pcallnargs: 0 nresults: 1;
 			          lua: state tointegerx: -1 ifNotInteger: [ Error signal ] ].
@@ -230,8 +230,8 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 	| result |
 	result := self liblua withOpenedLibsStateDo: [ :state | 
 		          self liblua
-			          luaL: state dostring: self commandDefLuaSource;
-			          luaL: state dostring: self commandsLuaSource;
+			          luaL_dostring: state string: self commandDefLuaSource;
+			          luaL_dostring: state string: self commandsLuaSource;
 			          lua: state getglobal: 'commands';
 			          lua: state get: -1 i: 1;
 			          lua: state get: -1 field: 'name';
@@ -248,8 +248,8 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL: state dostring: self commandDefLuaSource;
-			luaL: state dostring: self commandsLuaSource;
+			luaL_dostring: state string: self commandDefLuaSource;
+			luaL_dostring: state string: self commandsLuaSource;
 			lua: state getglobal: 'commands';
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
@@ -276,8 +276,8 @@ LibLuaTest >> testCopy [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL: state dostring: 'tbl = { hello = 3.14, "!" }';
-			luaL: state dostring: 'tbl[ { } ] = 2';
+			luaL_dostring: state string: 'tbl = { hello = 3.14, "!" }';
+			luaL_dostring: state string: 'tbl[ { } ] = 2';
 			lua: state getglobal: 'tbl';
 			lua_pushnil: state;
 			lua: state copy: -2 to: -1;
@@ -316,7 +316,7 @@ LibLuaTest >> testCopyCompare [
 	| outer inner |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		outer := self liblua
-			         luaL: state dostring: 'tbl = { nested = { } }';
+			         luaL_dostring: state string: 'tbl = { nested = { } }';
 			         lua: state getglobal: 'tbl';
 			         lua_pushnil: state;
 			         lua: state copy: -2 to: -1;
@@ -711,9 +711,9 @@ LibLuaTest >> testReadFromTable [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL: state dostring: 'tbl = {1, 4}';
-			          luaL: state dostring: 'tbl[{}] = "hello"';
-			          luaL: state dostring: 'tbl[true] = { 1 }';
+			          luaL_dostring: state string: 'tbl = {1, 4}';
+			          luaL_dostring: state string: 'tbl[{}] = "hello"';
+			          luaL_dostring: state string: 'tbl[true] = { 1 }';
 			          luaL_loadstring: state string: 'return tbl';
 			          lua: state pcallnargs: 0 nresults: 1;
 			          read: -1 from: state.
@@ -743,12 +743,12 @@ LibLuaTest >> testSearchPath [
 			            lua: state toboolean: -1.
 
 		self liblua
-			luaL: state
-			dostring: 'for k, v in pairs(package.loaded) do print(k) end'.
+			luaL_dostring: state
+			string: 'for k, v in pairs(package.loaded) do print(k) end'.
 
 		list := self liblua
-			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
-			        luaL: state dostring: 'heapq.heapify(list)';
+			        luaL_dostring: state string: 'list = {5, 4, 3, 2, 1}';
+			        luaL_dostring: state string: 'heapq.heapify(list)';
 			        luaL_loadstring: state string: 'return table.concat(list, ", ")';
 			        lua: state pcallnargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
@@ -802,12 +802,12 @@ LibLuaTest >> testTableMap [
 			require: 'op' operator: state.
 
 		list := self liblua
-			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
-			        luaL: state dostring: 'print(table.contains)';
-			        luaL: state dostring: 'print(op.increment)';
-			        luaL: state dostring: 'print(coroutine.zip)';
-			        luaL: state
-			        dostring: 'list = table.map(list, op.increment)';
+			        luaL_dostring: state string: 'list = {5, 4, 3, 2, 1}';
+			        luaL_dostring: state string: 'print(table.contains)';
+			        luaL_dostring: state string: 'print(op.increment)';
+			        luaL_dostring: state string: 'print(coroutine.zip)';
+			        luaL_dostring: state
+			        string: 'list = table.map(list, op.increment)';
 			        luaL_loadstring: state string: 'return table.concat(list, ", ")';
 			        lua: state pcallnargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
