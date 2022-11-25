@@ -95,7 +95,7 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 	aKey key: aKey key + s.
 
 	self liblua
-		push: s on: state;
+		on: state push: s;
 		lua: state set: -2 field: 'context'.
 
 	self liblua
@@ -103,7 +103,7 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 		lua: state set: -2 field: 'followups'.
 
 	self liblua
-		push: 'noop' on: state;
+		on: state push: 'noop';
 		lua: state set: -2 field: 'action'.
 
 	^ 1 "number of results"
@@ -189,12 +189,11 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 
 	result := self liblua withOpenedLibsStateDo: [ :state | 
 		          self liblua
-			          push: [ :ongoingState | 
+			          on: state push: [ :ongoingState | 
 				          self
 					          pushCommandTableOnLua: ongoingState
 					          random: random
-					          acc: r ]
-			          on: state;
+					          acc: r ];
 			          lua: state setglobal: 'command';
 			          luaL_dostring: state string: self recSumLuaSource;
 			          luaL_dostring: state string: self commandsLuaSource;
@@ -349,7 +348,7 @@ LibLuaTest >> testHeapBench [
 		c := self liblua
 			     lua: state getglobal: 'heapq';
 			     lua: state get: -1 field: 'create';
-			     push: array on: state;
+			     on: state push: array;
 			     lua_pcall: state nargs: 1 nresults: 1.
 
 		self assert: c equals: 0.
@@ -373,7 +372,7 @@ LibLuaTest >> testHeapBench [
 		c := self liblua
 			     lua: state getglobal: 'heapkt';
 			     lua: state get: -1 field: 'new';
-			     push: array on: state;
+			     on: state push: array;
 			     lua_pcall: state nargs: 1 nresults: 1.
 
 		self assert: c equals: 0.
@@ -404,7 +403,7 @@ LibLuaTest >> testHeapBench [
 
 	smalltalkTimeToRun := [ heap reSort ] timeToRun.
 	"pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun."
-	self halt.
+	self halt
 	"self
 		assert: luaTimeToRun < smalltalkTimeToRun;
 		assert: kleinbergTardosTimeToRun < smalltalkTimeToRun;
@@ -574,9 +573,10 @@ LibLuaTest >> testLuaSeti [
 
 	list := self liblua withOpenedLibsStateDo: [ :state | 
 		        self liblua
-			        push: array on: state;
+			        on: state push: array;
 			        lua: state setglobal: 'array';
-			        luaL_loadstring: state string: 'return  table.concat(array, " ")';
+			        luaL_loadstring: state
+			        string: 'return  table.concat(array, " ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
@@ -613,21 +613,21 @@ LibLuaTest >> testReadFromArray [
 		result := self liblua
 			          luaL_loadstring: state string: 'return {1, 2, 3, 4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: #( 1 2 3 4 5 ).
 
 		result := self liblua
 			          luaL_loadstring: state
 			          string: 'return {1, {1, 2, 3, 4, 5}, 3, 4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: #( 1 #( 1 2 3 4 5 ) 3 4 5 ).
 
 		result := self liblua
 			          luaL_loadstring: state
 			          string: 'return {[-1]=1, 2, nil, [100]=4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: (Dictionary new
 				 at: -1 put: 1;
 				 at: 1 put: 2;
@@ -644,13 +644,13 @@ LibLuaTest >> testReadFromBoolean [
 		result := self liblua
 			          luaL_loadstring: state string: 'return false';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self deny: result.
 
 		result := self liblua
 			          luaL_loadstring: state string: 'return true';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result ]
 ]
 
@@ -662,7 +662,7 @@ LibLuaTest >> testReadFromInteger [
 		result := self liblua
 			          luaL_loadstring: state string: 'return 12345';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: 12345 ]
 ]
 
@@ -674,7 +674,7 @@ LibLuaTest >> testReadFromNil [
 		result := self liblua
 			          luaL_loadstring: state string: 'return nil';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: nil ]
 ]
 
@@ -686,7 +686,7 @@ LibLuaTest >> testReadFromNumber [
 		result := self liblua
 			          luaL_loadstring: state string: 'return 12345.1';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: 12345.1 ]
 ]
 
@@ -698,7 +698,7 @@ LibLuaTest >> testReadFromString [
 		result := self liblua
 			          luaL_loadstring: state string: 'return "nil"';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: 'nil' ]
 ]
 
@@ -713,7 +713,7 @@ LibLuaTest >> testReadFromTable [
 			          luaL_dostring: state string: 'tbl[true] = { 1 }';
 			          luaL_loadstring: state string: 'return tbl';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          read: -1 from: state.
+			          on: state readAt: -1.
 		self assert: result equals: (Dictionary new
 				 at: 1 put: 1;
 				 at: 2 put: 4;
@@ -760,18 +760,16 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 	called := false.
 
 	self liblua withOpenedLibsStateDo: [ :state | 
-		self liblua
-			push: [ :ongoingState | 
-				| number |
-				called := true.
-				self assert: ongoingState equals: state.
+		self liblua on: state push: [ :ongoingState | 
+			| number |
+			called := true.
+			self assert: ongoingState equals: state.
 
-				number := self liblua luaL: state checknumber: 1.
+			number := self liblua luaL: state checknumber: 1.
 
-				self liblua push: number sin on: ongoingState.
+			self liblua on: ongoingState push: number sin.
 
-				1 "number of results" ]
-			on: state.
+			1 "number of results" ].
 
 		self liblua lua: state setglobal: 'mysin'.
 

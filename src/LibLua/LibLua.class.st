@@ -1311,13 +1311,13 @@ LibLua >> macLibraryName [
 ]
 
 { #category : #API }
-LibLua >> push: anObject on: state [
+LibLua >> on: state push: anObject [
 
 	^ anObject pushOnLua: state liblua: self
 ]
 
 { #category : #API }
-LibLua >> read: i from: state [
+LibLua >> on: state readAt: i [
 
 	| typeid |
 	typeid := self lua: state type: i.
@@ -1346,8 +1346,8 @@ LibLua >> read: i from: state [
 		dict := Dictionary new.
 		self table: state at: i do: [ :k :v | 
 			| key value |
-			key := self read: k from: state.
-			value := self read: v from: state.
+			key := self on: state readAt: k.
+			value := self on: state readAt: v.
 			dict at: key put: value.
 			keysAreIntegers := keysAreIntegers and: [ 
 				                   key isInteger and: [ 
