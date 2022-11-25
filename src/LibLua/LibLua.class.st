@@ -1,3 +1,6 @@
+"
+I bind functions in the Lua C API as described in https://www.lua.org/manual/5.4/.
+"
 Class {
 	#name : #LibLua,
 	#superclass : #FFILibrary,
@@ -575,48 +578,6 @@ LibLua >> lua: L next: idx [
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua: L pcallknargs: nargs nresults: nresults errfunc: errfunc lua_KContext: ctx lua_KFunction: k [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
-	
-		int lua_pcallk (lua_State *L,
-  		                int nargs,
-      			          int nresults,
-         			       int msgh,
-            			    lua_KContext ctx,
-               			 lua_KFunction k);
-			
-	This function behaves exactly like #lua_pcall:, except that it allows the called function to yield 
-	(see https://www.lua.org/manual/5.4/manual.html#4.5)."
-
-	^ self ffiCall:
-		  #( int lua_pcallk #( void * L , int nargs , int nresults , int errfunc
-		        , int ctx , void * k ) )
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L pcallnargs: nargs nresults: nresults [
-
-	^ self
-		  lua: L
-		  pcallnargs: nargs
-		  nresults: nresults
-		  errfunc: 0
-]
-
-{ #category : #'accessing - platform' }
-LibLua >> lua: L pcallnargs: nargs nresults: nresults errfunc: errfunc [
-
-	^ self
-		  lua: L
-		  pcallknargs: nargs
-		  nresults: nresults
-		  errfunc: errfunc
-		  lua_KContext: 0
-		  lua_KFunction: ExternalAddress null
-]
-
-{ #category : #'accessing - platform' }
 LibLua >> lua: L push: fn cclosure: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcclosure,
@@ -1043,10 +1004,10 @@ LibLua >> luaL_dostring: L string: s [
 	^ status = self LUA_OK
 		  ifTrue: [ 
 			  self
-				  lua: L
-				  pcallnargs: 0
+				  lua_pcall: L
+				  nargs: 0
 				  nresults: self LUA_MULTRET
-				  errfunc: 0 ]
+				  msgh: 0 ]
 		  ifFalse: [ status ]
 ]
 
@@ -1185,17 +1146,75 @@ It is equivalent to lua_createtable(L, 0, 0)."
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua_pcall: L [
+LibLua >> lua_pcall: L nargs: nargs nresults: nresults [
 
 	^ self
-		  lua: L
-		  pcallnargs: 0
-		  nresults: 0
-		  errfunc: 0
+		  lua_pcall: L
+		  nargs: nargs
+		  nresults: nresults
+		  msgh: 0
 ]
 
 { #category : #'accessing - platform' }
-LibLua >> lua_pop: L elements: n [
+LibLua >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pcall,
+
+		int lua_pcall (lua_State *L, int nargs, int nresults, int msgh);
+
+	Calls a function (or a callable object) in protected mode.
+
+	Both nargs and nresults have the same meaning as in lua_call. 
+	If there are no errors during the call, lua_pcall behaves exactly 
+	like lua_call. However, if there is any error, lua_pcall catches 
+	it, pushes a single value on the stack (the error object), and returns 
+	an error code. Like lua_call, lua_pcall always removes the function and 
+	its arguments from the stack.
+
+	If msgh is 0, then the error object returned on the stack is exactly the 
+	original error object. Otherwise, msgh is the stack index of a message handler. 
+	(This index cannot be a pseudo-index.) In case of runtime errors, this handler 
+	will be called with the error object and its return value will be the object 
+	returned on the stack by lua_pcall.
+
+	Typically, the message handler is used to add more debug information to the error 
+	object, such as a stack traceback. Such information cannot be gathered after the 
+	return of lua_pcall, since by then the stack has unwound.
+
+	The lua_pcall function returns one of the following status codes: 
+	LUA_OK, LUA_ERRRUN, LUA_ERRMEM, or LUA_ERRERR."
+
+	^ self
+		  lua_pcallk: L
+		  nargs: nargs
+		  nresults: nresults
+		  msgh: errfunc
+		  ctx: 0
+		  k: ExternalAddress null
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
+	
+		int lua_pcallk (lua_State *L,
+  		                int nargs,
+      			          int nresults,
+         			       int msgh,
+            			    lua_KContext ctx,
+               			 lua_KFunction k);
+			
+	This function behaves exactly like #lua_pcall:, except that it allows the called function to yield 
+	(see https://www.lua.org/manual/5.4/manual.html#4.5)."
+
+	^ self ffiCall:
+		  #( int lua_pcallk #( void * L , int nargs , int nresults , int msgh
+		        , int ctx , void * k ) )
+]
+
+{ #category : #'accessing - platform' }
+LibLua >> lua_pop: L nelements: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pop,
 	
@@ -1237,7 +1256,7 @@ LibLua >> lua_remove: L index: idx [
 
 	^ self
 		  lua_rotate: L index: idx positions: -1;
-		  lua_pop: L elements: 1
+		  lua_pop: L nelements: 1
 ]
 
 { #category : #'accessing - platform' }
@@ -1303,28 +1322,26 @@ LibLua >> read: i from: state [
 	| typeid |
 	typeid := self lua: state type: i.
 
-	typeid = (self typeAt: #LUA_TNIL) ifTrue: [ ^ nil ].
+	typeid = self LUA_TNIL ifTrue: [ ^ nil ].
 
-	typeid = (self typeAt: #LUA_TBOOLEAN) ifTrue: [ 
+	typeid = self LUA_TBOOLEAN ifTrue: [ 
 		^ (self lua: state toboolean: i) = 1 ].
 
-	(typeid = (self typeAt: #LUA_TLIGHTUSERDATA) or: [ 
-		 typeid = (self typeAt: #LUA_TUSERDATA) ]) ifTrue: [ 
-		^ self lua: state touserdata: i ].
+	(typeid = self LUA_TLIGHTUSERDATA or: [ typeid = self LUA_TUSERDATA ]) 
+		ifTrue: [ ^ self lua: state touserdata: i ].
 
-	typeid = (self typeAt: #LUA_TNUMBER) ifTrue: [ 
+	typeid = self LUA_TNUMBER ifTrue: [ 
 		^ (self lua: state isinteger: i) = 1
 			  ifTrue: [ self lua: state tointeger: i ]
 			  ifFalse: [ self lua: state tonumber: i ] ].
 
-	typeid = (self typeAt: #LUA_TSTRING) ifTrue: [ 
-		^ self lua: state tostring: i ].
+	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
 
-	typeid = (self typeAt: #LUA_TTABLE) ifTrue: [ 
+	typeid = self LUA_TTABLE ifTrue: [ 
 		| dict keysAreIntegers length |
 		self lua: state len: i.
 		length := self lua: state tointeger: -1.
-		self lua_pop: state elements: 1.
+		self lua_pop: state nelements: 1.
 		keysAreIntegers := true.
 		dict := Dictionary new.
 		self table: state at: i do: [ :k :v | 
@@ -1392,19 +1409,13 @@ LibLua >> table: L at: idx do: aBlock [
 	[ (self lua: L next: index) = 0 ] whileFalse: [ 
 		aBlock value: -2 value: -1.
 
-		self lua_pop: L elements: 1 ]
+		self lua_pop: L nelements: 1 ]
 ]
 
 { #category : #API }
 LibLua >> threadStatusAt: aTypeKey [
 
 	^ ThreadStatuses at: aTypeKey
-]
-
-{ #category : #API }
-LibLua >> typeAt: aTypeKey [
-
-	^ Types at: aTypeKey
 ]
 
 { #category : #'accessing - platform' }
