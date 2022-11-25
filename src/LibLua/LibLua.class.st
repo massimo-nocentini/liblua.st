@@ -402,7 +402,7 @@ LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 
 	^ self
 		  luaL_dostring: state
-		  string:
+		  chunk:
 		  'package.path = package.path .. ";/usr/local/share/lua/5.4/?.lua"'
 ]
 
@@ -986,7 +986,7 @@ LibLua >> luaL: L loadfile: filename x: mode [
 ]
 
 { #category : #'API - auxiliary' }
-LibLua >> luaL_dostring: L string: s [
+LibLua >> luaL_dostring: L chunk: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
 	
@@ -999,7 +999,7 @@ LibLua >> luaL_dostring: L string: s [
 	It returns LUA_OK if there are no errors, or an error code in case of errors (see §4.4.1)."
 
 	| status |
-	status := self luaL_loadstring: L string: s.
+	status := self luaL_loadstring: L chunk: s.
 
 	^ status = self LUA_OK
 		  ifTrue: [ 
@@ -1012,7 +1012,7 @@ LibLua >> luaL_dostring: L string: s [
 ]
 
 { #category : #'API - auxiliary' }
-LibLua >> luaL_loadstring: L string: s [
+LibLua >> luaL_loadstring: L chunk: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadstring,
 	
@@ -1023,7 +1023,7 @@ LibLua >> luaL_loadstring: L string: s [
 
 	This function returns the same results as lua_load.
 
-Also as lua_load, this function only loads the chunk; it does not run it."
+	Also as lua_load, this function only loads the chunk; it does not run it."
 
 	^ self ffiCall:
 		  #( int luaL_loadstring #( void * L , const char * s ) )
@@ -1367,19 +1367,19 @@ LibLua >> on: state readAt: i [
 { #category : #API }
 LibLua >> require: name heapkt: state [
 
-	^ self luaL_dostring: state string: name , ' = require "heapkt"'
+	^ self luaL_dostring: state chunk: name , ' = require "heapkt"'
 ]
 
 { #category : #API }
 LibLua >> require: name heapq: state [
 
-	^ self luaL_dostring: state string: name , ' = require "heapq"'
+	^ self luaL_dostring: state chunk: name , ' = require "heapq"'
 ]
 
 { #category : #API }
 LibLua >> require: name operator: state [
 
-	^ self luaL_dostring: state string: name , ' = require "operator"'
+	^ self luaL_dostring: state chunk: name , ' = require "operator"'
 ]
 
 { #category : #API }
