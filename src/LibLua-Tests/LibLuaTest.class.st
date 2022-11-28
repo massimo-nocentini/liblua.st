@@ -38,7 +38,7 @@ LibLuaTest >> average: state [
 	n := self liblua lua_gettop: state.
 	sum := 0.0.
 
-	1 to: n do: [ :i | sum := sum + (self liblua lua: state tonumber: i) ].
+	1 to: n do: [ :i | sum := sum + (self liblua lua_tonumber: state index: i) ].
 
 	self liblua
 		lua: state pushnumber: sum / n;
@@ -134,7 +134,7 @@ LibLuaTest >> testCFunctionAverage [
 		| average |
 		average := self liblua fficallbackOnBlock: [ :s | self average: s ].
 
-		self liblua lua: state register: 'foo' cfunction: average.
+		self liblua lua_register: state name: 'foo' cfunction: average.
 
 		"We push here some values on the stack to test the behaviour of #lua_gettop: 
 		 when the stack contains some more values other than the arguments for the 
@@ -147,8 +147,8 @@ LibLuaTest >> testCFunctionAverage [
 			luaL_loadstring: state chunk: 'return foo(12, 43, 43, 450)';
 			lua_pcall: state nargs: 0 nresults: 2.
 
-		avg := self liblua lua: state tonumber: -2.
-		sum := self liblua lua: state tonumber: -1 ].
+		avg := self liblua lua_tonumber: state index: -2.
+		sum := self liblua lua_tonumber: state index: -1 ].
 
 	self
 		assert: avg equals: { 12. 43. 43. 450 } average;

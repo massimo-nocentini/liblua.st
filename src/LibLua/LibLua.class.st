@@ -363,7 +363,8 @@ LibLua >> assert: aBlock [
 { #category : #API }
 LibLua >> fficallbackOnBlock: aBlock [
 
-	^ FFICallback signature: #( int #( const void * a ) ) block: aBlock
+	^ (FFICallback signature: #( int #( const void * a ) ) block: aBlock)
+		  getHandle
 ]
 
 { #category : #'API - C' }
@@ -622,22 +623,6 @@ LibLua >> lua: L pushstring: s [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: state register: name cfunction: f [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
-	
-		void lua_register (lua_State *L, const char *name, lua_CFunction f);
-
-	Sets the C function f as the new value of global name. It is defined as a macro:
-
-  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
-
-	^ self
-		  lua: state pushcfunction: f;
-		  lua: state setglobal: name
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L require: modname f: openf [
 
 	^ self
@@ -730,15 +715,6 @@ LibLua >> lua: L to: idx lstring: len [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L to: idx numberx: isnum [
-
-	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
-
-	^ self ffiCall:
-		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L toboolean: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_toboolean,
@@ -779,18 +755,12 @@ LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L tonumber: idx [
-
-	^ self lua: L to: idx numberx: ExternalAddress null
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 
 	| pointer value |
 	pointer := 0.0 pointer.
 
-	value := self lua: state to: idx numberx: pointer.
+	value := self lua_tonumberx: state index: idx isnumpointer: pointer.
 
 	^ (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
@@ -801,20 +771,6 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 LibLua >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L touserdata: index [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
-	
-		void *lua_touserdata (lua_State *L, int index);
-	
-	If the value at the given index is a full userdata, returns its 
-	memory-block address. If the value is a light userdata, returns 
-	its value (a pointer). Otherwise, returns NULL."
-
-	^ self ffiCall: #( void * lua_touserdata #( void * L , int index ) )
 ]
 
 { #category : #'API - C' }
@@ -1191,6 +1147,22 @@ LibLua >> lua_pushnil: L [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_register: state name: name cfunction: f [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
+	
+		void lua_register (lua_State *L, const char *name, lua_CFunction f);
+
+	Sets the C function f as the new value of global name. It is defined as a macro:
+
+  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
+
+	^ self
+		  lua: state pushcfunction: f;
+		  lua: state setglobal: name
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_remove: L index: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
@@ -1239,6 +1211,52 @@ LibLua >> lua_settop: L index: idx [
 	^ self ffiCall: #( void lua_settop #( void * L , int idx ) )
 ]
 
+{ #category : #'API - C' }
+LibLua >> lua_tonumber: L index: idx [
+
+	^ self lua_tonumberx: L index: idx isnumpointer: ExternalAddress null
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_tonumberx: L index: idx isnumpointer: isnum [
+
+	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
+
+	^ self ffiCall:
+		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_topointer: L index: idx [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_topointer,
+
+		const void *lua_topointer (lua_State *L, int index);
+		
+	Converts the value at the given index to a generic C pointer (void*). 
+	The value can be a userdata, a table, a thread, a string, or a function; 
+	otherwise, lua_topointer returns NULL. Different objects will give different 
+	pointers. There is no way to convert the pointer back to its original value.
+
+	Typically this function is used only for hashing and debug information."
+
+	^ self ffiCall: #( void * lua_topointer #( void * L , int idx ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_touserdata: L index: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
+	
+		void *lua_touserdata (lua_State *L, int index);
+	
+	If the value at the given index is a full userdata, returns its 
+	memory-block address. If the value is a light userdata, returns 
+	its value (a pointer). Otherwise, returns NULL."
+
+	^ self ffiCall: #( void * lua_touserdata #( void * L , int index ) )
+]
+
 { #category : #'library names' }
 LibLua >> macLibraryName [
 
@@ -1267,6 +1285,27 @@ LibLua >> on: state push: anObject [
 { #category : #API }
 LibLua >> on: state readAt: i [
 
+	^ self on: state readAt: i cache: Dictionary new
+]
+
+{ #category : #API }
+LibLua >> on: state readAt: i cache: cache [
+
+	| pointerAsInteger obj |
+	pointerAsInteger := (self lua_topointer: state index: i) asInteger.
+
+	obj := cache
+		       at: pointerAsInteger
+		       ifAbsentPut: [ self rawOn: state readAt: i cache: cache ].
+
+	pointerAsInteger = 0 ifTrue: [ cache removeKey: pointerAsInteger ].
+
+	^ obj
+]
+
+{ #category : #API }
+LibLua >> rawOn: state readAt: i cache: cache [
+
 	| typeid |
 	typeid := self lua: state type: i.
 
@@ -1276,12 +1315,12 @@ LibLua >> on: state readAt: i [
 		^ (self lua: state toboolean: i) = 1 ].
 
 	(typeid = self LUA_TLIGHTUSERDATA or: [ typeid = self LUA_TUSERDATA ]) 
-		ifTrue: [ ^ self lua: state touserdata: i ].
+		ifTrue: [ ^ self lua_touserdata: state index: i ].
 
 	typeid = self LUA_TNUMBER ifTrue: [ 
 		^ (self lua: state isinteger: i) = 1
 			  ifTrue: [ self lua: state tointeger: i ]
-			  ifFalse: [ self lua: state tonumber: i ] ].
+			  ifFalse: [ self lua_tonumber: state index: i ] ].
 
 	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
 
@@ -1294,8 +1333,8 @@ LibLua >> on: state readAt: i [
 		dict := Dictionary new.
 		self table: state at: i do: [ :k :v | 
 			| key value |
-			key := self on: state readAt: k.
-			value := self on: state readAt: v.
+			key := self on: state readAt: k cache: cache.
+			value := self on: state readAt: v cache: cache.
 			dict at: key put: value.
 			keysAreIntegers := keysAreIntegers and: [ 
 				                   key isInteger and: [ 
