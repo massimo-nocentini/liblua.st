@@ -346,6 +346,54 @@ LibLua >> LUA_YIELD [
 ]
 
 { #category : #API }
+LibLua >> _on: state at: i cache: cache [
+
+	| typeid |
+	typeid := self lua: state type: i.
+
+	typeid = self LUA_TNIL ifTrue: [ ^ nil ].
+
+	typeid = self LUA_TBOOLEAN ifTrue: [ 
+		^ (self lua: state toboolean: i) = 1 ].
+
+	(typeid = self LUA_TLIGHTUSERDATA or: [ typeid = self LUA_TUSERDATA ]) 
+		ifTrue: [ ^ self lua_touserdata: state index: i ].
+
+	typeid = self LUA_TNUMBER ifTrue: [ 
+		^ (self lua: state isinteger: i) = 1
+			  ifTrue: [ self lua: state tointeger: i ]
+			  ifFalse: [ self lua_tonumber: state index: i ] ].
+
+	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
+
+	typeid = self LUA_TTABLE ifTrue: [ 
+		| dict keysAreIntegers length |
+		self lua: state len: i.
+		length := self lua: state tointeger: -1.
+		self lua_pop: state nelements: 1.
+		keysAreIntegers := true.
+		dict := Dictionary new.
+		self table: state at: i do: [ :k :v | 
+			| key value |
+			key := self on: state at: k cache: cache.
+			value := self on: state at: v cache: cache.
+			dict at: key put: value.
+			keysAreIntegers := keysAreIntegers and: [ 
+				                   key isInteger and: [ 
+					                   key between: 1 and: length ] ] ].
+
+		^ keysAreIntegers
+			  ifTrue: [ 
+				  | array |
+				  array := Array new: dict size.
+				  dict keysAndValuesDo: [ :k :v | array at: k put: v ].
+				  array ]
+			  ifFalse: [ dict ] ].
+
+	self shouldBeImplemented
+]
+
+{ #category : #API }
 LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 
 	^ self
@@ -1277,26 +1325,20 @@ LibLua >> macLibraryName [
 ]
 
 { #category : #API }
-LibLua >> on: state push: anObject [
+LibLua >> on: state at: i [
 
-	^ anObject pushOnLua: state liblua: self
+	^ self on: state at: i cache: Dictionary new
 ]
 
 { #category : #API }
-LibLua >> on: state readAt: i [
-
-	^ self on: state readAt: i cache: Dictionary new
-]
-
-{ #category : #API }
-LibLua >> on: state readAt: i cache: cache [
+LibLua >> on: state at: i cache: cache [
 
 	| pointerAsInteger obj |
 	pointerAsInteger := (self lua_topointer: state index: i) asInteger.
 
 	obj := cache
 		       at: pointerAsInteger
-		       ifAbsentPut: [ self rawOn: state readAt: i cache: cache ].
+		       ifAbsentPut: [ self _on: state at: i cache: cache ].
 
 	pointerAsInteger = 0 ifTrue: [ cache removeKey: pointerAsInteger ].
 
@@ -1304,51 +1346,9 @@ LibLua >> on: state readAt: i cache: cache [
 ]
 
 { #category : #API }
-LibLua >> rawOn: state readAt: i cache: cache [
+LibLua >> on: state push: anObject [
 
-	| typeid |
-	typeid := self lua: state type: i.
-
-	typeid = self LUA_TNIL ifTrue: [ ^ nil ].
-
-	typeid = self LUA_TBOOLEAN ifTrue: [ 
-		^ (self lua: state toboolean: i) = 1 ].
-
-	(typeid = self LUA_TLIGHTUSERDATA or: [ typeid = self LUA_TUSERDATA ]) 
-		ifTrue: [ ^ self lua_touserdata: state index: i ].
-
-	typeid = self LUA_TNUMBER ifTrue: [ 
-		^ (self lua: state isinteger: i) = 1
-			  ifTrue: [ self lua: state tointeger: i ]
-			  ifFalse: [ self lua_tonumber: state index: i ] ].
-
-	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
-
-	typeid = self LUA_TTABLE ifTrue: [ 
-		| dict keysAreIntegers length |
-		self lua: state len: i.
-		length := self lua: state tointeger: -1.
-		self lua_pop: state nelements: 1.
-		keysAreIntegers := true.
-		dict := Dictionary new.
-		self table: state at: i do: [ :k :v | 
-			| key value |
-			key := self on: state readAt: k cache: cache.
-			value := self on: state readAt: v cache: cache.
-			dict at: key put: value.
-			keysAreIntegers := keysAreIntegers and: [ 
-				                   key isInteger and: [ 
-					                   key between: 1 and: length ] ] ].
-
-		^ keysAreIntegers
-			  ifTrue: [ 
-				  | array |
-				  array := Array new: dict size.
-				  dict keysAndValuesDo: [ :k :v | array at: k put: v ].
-				  array ]
-			  ifFalse: [ dict ] ].
-
-	self shouldBeImplemented
+	^ anObject pushOnLua: state liblua: self
 ]
 
 { #category : #API }

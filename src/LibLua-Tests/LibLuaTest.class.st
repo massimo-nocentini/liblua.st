@@ -613,21 +613,21 @@ LibLuaTest >> testReadFromArray [
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return {1, 2, 3, 4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: #( 1 2 3 4 5 ).
 
 		result := self liblua
 			          luaL_loadstring: state
 			          chunk: 'return {1, {1, 2, 3, 4, 5}, 3, 4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: #( 1 #( 1 2 3 4 5 ) 3 4 5 ).
 
 		result := self liblua
 			          luaL_loadstring: state
 			          chunk: 'return {[-1]=1, 2, nil, [100]=4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: (Dictionary new
 				 at: -1 put: 1;
 				 at: 1 put: 2;
@@ -644,13 +644,13 @@ LibLuaTest >> testReadFromBoolean [
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return false';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self deny: result.
 
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return true';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result ]
 ]
 
@@ -662,7 +662,7 @@ LibLuaTest >> testReadFromInteger [
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return 12345';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: 12345 ]
 ]
 
@@ -674,7 +674,7 @@ LibLuaTest >> testReadFromNil [
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return nil';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: nil ]
 ]
 
@@ -686,7 +686,7 @@ LibLuaTest >> testReadFromNumber [
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return 12345.1';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: 12345.1 ]
 ]
 
@@ -698,7 +698,7 @@ LibLuaTest >> testReadFromString [
 		result := self liblua
 			          luaL_loadstring: state chunk: 'return "nil"';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: 'nil' ]
 ]
 
@@ -713,7 +713,7 @@ LibLuaTest >> testReadFromTable [
 			          luaL_dostring: state chunk: 'tbl[true] = { 1 }';
 			          luaL_loadstring: state chunk: 'return tbl';
 			          lua_pcall: state nargs: 0 nresults: 1;
-			          on: state readAt: -1.
+			          on: state at: -1.
 		self assert: result equals: (Dictionary new
 				 at: 1 put: 1;
 				 at: 2 put: 4;
