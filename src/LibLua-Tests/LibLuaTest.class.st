@@ -739,7 +739,11 @@ LibLuaTest >> testRecursiveTables [
 		       self liblua assert: [ :ll | 
 			       ll lua_pcall: state nargs: 0 nresults: 1 ].
 
-		       self liblua on: state at: -1 ]
+		       self liblua on: state at: -1 ].
+
+	self
+		assert: (tbl at: #t) identicalTo: ((tbl at: #u) at: #t);
+		assert: (tbl at: #u) identicalTo: ((tbl at: #t) at: #u)
 ]
 
 { #category : #tests }

@@ -377,7 +377,12 @@ LibLua >> _on: state at: i cache: cache [
 			| key value |
 			key := self on: state at: k cache: cache.
 			value := self on: state at: v cache: cache.
-			dict at: key put: value.
+
+			dict
+				at: (key isString
+						 ifTrue: [ key asSymbol ]
+						 ifFalse: [ key ])
+				put: value.
 			keysAreIntegers := keysAreIntegers and: [ 
 				                   key isInteger and: [ 
 					                   key between: 1 and: length ] ] ].
@@ -1333,16 +1338,23 @@ LibLua >> on: state at: i [
 { #category : #API }
 LibLua >> on: state at: i cache: cache [
 
-	| pointerAsInteger obj |
+	| pointerAsInteger |
 	pointerAsInteger := (self lua_topointer: state at: i) asInteger.
 
-	obj := cache
-		       at: pointerAsInteger
-		       ifAbsentPut: [ self _on: state at: i cache: cache ].
+	^ pointerAsInteger = 0
+		  ifTrue: [ self _on: state at: i cache: cache ]
+		  ifFalse: [ 
+			  | witness obj |
+			  witness := Object new.
+			  obj := cache at: pointerAsInteger ifAbsentPut: [ witness ].
 
-	pointerAsInteger = 0 ifTrue: [ cache removeKey: pointerAsInteger ].
-
-	^ obj
+			  obj == witness
+				  ifTrue: [ 
+					  | reified |
+					  reified := self _on: state at: i cache: cache.
+					  witness become: reified.
+					  witness ]
+				  ifFalse: [ obj "easy case: already seen so return it." ] ]
 ]
 
 { #category : #API }
