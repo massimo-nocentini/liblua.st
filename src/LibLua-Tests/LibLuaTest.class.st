@@ -329,6 +329,19 @@ LibLuaTest >> testCopyCompare [
 ]
 
 { #category : #tests }
+LibLuaTest >> testDictionary [
+
+	| d |
+	d := IdentityDictionary new.
+
+	d
+		at: d put: d;
+		at: Object new put: Float goldenRatio.
+
+	self assert: (d at: d) identicalTo: d
+]
+
+{ #category : #tests }
 LibLuaTest >> testHeapBench [
 
 	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun heap position indexer code |
@@ -725,12 +738,13 @@ LibLuaTest >> testReadFromTable [
 { #category : #tests }
 LibLuaTest >> testRecursiveTables [
 
-	| tbl |
+	| tbl t u |
 	tbl := self liblua withOpenedLibsStateDo: [ :state | 
 		       self liblua assert: [ :ll | 
 			       ll luaL_loadstring: state chunk: '
 		
 			local t, u = {  }, {  }
+			t.t, u[u] = t, u
 			t.u, u.t = u, t
 			return { t = t, u = u }
 
@@ -741,9 +755,17 @@ LibLuaTest >> testRecursiveTables [
 
 		       self liblua on: state at: -1 ].
 
+	tbl inspect.
+
+	t := tbl at: #t.
+	u := tbl at: #u.
+
 	self
-		assert: (tbl at: #t) identicalTo: ((tbl at: #u) at: #t);
-		assert: (tbl at: #u) identicalTo: ((tbl at: #t) at: #u)
+		assert: t identicalTo: (u at: #t);
+		assert: u identicalTo: (t at: #u);
+		assert: t identicalTo: (t at: #t);
+		assert: (t at: #t) identicalTo: t";
+		assert: (u at: u) identicalTo: u"
 ]
 
 { #category : #tests }

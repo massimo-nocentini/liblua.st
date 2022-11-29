@@ -1332,7 +1332,7 @@ LibLua >> macLibraryName [
 { #category : #API }
 LibLua >> on: state at: i [
 
-	^ self on: state at: i cache: Dictionary new
+	^ self on: state at: i cache: IdentityDictionary new
 ]
 
 { #category : #API }
