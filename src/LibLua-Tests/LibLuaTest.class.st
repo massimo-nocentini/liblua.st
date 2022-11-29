@@ -723,6 +723,26 @@ LibLuaTest >> testReadFromTable [
 ]
 
 { #category : #tests }
+LibLuaTest >> testRecursiveTables [
+
+	| tbl |
+	tbl := self liblua withOpenedLibsStateDo: [ :state | 
+		       self liblua assert: [ :ll | 
+			       ll luaL_loadstring: state chunk: '
+		
+			local t, u = {  }, {  }
+			t.u, u.t = u, t
+			return { t = t, u = u }
+
+		' ].
+
+		       self liblua assert: [ :ll | 
+			       ll lua_pcall: state nargs: 0 nresults: 1 ].
+
+		       self liblua on: state at: -1 ]
+]
+
+{ #category : #tests }
 LibLuaTest >> testSearchPath [
 
 	| list longFlag |
