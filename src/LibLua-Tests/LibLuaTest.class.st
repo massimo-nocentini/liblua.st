@@ -38,7 +38,7 @@ LibLuaTest >> average: state [
 	n := self liblua lua_gettop: state.
 	sum := 0.0.
 
-	1 to: n do: [ :i | sum := sum + (self liblua lua_tonumber: state index: i) ].
+	1 to: n do: [ :i | sum := sum + (self liblua lua_tonumber: state at: i) ].
 
 	self liblua
 		lua: state pushnumber: sum / n;
@@ -147,8 +147,8 @@ LibLuaTest >> testCFunctionAverage [
 			luaL_loadstring: state chunk: 'return foo(12, 43, 43, 450)';
 			lua_pcall: state nargs: 0 nresults: 2.
 
-		avg := self liblua lua_tonumber: state index: -2.
-		sum := self liblua lua_tonumber: state index: -1 ].
+		avg := self liblua lua_tonumber: state at: -2.
+		sum := self liblua lua_tonumber: state at: -1 ].
 
 	self
 		assert: avg equals: { 12. 43. 43. 450 } average;
@@ -251,10 +251,10 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 				| keyType valueType |
 				keyType := self liblua
 					           lua: state
-					           typename: (self liblua lua: state type: k).
+					           typename: (self liblua lua_type: state at: k).
 				valueType := self liblua
 					             lua: state
-					             typename: (self liblua lua: state type: v).
+					             typename: (self liblua lua_type: state at: v).
 				result add: keyType -> valueType ] ].
 
 	self
@@ -281,19 +281,19 @@ LibLuaTest >> testCopy [
 				| keyType valueType |
 				keyType := self liblua
 					           lua: state
-					           typename: (self liblua lua: state type: k).
+					           typename: (self liblua lua_type: state at: k).
 				valueType := self liblua
 					             lua: state
-					             typename: (self liblua lua: state type: v).
+					             typename: (self liblua lua_type: state at: v).
 				result add: keyType -> valueType ];
 			table: state at: -2 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
 					           lua: state
-					           typename: (self liblua lua: state type: k).
+					           typename: (self liblua lua_type: state at: k).
 				valueType := self liblua
 					             lua: state
-					             typename: (self liblua lua: state type: v).
+					             typename: (self liblua lua_type: state at: v).
 				original add: keyType -> valueType ] ].
 
 	self

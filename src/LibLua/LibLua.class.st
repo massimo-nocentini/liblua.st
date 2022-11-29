@@ -349,7 +349,7 @@ LibLua >> LUA_YIELD [
 LibLua >> _on: state at: i cache: cache [
 
 	| typeid |
-	typeid := self lua: state type: i.
+	typeid := self lua_type: state at: i.
 
 	typeid = self LUA_TNIL ifTrue: [ ^ nil ].
 
@@ -357,19 +357,19 @@ LibLua >> _on: state at: i cache: cache [
 		^ (self lua: state toboolean: i) = 1 ].
 
 	(typeid = self LUA_TLIGHTUSERDATA or: [ typeid = self LUA_TUSERDATA ]) 
-		ifTrue: [ ^ self lua_touserdata: state index: i ].
+		ifTrue: [ ^ self lua_touserdata: state at: i ].
 
 	typeid = self LUA_TNUMBER ifTrue: [ 
 		^ (self lua: state isinteger: i) = 1
-			  ifTrue: [ self lua: state tointeger: i ]
-			  ifFalse: [ self lua_tonumber: state index: i ] ].
+			  ifTrue: [ self lua_tointeger: state at: i ]
+			  ifFalse: [ self lua_tonumber: state at: i ] ].
 
 	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
 
 	typeid = self LUA_TTABLE ifTrue: [ 
 		| dict keysAreIntegers length |
 		self lua: state len: i.
-		length := self lua: state tointeger: -1.
+		length := self lua_tointeger: state at: -1.
 		self lua_pop: state nelements: 1.
 		keysAreIntegers := true.
 		dict := Dictionary new.
@@ -778,18 +778,6 @@ LibLua >> lua: L toboolean: idx [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L tointeger: index [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
-	
-		lua_Integer lua_tointeger (lua_State *L, int index);
-		
-	Equivalent to lua_tointegerx with isnum equal to NULL."
-
-	^ self lua: L to: index integerx: ExternalAddress null
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 
 	| pointer value |
@@ -808,7 +796,7 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 	| pointer value |
 	pointer := 0.0 pointer.
 
-	value := self lua_tonumberx: state index: idx isnumpointer: pointer.
+	value := self lua_tonumberx: state at: idx isnumpointer: pointer.
 
 	^ (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
@@ -819,21 +807,6 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 LibLua >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L type: index [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
-	
-		int lua_type (lua_State *L, int index);
-	
-	Returns the type of the value in the given valid index, or LUA_TNONE 
-	for a non-valid but acceptable index. The types returned by lua_type are coded 
-	by the following constants defined in lua.h: LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, 
-	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
-
-	^ self ffiCall: #( int lua_type #( void * L , int index ) )
 ]
 
 { #category : #'API - C' }
@@ -1174,7 +1147,7 @@ LibLua >> lua_pop: L nelements: n [
 		
 	Pops n elements from the stack. It is implemented as a macro over lua_settop."
 
-	^ self lua_settop: L index: n negated - 1
+	^ self lua_settop: L at: n negated - 1
 ]
 
 { #category : #'API - C' }
@@ -1211,7 +1184,7 @@ LibLua >> lua_register: state name: name cfunction: f [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_remove: L index: idx [
+LibLua >> lua_remove: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
 	
@@ -1223,12 +1196,12 @@ LibLua >> lua_remove: L index: idx [
 	stack position."
 
 	^ self
-		  lua_rotate: L index: idx positions: -1;
+		  lua_rotate: L at: idx positions: -1;
 		  lua_pop: L nelements: 1
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_rotate: L index: idx positions: n [
+LibLua >> lua_rotate: L at: idx positions: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_rotate,
 	
@@ -1244,7 +1217,7 @@ LibLua >> lua_rotate: L index: idx positions: n [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_settop: L index: idx [
+LibLua >> lua_settop: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
 	
@@ -1260,13 +1233,25 @@ LibLua >> lua_settop: L index: idx [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_tonumber: L index: idx [
+LibLua >> lua_tointeger: L at: index [
 
-	^ self lua_tonumberx: L index: idx isnumpointer: ExternalAddress null
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
+	
+		lua_Integer lua_tointeger (lua_State *L, int index);
+		
+	Equivalent to lua_tointegerx with isnum equal to NULL."
+
+	^ self lua: L to: index integerx: ExternalAddress null
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_tonumberx: L index: idx isnumpointer: isnum [
+LibLua >> lua_tonumber: L at: idx [
+
+	^ self lua_tonumberx: L at: idx isnumpointer: ExternalAddress null
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_tonumberx: L at: idx isnumpointer: isnum [
 
 	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
 
@@ -1275,7 +1260,7 @@ LibLua >> lua_tonumberx: L index: idx isnumpointer: isnum [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_topointer: L index: idx [
+LibLua >> lua_topointer: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_topointer,
 
@@ -1292,7 +1277,7 @@ LibLua >> lua_topointer: L index: idx [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_touserdata: L index: index [
+LibLua >> lua_touserdata: L at: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
 	
@@ -1303,6 +1288,21 @@ LibLua >> lua_touserdata: L index: index [
 	its value (a pointer). Otherwise, returns NULL."
 
 	^ self ffiCall: #( void * lua_touserdata #( void * L , int index ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_type: L at: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
+	
+		int lua_type (lua_State *L, int index);
+	
+	Returns the type of the value in the given valid index, or LUA_TNONE 
+	for a non-valid but acceptable index. The types returned by lua_type are coded 
+	by the following constants defined in lua.h: LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, 
+	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
+
+	^ self ffiCall: #( int lua_type #( void * L , int index ) )
 ]
 
 { #category : #'library names' }
@@ -1334,7 +1334,7 @@ LibLua >> on: state at: i [
 LibLua >> on: state at: i cache: cache [
 
 	| pointerAsInteger obj |
-	pointerAsInteger := (self lua_topointer: state index: i) asInteger.
+	pointerAsInteger := (self lua_topointer: state at: i) asInteger.
 
 	obj := cache
 		       at: pointerAsInteger
