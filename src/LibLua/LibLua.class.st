@@ -452,24 +452,6 @@ LibLua >> lua: L create: narr table: nrec [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L get: index field: k [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
-	
-		int lua_getfield (lua_State *L, int index, const char *k);
-	
-	Pushes onto the stack the value t[k], where t is the value at the given index. 
-	As in Lua, this function may trigger a metamethod for the ""index"" event 
-	(see https://www.lua.org/manual/5.4/manual.html#2.4).
-
-	Returns the type of the pushed value.
-"
-
-	^ self ffiCall:
-		  #( int lua_getfield #( void * L , int index , const char * k ) )
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L get: index i: i [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
@@ -483,21 +465,6 @@ LibLua >> lua: L get: index i: i [
 	Returns the type of the pushed value."
 
 	^ self ffiCall: #( int lua_geti #( void * L , int index , long i ) )
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L getglobal: name [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
-	
-		int lua_getglobal (lua_State *L, const char *name);
-	
-	Pushes onto the stack the value of the global name. 
-
-	Returns the type of that value."
-
-	^ self ffiCall:
-		  #( int lua_getglobal #( void * L , const char * name ) )
 ]
 
 { #category : #'API - C' }
@@ -1048,6 +1015,38 @@ LibLua >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 		  index: index1
 		  anotherIndex: index2
 		  operator: 1
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_getfield: L at: index name: k [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
+	
+		int lua_getfield (lua_State *L, int index, const char *k);
+	
+	Pushes onto the stack the value t[k], where t is the value at the given index. 
+	As in Lua, this function may trigger a metamethod for the ""index"" event 
+	(see https://www.lua.org/manual/5.4/manual.html#2.4).
+
+	Returns the type of the pushed value."
+
+	^ self ffiCall:
+		  #( int lua_getfield #( void * L , int index , const char * k ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_getglobal: L name: name [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
+	
+		int lua_getglobal (lua_State *L, const char *name);
+	
+	Pushes onto the stack the value of the global name. 
+
+	Returns the type of that value."
+
+	^ self ffiCall:
+		  #( int lua_getglobal #( void * L , const char * name ) )
 ]
 
 { #category : #'API - C' }

@@ -228,9 +228,9 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 		          self liblua
 			          luaL_dostring: state chunk: self commandDefLuaSource;
 			          luaL_dostring: state chunk: self commandsLuaSource;
-			          lua: state getglobal: 'commands';
+			          lua_getglobal: state name: 'commands';
 			          lua: state get: -1 i: 1;
-			          lua: state get: -1 field: 'name';
+			          lua_getfield: state at: -1 name: 'name';
 			          lua: state tostring: -1 ].
 
 	self assert: result equals: 'create'
@@ -246,7 +246,7 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 		self liblua
 			luaL_dostring: state chunk: self commandDefLuaSource;
 			luaL_dostring: state chunk: self commandsLuaSource;
-			lua: state getglobal: 'commands';
+			lua_getglobal: state name: 'commands';
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
@@ -274,7 +274,7 @@ LibLuaTest >> testCopy [
 		self liblua
 			luaL_dostring: state chunk: 'tbl = { hello = 3.14, "!" }';
 			luaL_dostring: state chunk: 'tbl[ { } ] = 2';
-			lua: state getglobal: 'tbl';
+			lua_getglobal: state name: 'tbl';
 			lua_pushnil: state;
 			lua: state copy: -2 to: -1;
 			table: state at: -1 do: [ :k :v | 
@@ -313,14 +313,14 @@ LibLuaTest >> testCopyCompare [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		outer := self liblua
 			         luaL_dostring: state chunk: 'tbl = { nested = { } }';
-			         lua: state getglobal: 'tbl';
+			         lua_getglobal: state name: 'tbl';
 			         lua_pushnil: state;
 			         lua: state copy: -2 to: -1;
 			         lua_compare_eq: state index: -2 anotherIndex: -1.
 
 		inner := self liblua
-			         lua: state get: -2 field: 'nested';
-			         lua: state get: -2 field: 'nested';
+			         lua_getfield: state at: -2 name: 'nested';
+			         lua_getfield: state at: -2 name: 'nested';
 			         lua_compare_eq: state index: -2 anotherIndex: -1 ].
 
 	self
@@ -359,8 +359,8 @@ LibLuaTest >> testHeapBench [
 			require: 'heapkt' heapkt: state.
 
 		c := self liblua
-			     lua: state getglobal: 'heapq';
-			     lua: state get: -1 field: 'create';
+			     lua_getglobal: state name: 'heapq';
+			     lua_getfield: state at: -1 name: 'create';
 			     on: state push: array;
 			     lua_pcall: state nargs: 1 nresults: 1.
 
@@ -368,9 +368,9 @@ LibLuaTest >> testHeapBench [
 
 		self liblua
 			lua: state setglobal: 'H';
-			lua: state getglobal: 'heapq';
-			lua: state get: -1 field: 'heapify';
-			lua: state getglobal: 'H'.
+			lua_getglobal: state name: 'heapq';
+			lua_getfield: state at: -1 name: 'heapify';
+			lua_getglobal: state name: 'H'.
 
 		luaTimeToRun := [ 
 		                code := self liblua
@@ -383,8 +383,8 @@ LibLuaTest >> testHeapBench [
 		self assert: code equals: 0.
 
 		c := self liblua
-			     lua: state getglobal: 'heapkt';
-			     lua: state get: -1 field: 'new';
+			     lua_getglobal: state name: 'heapkt';
+			     lua_getfield: state at: -1 name: 'new';
 			     on: state push: array;
 			     lua_pcall: state nargs: 1 nresults: 1.
 
@@ -392,9 +392,9 @@ LibLuaTest >> testHeapBench [
 
 		self liblua
 			lua: state setglobal: 'H';
-			lua: state getglobal: 'heapkt';
-			lua: state get: -1 field: 'heapify';
-			lua: state getglobal: 'H'.
+			lua_getglobal: state name: 'heapkt';
+			lua_getfield: state at: -1 name: 'heapify';
+			lua_getglobal: state name: 'H'.
 
 		kleinbergTardosTimeToRun := [ 
 		                            code := self liblua
