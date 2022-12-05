@@ -41,8 +41,8 @@ LibLuaTest >> average: state [
 	1 to: n do: [ :i | sum := sum + (self liblua lua_tonumber: state at: i) ].
 
 	self liblua
-		lua: state pushnumber: sum / n;
-		lua: state pushnumber: sum.
+		lua_pushnumber: state value: sum / n;
+		lua_pushnumber: state value: sum.
 
 	^ 2
 ]
@@ -194,7 +194,7 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 					          pushCommandTableOnLua: ongoingState
 					          random: random
 					          acc: r ];
-			          lua: state setglobal: 'command';
+			          lua_setglobal: state name: 'command';
 			          luaL_dostring: state chunk: self recSumLuaSource;
 			          luaL_dostring: state chunk: self commandsLuaSource;
 			          luaL_loadstring: state chunk: 'return recSum(commands)';
@@ -406,7 +406,7 @@ LibLuaTest >> testHeapBench [
 		self assert: c equals: 0.
 
 		self liblua
-			lua: state setglobal: 'H';
+			lua_setglobal: state name: 'H';
 			lua_getglobal: state name: 'heapq';
 			lua_getfield: state at: -1 name: 'heapify';
 			lua_getglobal: state name: 'H'.
@@ -430,7 +430,7 @@ LibLuaTest >> testHeapBench [
 		self assert: c equals: 0.
 
 		self liblua
-			lua: state setglobal: 'H';
+			lua_setglobal: state name: 'H';
 			lua_getglobal: state name: 'heapkt';
 			lua_getfield: state at: -1 name: 'heapify';
 			lua_getglobal: state name: 'H'.
@@ -626,7 +626,7 @@ LibLuaTest >> testLuaSeti [
 	list := self liblua withOpenedLibsStateDo: [ :state | 
 		        self liblua
 			        on: state push: array;
-			        lua: state setglobal: 'array';
+			        lua_setglobal: state name: 'array';
 			        luaL_loadstring: state
 			        chunk: 'return  table.concat(array, " ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
@@ -856,7 +856,7 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 
 			1 "number of results" ].
 
-		self liblua lua: state setglobal: 'mysin'.
+		self liblua lua_setglobal: state name: 'mysin'.
 
 		self liblua luaL_loadstring: state chunk: 'return mysin(3)'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.

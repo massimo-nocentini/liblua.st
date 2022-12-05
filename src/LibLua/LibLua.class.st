@@ -435,23 +435,6 @@ LibLua >> lua: L copy: fromidx to: toidx [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L create: narr table: nrec [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_createtable,
-	
-		void lua_createtable (lua_State *L, int narr, int nrec);
-	
-	Creates a new empty table and pushes it onto the stack. Parameter narr is a hint 
-	for how many elements the table will have as a sequence; parameter nrec is a hint 
-	for how many other elements the table will have. Lua may use these hints to preallocate 
-	memory for the new table. This preallocation may help performance when you know 
-	in advance how many elements the table will have. Otherwise you can use the function `#lua_newtable:`."
-
-	^ self ffiCall:
-		  #( void lua_createtable #( void * L , int narr , int nrec ) )
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L get: index i: i [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
@@ -584,18 +567,6 @@ LibLua >> lua: L push: fn cclosure: n [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L pushboolean: b [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
-	
-		void lua_pushboolean (lua_State *L, int b);
-	
-	Pushes a boolean value with value b onto the stack."
-
-	^ self ffiCall: #( void lua_pushboolean #( void * L , int b ) )
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L pushcfunction: fn [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcfunction,
@@ -607,30 +578,6 @@ LibLua >> lua: L pushcfunction: fn [
 	This function is equivalent to lua_pushcclosure with no upvalues."
 
 	^ self lua: L push: fn cclosure: 0
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L pushinteger: n [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
-	
-		void lua_pushinteger (lua_State *L, lua_Integer n);
-
-	Pushes an integer with value n onto the stack."
-
-	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L pushnumber: n [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
-	
-		void lua_pushnumber (lua_State *L, lua_Number n);
-		
-	Pushes a float with value n onto the stack.	"
-
-	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
 ]
 
 { #category : #'API - C' }
@@ -696,15 +643,6 @@ LibLua >> lua: L set: index i: i [
 	trigger a metamethod for the 'newindex' event (see §2.4)."
 
 	^ self ffiCall: #( void lua_seti #( void * L , int index , long i ) )
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L setglobal: name [
-
-	"void lua_setglobal (lua_State *L, const char *name)"
-
-	^ self ffiCall:
-		  #( void lua_setglobal #( void * L , const char * name ) )
 ]
 
 { #category : #'API - C' }
@@ -990,6 +928,23 @@ LibLua >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_createtable: L narr: narr nrec: nrec [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_createtable,
+	
+		void lua_createtable (lua_State *L, int narr, int nrec);
+	
+	Creates a new empty table and pushes it onto the stack. Parameter narr is a hint 
+	for how many elements the table will have as a sequence; parameter nrec is a hint 
+	for how many other elements the table will have. Lua may use these hints to preallocate 
+	memory for the new table. This preallocation may help performance when you know 
+	in advance how many elements the table will have. Otherwise you can use the function `#lua_newtable:`."
+
+	^ self ffiCall:
+		  #( void lua_createtable #( void * L , int narr , int nrec ) )
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_getfield: L at: index name: k [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
@@ -1038,12 +993,14 @@ LibLua >> lua_gettop: L [
 { #category : #'API - C' }
 LibLua >> lua_newtable: L [
 
-	"void lua_newtable (lua_State *L);
+	"From https://www.lua.org/manual/5.4/manual.html#lua_newtable,
 	
-Creates a new empty table and pushes it onto the stack. 
-It is equivalent to lua_createtable(L, 0, 0)."
+		void lua_newtable (lua_State *L);
+		
+	Creates a new empty table and pushes it onto the stack. 
+	It is equivalent to lua_createtable(L, 0, 0)."
 
-	^ self lua: L create: 0 table: 0
+	^ self lua_createtable: L narr: 0 nrec: 0
 ]
 
 { #category : #'API - C' }
@@ -1127,7 +1084,31 @@ LibLua >> lua_pop: L nelements: n [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua_pushlightuserdata: L pointer: p [
+LibLua >> lua_pushboolean: L value: b [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
+	
+		void lua_pushboolean (lua_State *L, int b);
+	
+	Pushes a boolean value with value b onto the stack."
+
+	^ self ffiCall: #( void lua_pushboolean #( void * L , int b ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_pushinteger: L value: n [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
+	
+		void lua_pushinteger (lua_State *L, lua_Integer n);
+
+	Pushes an integer with value n onto the stack."
+
+	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_pushlightuserdata: L externalAddress: p [
 
 	"void lua_pushlightuserdata (lua_State *L, void *p)"
 
@@ -1144,6 +1125,18 @@ LibLua >> lua_pushnil: L [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_pushnumber: L value: n [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
+	
+		void lua_pushnumber (lua_State *L, lua_Number n);
+		
+	Pushes a float with value n onto the stack.	"
+
+	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_register: state name: name cfunction: f [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
@@ -1156,7 +1149,7 @@ LibLua >> lua_register: state name: name cfunction: f [
 
 	^ self
 		  lua: state pushcfunction: f;
-		  lua: state setglobal: name
+		  lua_setglobal: state name: name
 ]
 
 { #category : #'API - C' }
@@ -1207,6 +1200,19 @@ LibLua >> lua_setfield: L at: idx name: k [
 
 	^ self ffiCall:
 		  #( void lua_setfield #( void * L , int idx , const char * k ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_setglobal: L name: name [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_setglobal,
+	
+		void lua_setglobal (lua_State *L, const char *name);
+
+	Pops a value from the stack and sets it as the new value of global name."
+
+	^ self ffiCall:
+		  #( void lua_setglobal #( void * L , const char * name ) )
 ]
 
 { #category : #'API - C' }
