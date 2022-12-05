@@ -962,37 +962,31 @@ LibLua >> lua_compare: L index: index1 anotherIndex: index2 operator: op [
 { #category : #'API - C' }
 LibLua >> lua_compare_eq: L index: index1 anotherIndex: index2 [
 
-	"#define LUA_OPEQ	0"
-
 	^ self
 		  lua_compare: L
 		  index: index1
 		  anotherIndex: index2
-		  operator: 0
+		  operator: self LUA_OPEQ
 ]
 
 { #category : #'API - C' }
 LibLua >> lua_compare_le: L index: index1 anotherIndex: index2 [
 
-	"#define LUA_OPLE	2"
-
 	^ self
 		  lua_compare: L
 		  index: index1
 		  anotherIndex: index2
-		  operator: 2
+		  operator: self LUA_OPLE
 ]
 
 { #category : #'API - C' }
 LibLua >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 
-	"#define LUA_OPLT	1"
-
 	^ self
 		  lua_compare: L
 		  index: index1
 		  anotherIndex: index2
-		  operator: 1
+		  operator: self LUA_OPLT
 ]
 
 { #category : #'API - C' }
