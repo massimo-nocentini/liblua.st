@@ -89,22 +89,22 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
 	name := self liblua lua: state get: -2 i: 1.
 	self assert: name equals: self liblua LUA_TSTRING.
-	self liblua lua: state set: -2 field: 'name'.
+	self liblua lua_setfield: state at: -2 name: 'name'.
 
 	s := random next.
 	aKey key: aKey key + s.
 
 	self liblua
 		on: state push: s;
-		lua: state set: -2 field: 'context'.
+		lua_setfield: state at: -2 name: 'context'.
 
 	self liblua
 		lua: state get: -2 i: 2;
-		lua: state set: -2 field: 'followups'.
+		lua_setfield: state at: -2 name: 'followups'.
 
 	self liblua
 		on: state push: 'noop';
-		lua: state set: -2 field: 'action'.
+		lua_setfield: state at: -2 name: 'action'.
 
 	^ 1 "number of results"
 ]
@@ -250,11 +250,11 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
-					           lua: state
-					           typename: (self liblua lua_type: state at: k).
+					           lua_typename: state
+					           type: (self liblua lua_type: state at: k).
 				valueType := self liblua
-					             lua: state
-					             typename: (self liblua lua_type: state at: v).
+					             lua_typename: state
+					             type: (self liblua lua_type: state at: v).
 				result add: keyType -> valueType ] ].
 
 	self
@@ -280,20 +280,20 @@ LibLuaTest >> testCopy [
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
-					           lua: state
-					           typename: (self liblua lua_type: state at: k).
+					           lua_typename: state
+					           type: (self liblua lua_type: state at: k).
 				valueType := self liblua
-					             lua: state
-					             typename: (self liblua lua_type: state at: v).
+					             lua_typename: state
+					             type: (self liblua lua_type: state at: v).
 				result add: keyType -> valueType ];
 			table: state at: -2 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
-					           lua: state
-					           typename: (self liblua lua_type: state at: k).
+					           lua_typename: state
+					           type: (self liblua lua_type: state at: k).
 				valueType := self liblua
-					             lua: state
-					             typename: (self liblua lua_type: state at: v).
+					             lua_typename: state
+					             type: (self liblua lua_type: state at: v).
 				original add: keyType -> valueType ] ].
 
 	self
@@ -339,6 +339,45 @@ LibLuaTest >> testDictionary [
 		at: Object new put: Float goldenRatio.
 
 	self assert: (d at: d) identicalTo: d
+]
+
+{ #category : #tests }
+LibLuaTest >> testGetGlobal_ENV [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| tbl |
+		self liblua assert: [ :ll | 
+			ll
+				luaL_dostring: state
+				chunk:
+				'myENV = _ENV	-- workaround to have the global environment.' ].
+
+		"to cleanup the workaround."
+		self liblua
+			lua_getglobal: state name: 'myENV';
+			lua_pushnil: state;
+			lua_setfield: state at: -2 name: 'myENV'.
+
+		tbl := self liblua on: state at: -1.
+
+		self assert: (tbl at: #_VERSION) equals: 'Lua 5.4' ]
+]
+
+{ #category : #tests }
+LibLuaTest >> testGetInfoPrint [
+
+	self liblua withOpenedLibsStateDo: [ :state | 
+		| tbl |
+		self liblua assert: [ :ll | 
+			ll
+				luaL_dostring: state
+				chunk: 'print_info = debug.getinfo (debug.getinfo)' ].
+
+		tbl := self liblua
+			       lua_getglobal: state name: 'print_info';
+			       on: state at: -1.
+
+		self assert: (tbl at: #what) equals: 'C' ]
 ]
 
 { #category : #tests }

@@ -395,7 +395,7 @@ LibLua >> _on: state at: i cache: cache [
 				  array ]
 			  ifFalse: [ dict ] ].
 
-	self shouldBeImplemented
+	^ self lua_typename: state at: i
 ]
 
 { #category : #API }
@@ -683,15 +683,6 @@ LibLua >> lua: L requireGlobal: modname f: openf [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L set: idx field: k [
-
-	"void lua_setfield (lua_State *L, int idx, const char *k)"
-
-	^ self ffiCall:
-		  #( void lua_setfield #( void * L , int idx , const char * k ) )
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L set: index i: i [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
@@ -779,19 +770,6 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 LibLua >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L typename: tp [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
-	
-		const char *lua_typename (lua_State *L, int tp);
-	
-	Returns the name of the type encoded by the value tp, which must 
-	be one the values returned by lua_type."
-
-	^ self ffiCall: #( const char * lua_typename #( void * L , int tp ) )
 ]
 
 { #category : #'API - auxiliary' }
@@ -1221,6 +1199,23 @@ LibLua >> lua_rotate: L at: idx positions: n [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_setfield: L at: idx name: k [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
+		
+		void lua_setfield (lua_State *L, int index, const char *k);
+		
+	Does the equivalent to t[k] = v, where t is the value at the given 
+	index and v is the value on the top of the stack.
+
+	This function pops the value from the stack. As in Lua, this function 
+	may trigger a metamethod for the ""newindex"" event (see §2.4, 	https://www.lua.org/manual/5.4/manual.html#2.4)."
+
+	^ self ffiCall:
+		  #( void lua_setfield #( void * L , int idx , const char * k ) )
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_settop: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
@@ -1307,6 +1302,25 @@ LibLua >> lua_type: L at: index [
 	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
 
 	^ self ffiCall: #( int lua_type #( void * L , int index ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_typename: L at: i [
+
+	^ self lua_typename: L type: (self lua_type: L at: i)
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_typename: L type: tp [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
+	
+		const char *lua_typename (lua_State *L, int tp);
+	
+	Returns the name of the type encoded by the value tp, which must 
+	be one the values returned by lua_type."
+
+	^ self ffiCall: #( const char * lua_typename #( void * L , int tp ) )
 ]
 
 { #category : #'library names' }
