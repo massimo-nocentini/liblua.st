@@ -378,11 +378,7 @@ LibLua >> _on: state at: i cache: cache [
 			key := self on: state at: k cache: cache.
 			value := self on: state at: v cache: cache.
 
-			dict
-				at: (key isString
-						 ifTrue: [ key asSymbol ]
-						 ifFalse: [ key ])
-				put: value.
+			dict at: key put: value.
 			keysAreIntegers := keysAreIntegers and: [ 
 				                   key isInteger and: [ 
 					                   key between: 1 and: length ] ] ].
