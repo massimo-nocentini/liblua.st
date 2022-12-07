@@ -16,28 +16,28 @@ ExternalAddress class >> allocateInt32Size: n [
 ExternalAddress >> float64WeightedAt: oneBasedOffset [
 
 	^ self float64AtOffset:
-		  oneBasedOffset - 1 * ExternalType double byteSize
+		  oneBasedOffset - 1 << 3"ExternalType double byteSize"
 ]
 
 { #category : #'*LibLua' }
 ExternalAddress >> float64WeightedAt: oneBasedOffset put: value [
 
 	^ self
-		  float64AtOffset: oneBasedOffset - 1 * ExternalType double byteSize
+		  float64AtOffset: oneBasedOffset - 1 << 3"ExternalType double byteSize"
 		  put: value
 ]
 
 { #category : #'*LibLua' }
 ExternalAddress >> int32WeightedAt: oneBasedOffset [
 
-	^ self int32AtOffset: oneBasedOffset - 1 * ExternalType long byteSize
+	^ self int32AtOffset: oneBasedOffset - 1 << 2"* ExternalType long byteSize"
 ]
 
 { #category : #'*LibLua' }
 ExternalAddress >> int32WeightedAt: oneBasedOffset put: value [
 
 	^ self
-		  int32AtOffset: oneBasedOffset - 1 * ExternalType long byteSize
+		  int32AtOffset: oneBasedOffset - 1 << 2"* ExternalType long byteSize"
 		  put: value
 ]
 
