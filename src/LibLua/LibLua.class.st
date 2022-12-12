@@ -958,6 +958,18 @@ LibLua >> lua_getfield: L at: index name: k [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_getfield: L at: index name: k remove: shouldRemove [
+
+	| type tblindex |
+	tblindex := self lua_absindex: L index: index.
+	type := self lua_getfield: L at: index name: k.
+
+	shouldRemove ifTrue: [ self lua_remove: L at: tblindex ].
+
+	^ type
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_getglobal: L name: name [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
