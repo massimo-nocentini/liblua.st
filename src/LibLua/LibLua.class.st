@@ -1012,6 +1012,18 @@ LibLua >> lua_newtable: L [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_pcall: L nargs: nargs lets: names [
+
+	| flag |
+	flag := self lua_pcall: L nargs: nargs nresults: names size.
+
+	flag = self LUA_OK ifTrue: [ 
+		names reverseDo: [ :var | self lua_setglobal: L name: var asString ] ].
+
+	^ flag
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_pcall: L nargs: nargs nresults: nresults [
 
 	^ self
@@ -1057,6 +1069,14 @@ LibLua >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
 		  msgh: errfunc
 		  ctx: 0
 		  k: ExternalAddress null
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_pcall: L valueWithArguments: args lets: names [
+
+	args do: [ :arg | self on: L push: arg ].
+
+	^ self lua_pcall: L nargs: args size lets: names
 ]
 
 { #category : #'API - C' }
