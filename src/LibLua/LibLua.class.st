@@ -586,46 +586,6 @@ LibLua >> lua: L pushstring: s [
 ]
 
 { #category : #'API - C' }
-LibLua >> lua: L require: modname f: openf [
-
-	^ self
-		  lua: L
-		  require: modname
-		  f: openf
-		  global: 0
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L require: modname f: openf global: glb [
-
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
-	
-		void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb);
-	
-	If package.loaded[modname] is not true, calls the function openf with the 
-	string modname as an argument and sets the call result to package.loaded[modname], 
-	as if that function has been called through require.
-
-	If glb is true, also stores the module into the global modname.
-
-	Leaves a copy of the module on the stack."
-
-	^ self ffiCall:
-		  #( void luaL_requiref #( void * L , const char * modname , void
-		        * openf , int glb ) )
-]
-
-{ #category : #'API - C' }
-LibLua >> lua: L requireGlobal: modname f: openf [
-
-	^ self
-		  lua: L
-		  require: modname
-		  f: openf
-		  global: 1
-]
-
-{ #category : #'API - C' }
 LibLua >> lua: L set: index i: i [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
@@ -852,6 +812,67 @@ LibLua >> luaL_openlibs: L [
 	^ self ffiCall: #( void luaL_openlibs #( void * L ) )
 ]
 
+{ #category : #'API - auxiliary' }
+LibLua >> luaL_requiref: L name: modname [
+
+	^ self luaL_requiref: L name: modname let: modname
+]
+
+{ #category : #'API - auxiliary' }
+LibLua >> luaL_requiref: L name: modname function: openf global: glb [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
+	
+		void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb);
+	
+	If package.loaded[modname] is not true, calls the function openf with the 
+	string modname as an argument and sets the call result to package.loaded[modname], 
+	as if that function has been called through require.
+
+	If glb is true, also stores the module into the global modname.
+
+	Leaves a copy of the module on the stack."
+
+	^ self ffiCall:
+		  #( void luaL_requiref #( void * L , const char * modname , void
+		        * openf , int glb ) )
+]
+
+{ #category : #'API - auxiliary' }
+LibLua >> luaL_requiref: L name: modname let: varname [
+
+	^ self
+		  luaL_requiref: L
+		  name: modname
+		  let: varname
+		  onErrorDo: [ :S | 
+			  | errorMsg |
+			  errorMsg := self on: S at: -1.
+			  self error: errorMsg ]
+]
+
+{ #category : #'API - auxiliary' }
+LibLua >> luaL_requiref: L name: modname let: varname onErrorDo: aBlock [
+
+	| luaCode |
+	self
+		luaL_requiref: L
+		name: modname
+		function: (self fficallbackOnBlock: [ :S | 
+				 luaCode := self
+					            on: S push: #require;
+					            "get the module name"lua_pushvalue: S at: -2;
+					            lua_pcall: S nargs: 1 nresults: 1.
+				 1 ])
+		global: false asBit.
+
+	luaCode == self LUA_OK
+		ifTrue: [ self lua_setglobal: L name: varname ]
+		ifFalse: [ aBlock cull: L ].
+
+	^ nil
+]
+
 { #category : #'API - C' }
 LibLua >> lua_absindex: L index: idx [
 
@@ -941,6 +962,20 @@ LibLua >> lua_createtable: L narr: narr nrec: nrec [
 ]
 
 { #category : #'API - C' }
+LibLua >> lua_error: L [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_error,
+	
+		int lua_error (lua_State *L);
+
+	Raises a Lua error, using the value on the top of the stack as 
+	the error object. This function does a long jump, and therefore 
+	never returns (see luaL_error)."
+
+	^ self ffiCall: #( int lua_error #( void * L ) )
+]
+
+{ #category : #'API - C' }
 LibLua >> lua_getfield: L at: index name: k [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
@@ -996,6 +1031,18 @@ LibLua >> lua_gettop: L [
 	in particular, 0 means an empty stack."
 
 	^ self ffiCall: #( int lua_gettop #( void * L ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_isnil: L at: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_isnil,
+	
+		int lua_isnil (lua_State *L, int index);
+
+	Returns 1 if the value at the given index is nil, and 0 otherwise."
+
+	^ self ffiCall: #( int lua_isnil #( void * L , int index ) )
 ]
 
 { #category : #'API - C' }
@@ -1162,6 +1209,18 @@ LibLua >> lua_pushnumber: L value: n [
 	Pushes a float with value n onto the stack.	"
 
 	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
+]
+
+{ #category : #'API - C' }
+LibLua >> lua_pushvalue: L at: index [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
+	
+		void lua_pushvalue (lua_State *L, int index);
+	
+	Pushes a copy of the element at the given index onto the stack."
+
+	^ self ffiCall: #( void lua_pushvalue #( void * L , int index ) )
 ]
 
 { #category : #'API - C' }
