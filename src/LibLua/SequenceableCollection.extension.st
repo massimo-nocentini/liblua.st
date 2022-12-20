@@ -3,13 +3,13 @@ Extension { #name : #SequenceableCollection }
 { #category : #'*LibLua' }
 SequenceableCollection >> asFloat64ExternalAddress [
 
-	^ Float64WeightedExternalAddress fromSequenceableCollection: self
+	^ Float64TypedExternalAddress fromSequenceableCollection: self
 ]
 
 { #category : #'*LibLua' }
 SequenceableCollection >> asInt32ExternalAddress [
 
-	^ Int32WeightedExternalAddress fromSequenceableCollection: self
+	^ Int32TypedExternalAddress fromSequenceableCollection: self
 ]
 
 { #category : #'*LibLua' }

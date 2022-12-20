@@ -1,11 +1,14 @@
+"
+I denote a C pointer to `double` memory locations.
+"
 Class {
-	#name : #Float64WeightedExternalAddress,
-	#superclass : #WeightedExternalAddress,
+	#name : #Float64TypedExternalAddress,
+	#superclass : #TypedExternalAddress,
 	#category : #LibLua
 }
 
 { #category : #'instance creation' }
-Float64WeightedExternalAddress class >> allocate: size [
+Float64TypedExternalAddress class >> allocate: size [
 
 	^ (super allocate: size * Float64ByteSize)
 		  size: size;
@@ -13,14 +16,14 @@ Float64WeightedExternalAddress class >> allocate: size [
 ]
 
 { #category : #accessing }
-Float64WeightedExternalAddress >> at: oneBasedOffset [
+Float64TypedExternalAddress >> at: oneBasedOffset [
 
 	^ externalAddress float64AtOffset:
 		  oneBasedOffset - 1 * Float64ByteSize
 ]
 
 { #category : #accessing }
-Float64WeightedExternalAddress >> at: oneBasedOffset put: aFloat64 [
+Float64TypedExternalAddress >> at: oneBasedOffset put: aFloat64 [
 
 	^ externalAddress
 		  float64AtOffset: oneBasedOffset - 1 * Float64ByteSize

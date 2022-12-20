@@ -1,11 +1,14 @@
+"
+I denote a C pointer to `int` memory locations.
+"
 Class {
-	#name : #Int32WeightedExternalAddress,
-	#superclass : #WeightedExternalAddress,
+	#name : #Int32TypedExternalAddress,
+	#superclass : #TypedExternalAddress,
 	#category : #LibLua
 }
 
 { #category : #'instance creation' }
-Int32WeightedExternalAddress class >> allocate: size [
+Int32TypedExternalAddress class >> allocate: size [
 
 	^ (super allocate: size * Int32ByteSize)
 		  size: size;
@@ -13,13 +16,13 @@ Int32WeightedExternalAddress class >> allocate: size [
 ]
 
 { #category : #accessing }
-Int32WeightedExternalAddress >> at: oneBasedOffset [
+Int32TypedExternalAddress >> at: oneBasedOffset [
 
 	^ externalAddress int32AtOffset: oneBasedOffset - 1 * Int32ByteSize
 ]
 
 { #category : #accessing }
-Int32WeightedExternalAddress >> at: oneBasedOffset put: anInt32 [
+Int32TypedExternalAddress >> at: oneBasedOffset put: anInt32 [
 
 	^ externalAddress
 		  int32AtOffset: oneBasedOffset - 1 * Int32ByteSize

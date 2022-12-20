@@ -1,5 +1,8 @@
+"
+I am an ""abstract"" and ""typed"" `ExternalAddress`.
+"
 Class {
-	#name : #WeightedExternalAddress,
+	#name : #TypedExternalAddress,
 	#superclass : #Object,
 	#instVars : [
 		'externalAddress',
@@ -13,7 +16,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-WeightedExternalAddress class >> allocate: size [
+TypedExternalAddress class >> allocate: size [
 
 	^ self new
 		  externalAddress: (ExternalAddress allocate: size);
@@ -21,7 +24,7 @@ WeightedExternalAddress class >> allocate: size [
 ]
 
 { #category : #'instance creation' }
-WeightedExternalAddress class >> fromSequenceableCollection: anArray [
+TypedExternalAddress class >> fromSequenceableCollection: anArray [
 
 	| addr |
 	addr := self allocate: anArray.
@@ -32,38 +35,38 @@ WeightedExternalAddress class >> fromSequenceableCollection: anArray [
 ]
 
 { #category : #initialization }
-WeightedExternalAddress class >> initialize [
+TypedExternalAddress class >> initialize [
 
 	Int32ByteSize := ExternalType long byteSize.
 	Float64ByteSize := ExternalType double byteSize
 ]
 
 { #category : #accessing }
-WeightedExternalAddress >> at: index [
+TypedExternalAddress >> at: index [
 
 	self subclassResponsibility
 ]
 
 { #category : #accessing }
-WeightedExternalAddress >> at: index put: value [
+TypedExternalAddress >> at: index put: value [
 
 	self subclassResponsibility
 ]
 
 { #category : #accessing }
-WeightedExternalAddress >> externalAddress: anObject [
+TypedExternalAddress >> externalAddress: anObject [
 
 	externalAddress := anObject
 ]
 
 { #category : #'initialize-release' }
-WeightedExternalAddress >> free [
+TypedExternalAddress >> free [
 
 	^ externalAddress free
 ]
 
 { #category : #dispatched }
-WeightedExternalAddress >> intoSequenceableCollection: anArray [
+TypedExternalAddress >> intoSequenceableCollection: anArray [
 
 	self assert: size <= anArray size.
 
@@ -71,13 +74,13 @@ WeightedExternalAddress >> intoSequenceableCollection: anArray [
 ]
 
 { #category : #dispatched }
-WeightedExternalAddress >> pushOnLua: state liblua: liblua [
+TypedExternalAddress >> pushOnLua: state liblua: liblua [
 
 	^ externalAddress pushOnLua: state liblua: liblua
 ]
 
 { #category : #accessing }
-WeightedExternalAddress >> size: anObject [
+TypedExternalAddress >> size: anObject [
 
 	size := anObject
 ]
