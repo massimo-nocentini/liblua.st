@@ -176,6 +176,43 @@ LibLuaTest >> testCFunctionPCallCoroutine [
 ]
 
 { #category : #tests }
+LibLuaTest >> testCairoPango [
+
+	| ll |
+	ll := LibLua uniqueInstance.
+
+	ll withOpenedLibsStateDo: [ :L |
+		| canvas code |
+		ll luaL_requiref: L name: 'cairo'.
+
+		ll
+			on: L push: #cairo;
+			lua_getfield: L at: -1 name: 'write'.
+
+		canvas := RSCanvas new yourself.
+		"   add: (RSBox new
+					           extent: 20 @ 30;
+					           yourself);"
+
+
+		canvas createMorph surface drawDuring: [ :cr |
+			ll
+				on: L push: cr surface;
+				on: L push: cr;
+				on: L push: (String loremIpsum: 400).
+
+			code := ll lua_pcall: L nargs: 3 nresults: 0.
+
+			code = ll LUA_OK ifFalse: [ (ll on: L at: -1) inspect ] ].
+
+		canvas
+			zoomToFit;
+			addInteraction: RSCanvasController new;
+			exportToPNG;
+			open ]
+]
+
+{ #category : #tests }
 LibLuaTest >> testCommandsUsingLuaAPI [
 
 	| result random r |
