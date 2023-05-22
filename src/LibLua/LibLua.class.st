@@ -406,7 +406,7 @@ LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 { #category : #API }
 LibLua >> assert: aBlock [
 
-	^ super assert: [ (aBlock cull: self) = self LUA_OK ]
+	^ super assert: (aBlock cull: self) = self LUA_OK
 ]
 
 { #category : #API }
@@ -1427,6 +1427,13 @@ LibLua >> macLibraryName [
 	"
 
 	^ 'liblua5.4.4.dylib'
+]
+
+{ #category : #API }
+LibLua >> on: state assertLUAOK: aBlock [
+
+	(aBlock cull: self) = self LUA_OK ifFalse: [
+		self assert: false description: (self on: state at: -1) ]
 ]
 
 { #category : #API }
