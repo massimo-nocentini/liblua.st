@@ -1520,7 +1520,6 @@ LibLua >> table: L at: idx do: aBlock [
 
 { #category : #'library names' }
 LibLua >> unix64LibraryName [
-
 	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-for-linux-as-a-shared-library/
 	 change the Makefile with
 	
@@ -1535,7 +1534,8 @@ $(LUA_A): $(BASE_O)
 	
 	"
 
-	^ 'liblua5.4.4.so'
+	^ FFIUnix64LibraryFinder findAnyLibrary:
+		  { 'liblua5.4.6.so'. 'liblua5.4.4.so' }
 ]
 
 { #category : #'library names' }
