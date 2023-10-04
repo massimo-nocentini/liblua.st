@@ -652,11 +652,11 @@ LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 
 	| pointer value |
-	pointer := 0.0 pointer.
+	pointer := ByteArray new: 4.
 
 	value := self lua_tonumberx: state at: idx isnumpointer: pointer.
 
-	^ (pointer boolean8AtOffset: 0)
+	^ (pointer int32AtOffset: 0) = 1
 		  ifTrue: [ value ]
 		  ifFalse: aBlock
 ]
