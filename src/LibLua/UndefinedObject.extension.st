@@ -1,6 +1,6 @@
-Extension { #name : #UndefinedObject }
+Extension { #name : 'UndefinedObject' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 UndefinedObject >> pushOnLua: state liblua: liblua [
 
 	^ liblua lua_pushnil: state

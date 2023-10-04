@@ -1,6 +1,6 @@
-Extension { #name : #MessageSend }
+Extension { #name : 'MessageSend' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 MessageSend >> pushOnLua: state liblua: liblua [
 
 	self receiver pushOnLua: state liblua: liblua.

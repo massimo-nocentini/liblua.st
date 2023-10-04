@@ -1,6 +1,6 @@
-Extension { #name : #Object }
+Extension { #name : 'Object' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 Object >> pushOnLua: state liblua: liblua [
 
 	self subclassResponsibility

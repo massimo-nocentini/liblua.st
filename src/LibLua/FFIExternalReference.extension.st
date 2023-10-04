@@ -1,6 +1,6 @@
-Extension { #name : #FFIExternalReference }
+Extension { #name : 'FFIExternalReference' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 FFIExternalReference >> pushOnLua: state liblua: liblua [
 
 	^ liblua on: state push: handle

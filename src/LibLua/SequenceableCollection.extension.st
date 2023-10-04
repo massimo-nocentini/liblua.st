@@ -1,18 +1,18 @@
-Extension { #name : #SequenceableCollection }
+Extension { #name : 'SequenceableCollection' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 SequenceableCollection >> asFloat64ExternalAddress [
 
 	^ Float64TypedExternalAddress fromSequenceableCollection: self
 ]
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 SequenceableCollection >> asInt32ExternalAddress [
 
 	^ Int32TypedExternalAddress fromSequenceableCollection: self
 ]
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 SequenceableCollection >> pushOnLua: state liblua: liblua [
 
 	liblua lua_newtable: state.
@@ -24,7 +24,7 @@ SequenceableCollection >> pushOnLua: state liblua: liblua [
 	^ 1 "number of results"
 ]
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 SequenceableCollection >> withExternalAddressClass: aClass do: aBlock [
 
 	| ea |

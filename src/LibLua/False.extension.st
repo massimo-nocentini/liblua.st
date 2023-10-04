@@ -1,6 +1,6 @@
-Extension { #name : #False }
+Extension { #name : 'False' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 False >> pushOnLua: state liblua: liblua [
 
 	^ liblua lua_pushboolean: state value: 0

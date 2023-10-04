@@ -1,6 +1,6 @@
-Extension { #name : #BlockClosure }
+Extension { #name : 'BlockClosure' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 BlockClosure >> pushOnLua: state liblua: liblua [
 
 	| cb |

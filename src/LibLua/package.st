@@ -1,1 +1,1 @@
-Package { #name : #LibLua }
+Package { #name : 'LibLua' }

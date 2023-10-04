@@ -2,162 +2,163 @@
 I bind functions in the Lua C API as described in https://www.lua.org/manual/5.4/.
 "
 Class {
-	#name : #LibLua,
-	#superclass : #FFILibrary,
-	#category : #LibLua
+	#name : 'LibLua',
+	#superclass : 'FFILibrary',
+	#category : 'LibLua',
+	#package : 'LibLua'
 }
 
-{ #category : #'constants - thread status' }
+{ #category : 'constants - thread status' }
 LibLua >> LUA_ERRERR [
 
 	^ 5
 ]
 
-{ #category : #'constants - thread status' }
+{ #category : 'constants - thread status' }
 LibLua >> LUA_ERRMEM [
 
 	^ 4
 ]
 
-{ #category : #'constants - thread status' }
+{ #category : 'constants - thread status' }
 LibLua >> LUA_ERRRUN [
 
 	^ 2
 ]
 
-{ #category : #'constants - thread status' }
+{ #category : 'constants - thread status' }
 LibLua >> LUA_ERRSYNTAX [
 
 	^ 3
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCCOLLECT [
 
 	^ 2
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCCOUNT [
 
 	^ 3
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCCOUNTB [
 
 	^ 4
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCGEN [
 
 	^ 10
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCINC [
 
 	^ 11
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCISRUNNING [
 
 	^ 9
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCRESTART [
 
 	^ 1
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCSETPAUSE [
 
 	^ 6
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCSETSTEPMUL [
 
 	^ 7
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCSTEP [
 
 	^ 5
 ]
 
-{ #category : #'constants - gc' }
+{ #category : 'constants - gc' }
 LibLua >> LUA_GCSTOP [
 
 	^ 0
 ]
 
-{ #category : #'constants - event codes' }
+{ #category : 'constants - event codes' }
 LibLua >> LUA_HOOKCALL [
 
 	^ 0
 ]
 
-{ #category : #'constants - event codes' }
+{ #category : 'constants - event codes' }
 LibLua >> LUA_HOOKCOUNT [
 
 	^ 3
 ]
 
-{ #category : #'constants - event codes' }
+{ #category : 'constants - event codes' }
 LibLua >> LUA_HOOKLINE [
 
 	^ 2
 ]
 
-{ #category : #'constants - event codes' }
+{ #category : 'constants - event codes' }
 LibLua >> LUA_HOOKRET [
 
 	^ 1
 ]
 
-{ #category : #'constants - event codes' }
+{ #category : 'constants - event codes' }
 LibLua >> LUA_HOOKTAILCALL [
 
 	^ 4
 ]
 
-{ #category : #'constants - event masks' }
+{ #category : 'constants - event masks' }
 LibLua >> LUA_MASKCALL [
 
 	^ 1 << self LUA_HOOKCALL
 ]
 
-{ #category : #'constants - event masks' }
+{ #category : 'constants - event masks' }
 LibLua >> LUA_MASKCOUNT [
 
 	^ 1 << self LUA_HOOKCOUNT
 ]
 
-{ #category : #'constants - event masks' }
+{ #category : 'constants - event masks' }
 LibLua >> LUA_MASKLINE [
 
 	^ 1 << self LUA_HOOKLINE
 ]
 
-{ #category : #'constants - event masks' }
+{ #category : 'constants - event masks' }
 LibLua >> LUA_MASKRET [
 
 	^ 1 << self LUA_HOOKRET
 ]
 
-{ #category : #'constants - generic' }
+{ #category : 'constants - generic' }
 LibLua >> LUA_MINSTACK [
 
 	^ 20
 ]
 
-{ #category : #'constants - generic' }
+{ #category : 'constants - generic' }
 LibLua >> LUA_MULTRET [
 
 	"option for multiple returns in 'lua_pcall' and 'lua_call'"
@@ -165,187 +166,187 @@ LibLua >> LUA_MULTRET [
 	^ -1
 ]
 
-{ #category : #'constants - generic' }
+{ #category : 'constants - generic' }
 LibLua >> LUA_NUMTYPES [
 
 	^ 9
 ]
 
-{ #category : #'constants - thread status' }
+{ #category : 'constants - thread status' }
 LibLua >> LUA_OK [
 
 	^ 0
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPADD [
 
 	^ 0
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPBAND [
 
 	^ 7
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPBNOT [
 
 	^ 13
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPBOR [
 
 	^ 8
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPBXOR [
 
 	^ 9
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPDIV [
 
 	^ 5
 ]
 
-{ #category : #'constants - comparison' }
+{ #category : 'constants - comparison' }
 LibLua >> LUA_OPEQ [
 
 	^ 0
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPIDIV [
 
 	^ 6
 ]
 
-{ #category : #'constants - comparison' }
+{ #category : 'constants - comparison' }
 LibLua >> LUA_OPLE [
 
 	^ 2
 ]
 
-{ #category : #'constants - comparison' }
+{ #category : 'constants - comparison' }
 LibLua >> LUA_OPLT [
 
 	^ 1
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPMOD [
 
 	^ 3
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPMUL [
 
 	^ 2
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPPOW [
 
 	^ 4
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPSHL [
 
 	^ 10
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPSHR [
 
 	^ 11
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPSUB [
 
 	^ 1
 ]
 
-{ #category : #'constants - arith functions' }
+{ #category : 'constants - arith functions' }
 LibLua >> LUA_OPUNM [
 
 	^ 12
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TBOOLEAN [
 
 	^ 1
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TFUNCTION [
 
 	^ 6
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TLIGHTUSERDATA [
 
 	^ 2
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TNIL [
 
 	^ 0
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TNONE [
 
 	^ -1
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TNUMBER [
 
 	^ 3
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TSTRING [
 
 	^ 4
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TTABLE [
 
 	^ 5
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TTHREAD [
 
 	^ 8
 ]
 
-{ #category : #'constants - types' }
+{ #category : 'constants - types' }
 LibLua >> LUA_TUSERDATA [
 
 	^ 7
 ]
 
-{ #category : #'constants - thread status' }
+{ #category : 'constants - thread status' }
 LibLua >> LUA_YIELD [
 
 	^ 1
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> _on: state at: i cache: cache [
 
 	| typeid |
@@ -394,7 +395,7 @@ LibLua >> _on: state at: i cache: cache [
 	^ self lua_typename: state at: i
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 
 	^ self
@@ -403,20 +404,20 @@ LibLua >> appendOnLuaRepositoryOnPackagePathOf: state [
 		  'package.path = package.path .. ";/usr/local/share/lua/5.4/?.lua"'
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> assert: aBlock [
 
 	^ super assert: (aBlock cull: self) = self LUA_OK
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> fficallbackOnBlock: aBlock [
 
 	^ (FFICallback signature: #( int #( const void * a ) ) block: aBlock)
 		  getHandle
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L copy: fromidx to: toidx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
@@ -430,7 +431,7 @@ LibLua >> lua: L copy: fromidx to: toidx [
 		  #( void lua_copy #( void * L , int fromidx , int toidx ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L get: index i: i [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
@@ -446,7 +447,7 @@ LibLua >> lua: L get: index i: i [
 	^ self ffiCall: #( int lua_geti #( void * L , int index , long i ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L gettable: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_gettable,
@@ -464,7 +465,7 @@ LibLua >> lua: L gettable: index [
 	^ self ffiCall: #( int lua_gettable #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L isinteger: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_isinteger,
@@ -477,7 +478,7 @@ LibLua >> lua: L isinteger: index [
 	^ self ffiCall: #( int lua_isinteger #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L len: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_len,
@@ -491,7 +492,7 @@ LibLua >> lua: L len: index [
 	^ self ffiCall: #( void lua_len #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L next: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_next,
@@ -525,7 +526,7 @@ LibLua >> lua: L next: idx [
 	^ self ffiCall: #( int lua_next #( void * L , int idx ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L push: fn cclosure: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcclosure,
@@ -562,7 +563,7 @@ LibLua >> lua: L push: fn cclosure: n [
 		  #( void lua_pushcclosure #( void * L , void * fn , int n ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L pushcfunction: fn [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcfunction,
@@ -576,7 +577,7 @@ LibLua >> lua: L pushcfunction: fn [
 	^ self lua: L push: fn cclosure: 0
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L pushstring: s [
 
 	"const char *lua_pushstring (lua_State *L, const char *s)"
@@ -585,7 +586,7 @@ LibLua >> lua: L pushstring: s [
 		  #( const char * lua_pushstring #( void * L , const char * s ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L set: index i: i [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
@@ -601,7 +602,7 @@ LibLua >> lua: L set: index i: i [
 	^ self ffiCall: #( void lua_seti #( void * L , int index , long i ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L to: idx integerx: isnum [
 
 	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
@@ -610,7 +611,7 @@ LibLua >> lua: L to: idx integerx: isnum [
 		  #( long lua_tointegerx #( void * L , int idx , void * isnum ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L to: idx lstring: len [
 
 	"const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);"
@@ -619,7 +620,7 @@ LibLua >> lua: L to: idx lstring: len [
 		  #( const char * lua_tolstring #( void * L , int idx , void * len ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L toboolean: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_toboolean,
@@ -634,7 +635,7 @@ LibLua >> lua: L toboolean: idx [
 	^ self ffiCall: #( int lua_toboolean #( void * L , int idx ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 
 	| pointer value |
@@ -647,7 +648,7 @@ LibLua >> lua: state tointegerx: idx ifNotInteger: aBlock [
 		  ifFalse: aBlock
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 
 	| pointer value |
@@ -660,13 +661,13 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 		  ifFalse: aBlock
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL: L check: arg lstring: l [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_checklstring,
@@ -684,7 +685,7 @@ LibLua >> luaL: L check: arg lstring: l [
 		        * l ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL: L check: arg type: t [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_checktype,
@@ -698,7 +699,7 @@ LibLua >> luaL: L check: arg type: t [
 		  #( void luaL_checktype #( void * L , int arg , int t ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL: L checknumber: arg [
 
 	"lua_Number luaL_checknumber (lua_State *L, int arg)"
@@ -706,7 +707,7 @@ LibLua >> luaL: L checknumber: arg [
 	^ self ffiCall: #( double luaL_checknumber #( void * L , int arg ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL: L checkstring: arg [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_checkstring,
@@ -720,7 +721,7 @@ LibLua >> luaL: L checkstring: arg [
 	^ self luaL: L check: arg lstring: ExternalAddress null
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL: L loadfile: filename [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfile,
@@ -732,7 +733,7 @@ LibLua >> luaL: L loadfile: filename [
 	^ self luaL: L loadfile: filename x: ExternalAddress null
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL: L loadfile: filename x: mode [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfilex,
@@ -754,7 +755,7 @@ LibLua >> luaL: L loadfile: filename x: mode [
 		        char * mode ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_dostring: L chunk: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
@@ -780,7 +781,7 @@ LibLua >> luaL_dostring: L chunk: s [
 		  ifFalse: [ status ]
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_loadstring: L chunk: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadstring,
@@ -798,13 +799,13 @@ LibLua >> luaL_loadstring: L chunk: s [
 		  #( int luaL_loadstring #( void * L , const char * s ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_newstate [
 
 	^ self ffiCall: #( void * luaL_newstate #( void ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_openlibs: L [
 
 	"void (luaL_openlibs) (lua_State *L);"
@@ -812,13 +813,13 @@ LibLua >> luaL_openlibs: L [
 	^ self ffiCall: #( void luaL_openlibs #( void * L ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_requiref: L name: modname [
 
 	^ self luaL_requiref: L name: modname let: modname
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_requiref: L name: modname function: openf global: glb [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
@@ -838,7 +839,7 @@ LibLua >> luaL_requiref: L name: modname function: openf global: glb [
 		        * openf , int glb ) )
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_requiref: L name: modname let: varname [
 
 	^ self
@@ -851,7 +852,7 @@ LibLua >> luaL_requiref: L name: modname let: varname [
 			  self error: errorMsg ]
 ]
 
-{ #category : #'API - auxiliary' }
+{ #category : 'API - auxiliary' }
 LibLua >> luaL_requiref: L name: modname let: varname onErrorDo: aBlock [
 
 	| luaCode |
@@ -873,7 +874,7 @@ LibLua >> luaL_requiref: L name: modname let: varname onErrorDo: aBlock [
 	^ nil
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_absindex: L index: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_absindex,
@@ -886,13 +887,13 @@ LibLua >> lua_absindex: L index: idx [
 	^ self ffiCall: #( int lua_absindex #( void * L , int idx ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_close: L [
 
 	^ self ffiCall: #( void lua_close #( void * L ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_compare: L index: index1 anotherIndex: index2 operator: op [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
@@ -914,7 +915,7 @@ LibLua >> lua_compare: L index: index1 anotherIndex: index2 operator: op [
 		  #( int lua_compare #( void * L , int index1 , int index2 , int op ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_compare_eq: L index: index1 anotherIndex: index2 [
 
 	^ self
@@ -924,7 +925,7 @@ LibLua >> lua_compare_eq: L index: index1 anotherIndex: index2 [
 		  operator: self LUA_OPEQ
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_compare_le: L index: index1 anotherIndex: index2 [
 
 	^ self
@@ -934,7 +935,7 @@ LibLua >> lua_compare_le: L index: index1 anotherIndex: index2 [
 		  operator: self LUA_OPLE
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 
 	^ self
@@ -944,7 +945,7 @@ LibLua >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 		  operator: self LUA_OPLT
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_createtable: L narr: narr nrec: nrec [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_createtable,
@@ -961,7 +962,7 @@ LibLua >> lua_createtable: L narr: narr nrec: nrec [
 		  #( void lua_createtable #( void * L , int narr , int nrec ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_error: L [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_error,
@@ -975,7 +976,7 @@ LibLua >> lua_error: L [
 	^ self ffiCall: #( int lua_error #( void * L ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_getfield: L at: index name: k [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
@@ -992,7 +993,7 @@ LibLua >> lua_getfield: L at: index name: k [
 		  #( int lua_getfield #( void * L , int index , const char * k ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_getfield: L at: index name: k remove: shouldRemove [
 
 	| type tblindex |
@@ -1004,7 +1005,7 @@ LibLua >> lua_getfield: L at: index name: k remove: shouldRemove [
 	^ type
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_getglobal: L name: name [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
@@ -1019,7 +1020,7 @@ LibLua >> lua_getglobal: L name: name [
 		  #( int lua_getglobal #( void * L , const char * name ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_gettop: L [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_gettop,
@@ -1033,7 +1034,7 @@ LibLua >> lua_gettop: L [
 	^ self ffiCall: #( int lua_gettop #( void * L ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_isnil: L at: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_isnil,
@@ -1045,7 +1046,7 @@ LibLua >> lua_isnil: L at: index [
 	^ self ffiCall: #( int lua_isnil #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_newtable: L [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_newtable,
@@ -1058,7 +1059,7 @@ LibLua >> lua_newtable: L [
 	^ self lua_createtable: L narr: 0 nrec: 0
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pcall: L nargs: nargs lets: names [
 
 	| flag |
@@ -1070,7 +1071,7 @@ LibLua >> lua_pcall: L nargs: nargs lets: names [
 	^ flag
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pcall: L nargs: nargs nresults: nresults [
 
 	^ self
@@ -1080,7 +1081,7 @@ LibLua >> lua_pcall: L nargs: nargs nresults: nresults [
 		  msgh: 0
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcall,
@@ -1118,7 +1119,7 @@ LibLua >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
 		  k: ExternalAddress null
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pcall: L valueWithArguments: args lets: names [
 
 	args do: [ :arg | self on: L push: arg ].
@@ -1126,7 +1127,7 @@ LibLua >> lua_pcall: L valueWithArguments: args lets: names [
 	^ self lua_pcall: L nargs: args size lets: names
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
@@ -1146,7 +1147,7 @@ LibLua >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k
 		        , int ctx , void * k ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pop: L nelements: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pop,
@@ -1158,7 +1159,7 @@ LibLua >> lua_pop: L nelements: n [
 	^ self lua_settop: L at: n negated - 1
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pushboolean: L value: b [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
@@ -1170,7 +1171,7 @@ LibLua >> lua_pushboolean: L value: b [
 	^ self ffiCall: #( void lua_pushboolean #( void * L , int b ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pushinteger: L value: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
@@ -1182,7 +1183,7 @@ LibLua >> lua_pushinteger: L value: n [
 	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pushlightuserdata: L externalAddress: p [
 
 	"void lua_pushlightuserdata (lua_State *L, void *p)"
@@ -1191,7 +1192,7 @@ LibLua >> lua_pushlightuserdata: L externalAddress: p [
 		  #( void lua_pushlightuserdata #( void * L , void * p ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pushnil: L [
 
 	" void lua_pushnil (lua_State *L)"
@@ -1199,7 +1200,7 @@ LibLua >> lua_pushnil: L [
 	^ self ffiCall: #( void lua_pushnil #( void * L ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pushnumber: L value: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
@@ -1211,7 +1212,7 @@ LibLua >> lua_pushnumber: L value: n [
 	^ self ffiCall: #( void lua_pushnumber #( void * L , double n ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_pushvalue: L at: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
@@ -1223,7 +1224,7 @@ LibLua >> lua_pushvalue: L at: index [
 	^ self ffiCall: #( void lua_pushvalue #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_register: state name: name cfunction: f [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
@@ -1239,7 +1240,7 @@ LibLua >> lua_register: state name: name cfunction: f [
 		  lua_setglobal: state name: name
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_remove: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
@@ -1256,7 +1257,7 @@ LibLua >> lua_remove: L at: idx [
 		  lua_pop: L nelements: 1
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_rotate: L at: idx positions: n [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_rotate,
@@ -1272,7 +1273,7 @@ LibLua >> lua_rotate: L at: idx positions: n [
 	^ self ffiCall: #( void lua_rotate #( void * L , int idx , int n ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_setfield: L at: idx name: k [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
@@ -1289,7 +1290,7 @@ LibLua >> lua_setfield: L at: idx name: k [
 		  #( void lua_setfield #( void * L , int idx , const char * k ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_setglobal: L name: name [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_setglobal,
@@ -1302,7 +1303,7 @@ LibLua >> lua_setglobal: L name: name [
 		  #( void lua_setglobal #( void * L , const char * name ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_settop: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
@@ -1318,7 +1319,7 @@ LibLua >> lua_settop: L at: idx [
 	^ self ffiCall: #( void lua_settop #( void * L , int idx ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_tointeger: L at: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
@@ -1330,13 +1331,13 @@ LibLua >> lua_tointeger: L at: index [
 	^ self lua: L to: index integerx: ExternalAddress null
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_tonumber: L at: idx [
 
 	^ self lua_tonumberx: L at: idx isnumpointer: ExternalAddress null
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_tonumberx: L at: idx isnumpointer: isnum [
 
 	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
@@ -1345,7 +1346,7 @@ LibLua >> lua_tonumberx: L at: idx isnumpointer: isnum [
 		  #( double lua_tonumberx #( void * L , int idx , void * isnum ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_topointer: L at: idx [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_topointer,
@@ -1362,7 +1363,7 @@ LibLua >> lua_topointer: L at: idx [
 	^ self ffiCall: #( void * lua_topointer #( void * L , int idx ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_touserdata: L at: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
@@ -1376,7 +1377,7 @@ LibLua >> lua_touserdata: L at: index [
 	^ self ffiCall: #( void * lua_touserdata #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_type: L at: index [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
@@ -1391,13 +1392,13 @@ LibLua >> lua_type: L at: index [
 	^ self ffiCall: #( int lua_type #( void * L , int index ) )
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_typename: L at: i [
 
 	^ self lua_typename: L type: (self lua_type: L at: i)
 ]
 
-{ #category : #'API - C' }
+{ #category : 'API - C' }
 LibLua >> lua_typename: L type: tp [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
@@ -1410,7 +1411,7 @@ LibLua >> lua_typename: L type: tp [
 	^ self ffiCall: #( const char * lua_typename #( void * L , int tp ) )
 ]
 
-{ #category : #'library names' }
+{ #category : 'library names' }
 LibLua >> macLibraryName [
 
 	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-as-a-mac-os-x-dynamic-library/, 
@@ -1429,20 +1430,20 @@ LibLua >> macLibraryName [
 	^ 'liblua5.4.4.dylib'
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> on: state assertLUAOK: aBlock [
 
 	(aBlock cull: self) = self LUA_OK ifFalse: [
 		self assert: false description: (self on: state at: -1) ]
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> on: state at: i [
 
 	^ self on: state at: i cache: IdentityDictionary new
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> on: state at: i cache: cache [
 
 	| pointerAsInteger |
@@ -1464,31 +1465,31 @@ LibLua >> on: state at: i cache: cache [
 				  ifFalse: [ obj "easy case: already seen so return it." ] ]
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> on: state push: anObject [
 
 	^ anObject pushOnLua: state liblua: self
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> require: name heapkt: state [
 
 	^ self luaL_dostring: state chunk: name , ' = require "heapkt"'
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> require: name heapq: state [
 
 	^ self luaL_dostring: state chunk: name , ' = require "heapq"'
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> require: name operator: state [
 
 	^ self luaL_dostring: state chunk: name , ' = require "operator"'
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> table: L at: idx do: aBlock [
 
 	"A typical table traversal looks like this:
@@ -1518,7 +1519,7 @@ LibLua >> table: L at: idx do: aBlock [
 		self lua_pop: L nelements: 1 ]
 ]
 
-{ #category : #'library names' }
+{ #category : 'library names' }
 LibLua >> unix64LibraryName [
 	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-for-linux-as-a-shared-library/
 	 change the Makefile with
@@ -1538,13 +1539,13 @@ $(LUA_A): $(BASE_O)
 		  { 'liblua5.4.6.so'. 'liblua5.4.4.so' }
 ]
 
-{ #category : #'library names' }
+{ #category : 'library names' }
 LibLua >> win32LibraryName [
 
 	^ FFIWindowsLibraryFinder findAnyLibrary: #( 'liblua54.dll' )
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> withOpenedLibsStateDo: aBlock [
 
 	^ self withStateDo: [ :state | 
@@ -1552,7 +1553,7 @@ LibLua >> withOpenedLibsStateDo: aBlock [
 		  aBlock value: state ]
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 LibLua >> withStateDo: aBlock [
 
 	| state |

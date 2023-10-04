@@ -1,6 +1,6 @@
-Extension { #name : #AthensCairoCanvas }
+Extension { #name : 'AthensCairoCanvas' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 AthensCairoCanvas >> pushOnLua: state liblua: liblua [
 
 	^ liblua on: state push: handle

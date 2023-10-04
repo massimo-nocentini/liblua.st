@@ -2,8 +2,8 @@
 I am an ""abstract"" and ""typed"" `ExternalAddress`.
 "
 Class {
-	#name : #TypedExternalAddress,
-	#superclass : #Object,
+	#name : 'TypedExternalAddress',
+	#superclass : 'Object',
 	#instVars : [
 		'externalAddress',
 		'size'
@@ -12,10 +12,11 @@ Class {
 		'Float64ByteSize',
 		'Int32ByteSize'
 	],
-	#category : #LibLua
+	#category : 'LibLua',
+	#package : 'LibLua'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 TypedExternalAddress class >> allocate: size [
 
 	^ self new
@@ -23,7 +24,7 @@ TypedExternalAddress class >> allocate: size [
 		  yourself
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 TypedExternalAddress class >> fromSequenceableCollection: anArray [
 
 	| addr |
@@ -34,38 +35,38 @@ TypedExternalAddress class >> fromSequenceableCollection: anArray [
 	^ addr
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 TypedExternalAddress class >> initialize [
 
 	Int32ByteSize := ExternalType long byteSize.
 	Float64ByteSize := ExternalType double byteSize
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TypedExternalAddress >> at: index [
 
 	self subclassResponsibility
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TypedExternalAddress >> at: index put: value [
 
 	self subclassResponsibility
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TypedExternalAddress >> externalAddress: anObject [
 
 	externalAddress := anObject
 ]
 
-{ #category : #'initialize-release' }
+{ #category : 'initialize-release' }
 TypedExternalAddress >> free [
 
 	^ externalAddress free
 ]
 
-{ #category : #dispatched }
+{ #category : 'dispatched' }
 TypedExternalAddress >> intoSequenceableCollection: anArray [
 
 	self assert: size <= anArray size.
@@ -73,13 +74,13 @@ TypedExternalAddress >> intoSequenceableCollection: anArray [
 	1 to: size do: [ :i | anArray at: i put: (self at: i) ]
 ]
 
-{ #category : #dispatched }
+{ #category : 'dispatched' }
 TypedExternalAddress >> pushOnLua: state liblua: liblua [
 
 	^ externalAddress pushOnLua: state liblua: liblua
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 TypedExternalAddress >> size: anObject [
 
 	size := anObject

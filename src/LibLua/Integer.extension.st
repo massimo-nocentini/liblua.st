@@ -1,6 +1,6 @@
-Extension { #name : #Integer }
+Extension { #name : 'Integer' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 Integer >> pushOnLua: state liblua: liblua [
 
 	^ liblua lua_pushinteger: state value: self

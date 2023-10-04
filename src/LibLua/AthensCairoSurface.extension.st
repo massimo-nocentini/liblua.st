@@ -1,6 +1,6 @@
-Extension { #name : #AthensCairoSurface }
+Extension { #name : 'AthensCairoSurface' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 AthensCairoSurface >> pushOnLua: state liblua: liblua [
 
 	^ liblua on: state push: handle

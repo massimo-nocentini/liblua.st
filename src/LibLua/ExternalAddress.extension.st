@@ -1,6 +1,6 @@
-Extension { #name : #ExternalAddress }
+Extension { #name : 'ExternalAddress' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 ExternalAddress >> pushOnLua: state liblua: liblua [
 
 	^ liblua lua_pushlightuserdata: state externalAddress: self

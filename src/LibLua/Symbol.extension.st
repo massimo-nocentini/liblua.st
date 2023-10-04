@@ -1,6 +1,6 @@
-Extension { #name : #Symbol }
+Extension { #name : 'Symbol' }
 
-{ #category : #'*LibLua' }
+{ #category : '*LibLua' }
 Symbol >> pushOnLua: state liblua: liblua [
 
 	^ liblua lua_getglobal: state name: self asString
