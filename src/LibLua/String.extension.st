@@ -31,7 +31,7 @@ String >> formatDateAndTime: timer localeSpecifier: locale luaState: L liblua: l
 		        lua_getfield: L at: -2 name: 'format';
 		        lua_pushvalue: L at: -2;
 		        on: L push: timer asUnixTime;
-		        on: L push: locale;
+		        on: L push: locale , '.utf8';
 		        lua_pcall: L nargs: 3 nresults: 1.
 
 	self assert: flag == ll LUA_OK.
