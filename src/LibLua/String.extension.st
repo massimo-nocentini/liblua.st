@@ -20,11 +20,11 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 { #category : '*LibLua' }
 String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local luaState: L liblua: ll [
 
-	| flag |
+	| flag formatted |
 	flag := ll
 		        on: L push: #datetimeformatter;
 		        lua_getfield: L at: -1 name: 'compile';
-		        on: L push: self;
+		        lua: L pushstring: self;
 		        lua_pcall: L nargs: 1 nresults: 1.
 
 	self assert: flag == ll LUA_OK.
@@ -32,16 +32,20 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 	flag := ll
 		        lua_getfield: L at: -2 name: 'format';
 		        lua_pushvalue: L at: -2;
-		        on: L push: timer asUnixTime;
-		        on: L push: locale , '.utf8';
-		        on: L push: timer offset asSeconds;
-		        on: L push: timer timeZone abbreviation;
-		        on: L push: local;
+		        lua_pushinteger: L value: timer asUnixTime;
+		        lua: L pushstring: locale;
+		        lua_pushinteger: L value: timer offset asSeconds;
+		        lua: L pushstring: timer timeZone abbreviation;
+		        lua_pushboolean: L value: local;
 		        lua_pcall: L nargs: 6 nresults: 1.
 
 	self assert: flag == ll LUA_OK.
 
-	^ ll lua: L tostring: -1
+	formatted := ll lua: L tostring: -1.
+
+	ll lua_pop: L nelements: 3.
+
+	^ formatted
 ]
 
 { #category : '*LibLua' }
