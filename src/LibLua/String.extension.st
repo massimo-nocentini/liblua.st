@@ -7,6 +7,8 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 	ll := LibLua uniqueInstance.
 
 	^ ll withOpenedLibsStateDo: [ :L |
+		  ll luaL_requiref: L name: 'datetimeformatter'.
+
 		  self
 			  formatDateAndTime: timer
 			  localeSpecifier: locale
@@ -20,7 +22,6 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 
 	| flag |
 	flag := ll
-		        luaL_requiref: L name: 'datetimeformatter';
 		        on: L push: #datetimeformatter;
 		        lua_getfield: L at: -1 name: 'compile';
 		        on: L push: self;
