@@ -1,7 +1,7 @@
 Extension { #name : 'String' }
 
 { #category : '*LibLua' }
-String >> formatDateAndTime: timer localeSpecifier: locale [
+String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local [
 
 	| ll |
 	ll := LibLua uniqueInstance.
@@ -10,12 +10,13 @@ String >> formatDateAndTime: timer localeSpecifier: locale [
 		  self
 			  formatDateAndTime: timer
 			  localeSpecifier: locale
+			  showLocalTime: local
 			  luaState: L
 			  liblua: ll ]
 ]
 
 { #category : '*LibLua' }
-String >> formatDateAndTime: timer localeSpecifier: locale luaState: L liblua: ll [
+String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local luaState: L liblua: ll [
 
 	| flag |
 	flag := ll
@@ -32,7 +33,10 @@ String >> formatDateAndTime: timer localeSpecifier: locale luaState: L liblua: l
 		        lua_pushvalue: L at: -2;
 		        on: L push: timer asUnixTime;
 		        on: L push: locale , '.utf8';
-		        lua_pcall: L nargs: 3 nresults: 1.
+		        on: L push: timer offset asSeconds;
+		        on: L push: timer timeZone abbreviation;
+		        on: L push: local;
+		        lua_pcall: L nargs: 6 nresults: 1.
 
 	self assert: flag == ll LUA_OK.
 
