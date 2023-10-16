@@ -1216,14 +1216,14 @@ LibLua >> lua_pushnumber: L value: n [
 
 { #category : 'API - C' }
 LibLua >> lua_pushvalue: L at: index [
-
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
 	
 		void lua_pushvalue (lua_State *L, int index);
 	
 	Pushes a copy of the element at the given index onto the stack."
 
-	^ self ffiCall: #( void lua_pushvalue #( void * L , int index ) )
+	<primitive: 'primitive_lua_pushvalue' module: 'LuaPlugin'>
+	^ self ffiCall: #( void lua_pushvalue #( void #* L #, int index ) )
 ]
 
 { #category : 'API - C' }

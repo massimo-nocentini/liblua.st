@@ -7,7 +7,11 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 	ll := LibLua uniqueInstance.
 
 	^ ll withOpenedLibsStateDo: [ :L |
-		  ll luaL_requiref: L name: 'datetimeformatter'.
+		  ll
+			  luaL_requiref: L name: 'datetimeformatter';
+			  on: L push: #datetimeformatter;
+			  lua_getfield: L at: -1 name: 'compile_then_format';
+			  lua_remove: L at: 1. "remove the table for the module, leaving on the stack just the function."
 
 		  self
 			  formatDateAndTime: timer
@@ -22,8 +26,7 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 
 	| flag formatted |
 	flag := ll
-		        on: L push: #datetimeformatter;
-		        lua_getfield: L at: -1 name: 'compile_then_format';
+		        lua_pushvalue: L at: 1;
 		        lua: L pushstring: self;
 		        lua_pushinteger: L value: timer asUnixTime;
 		        lua: L pushstring: locale;
