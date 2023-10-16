@@ -23,15 +23,8 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 	| flag formatted |
 	flag := ll
 		        on: L push: #datetimeformatter;
-		        lua_getfield: L at: -1 name: 'compile';
+		        lua_getfield: L at: -1 name: 'compile_then_format';
 		        lua: L pushstring: self;
-		        lua_pcall: L nargs: 1 nresults: 1.
-
-	self assert: flag == ll LUA_OK.
-
-	flag := ll
-		        lua_getfield: L at: -2 name: 'format';
-		        lua_pushvalue: L at: -2;
 		        lua_pushinteger: L value: timer asUnixTime;
 		        lua: L pushstring: locale;
 		        lua_pushinteger: L value: timer offset asSeconds;
@@ -43,7 +36,7 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 
 	formatted := ll lua: L tostring: -1.
 
-	ll lua_pop: L nelements: 3.
+	ll lua_pop: L nelements: 1.
 
 	^ formatted
 ]

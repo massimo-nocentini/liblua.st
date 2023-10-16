@@ -579,11 +579,11 @@ LibLua >> lua: L pushcfunction: fn [
 
 { #category : 'API - C' }
 LibLua >> lua: L pushstring: s [
-
 	"const char *lua_pushstring (lua_State *L, const char *s)"
 
+	<primitive: 'primitive_lua_pushstring' module: 'LuaPlugin'>
 	^ self ffiCall:
-		  #( const char * lua_pushstring #( void * L , const char * s ) )
+		  #( const char #* lua_pushstring #( void #* L #, const char #* s ) )
 ]
 
 { #category : 'API - C' }
@@ -664,6 +664,7 @@ LibLua >> lua: state tonumberx: idx ifNotNumber: aBlock [
 { #category : 'API - C' }
 LibLua >> lua: L tostring: idx [
 
+	<primitive: 'primitive_lua_tostring' module: 'LuaPlugin'>
 	^ self lua: L to: idx lstring: ExternalAddress null
 ]
 
@@ -802,7 +803,8 @@ LibLua >> luaL_loadstring: L chunk: s [
 { #category : 'API - auxiliary' }
 LibLua >> luaL_newstate [
 
-	^ self ffiCall: #( void * luaL_newstate #( void ) )
+	<primitive: 'primitive_luaL_newstate' module: 'LuaPlugin'>
+	^ self ffiCall: #( void #* luaL_newstate #( void ) )
 ]
 
 { #category : 'API - auxiliary' }
@@ -1083,7 +1085,6 @@ LibLua >> lua_pcall: L nargs: nargs nresults: nresults [
 
 { #category : 'API - C' }
 LibLua >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
-
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcall,
 
 		int lua_pcall (lua_State *L, int nargs, int nresults, int msgh);
@@ -1110,6 +1111,7 @@ LibLua >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
 	The lua_pcall function returns one of the following status codes: 
 	LUA_OK, LUA_ERRRUN, LUA_ERRMEM, or LUA_ERRERR."
 
+	<primitive: 'primitive_lua_pcall' module: 'LuaPlugin'>
 	^ self
 		  lua_pcallk: L
 		  nargs: nargs
@@ -1149,38 +1151,38 @@ LibLua >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k
 
 { #category : 'API - C' }
 LibLua >> lua_pop: L nelements: n [
-
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pop,
 	
 		void lua_pop (lua_State *L, int n);
 		
 	Pops n elements from the stack. It is implemented as a macro over lua_settop."
 
+	<primitive: 'primitive_lua_pop' module: 'LuaPlugin'>
 	^ self lua_settop: L at: n negated - 1
 ]
 
 { #category : 'API - C' }
 LibLua >> lua_pushboolean: L value: b [
-
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
 	
 		void lua_pushboolean (lua_State *L, int b);
 	
 	Pushes a boolean value with value b onto the stack."
 
-	^ self ffiCall: #( void lua_pushboolean #( void * L , int b ) )
+	<primitive: 'primitive_lua_pushboolean' module: 'LuaPlugin'>
+	^ self ffiCall: #( void lua_pushboolean #( void #* L #, int b ) )
 ]
 
 { #category : 'API - C' }
 LibLua >> lua_pushinteger: L value: n [
-
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
 	
 		void lua_pushinteger (lua_State *L, lua_Integer n);
 
 	Pushes an integer with value n onto the stack."
 
-	^ self ffiCall: #( void lua_pushinteger #( void * L , long n ) )
+	<primitive: 'primitive_lua_pushinteger' module: 'LuaPlugin'>
+	^ self ffiCall: #( void lua_pushinteger #( void #* L #, long n ) )
 ]
 
 { #category : 'API - C' }
