@@ -2,18 +2,19 @@
 A LibLuaTest is a test class for testing the behavior of LibLua
 "
 Class {
-	#name : #LibLuaTest,
-	#superclass : #LibLuaAbstractTest,
-	#category : #'LibLua-Tests'
+	#name : 'LibLuaTest',
+	#superclass : 'LibLuaAbstractTest',
+	#category : 'LibLua-Tests',
+	#package : 'LibLua-Tests'
 }
 
-{ #category : #testing }
+{ #category : 'testing' }
 LibLuaTest class >> isAbstract [
 
 	^ false
 ]
 
-{ #category : #'Lua creation' }
+{ #category : 'Lua creation' }
 LibLuaTest >> average: state [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_CFunction,
@@ -47,7 +48,7 @@ LibLuaTest >> average: state [
 	^ 2
 ]
 
-{ #category : #'Lua chunks' }
+{ #category : 'Lua chunks' }
 LibLuaTest >> commandDefLuaSource [
 
 	^ '
@@ -59,7 +60,7 @@ end
 '
 ]
 
-{ #category : #'Lua chunks' }
+{ #category : 'Lua chunks' }
 LibLuaTest >> commandsLuaSource [
 
 	^ '
@@ -77,7 +78,7 @@ commands = {
 '
 ]
 
-{ #category : #'Lua creation' }
+{ #category : 'Lua creation' }
 LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
 	"According to https://stackoverflow.com/questions/20147027/creating-a-simple-table-with-lua-tables-c-api"
@@ -109,7 +110,7 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 	^ 1 "number of results"
 ]
 
-{ #category : #'Lua chunks' }
+{ #category : 'Lua chunks' }
 LibLuaTest >> recSumLuaSource [
 
 	^ '
@@ -126,7 +127,7 @@ end
 '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCFunctionAverage [
 
 	| avg sum |
@@ -155,7 +156,7 @@ LibLuaTest >> testCFunctionAverage [
 		assert: sum equals: { 12. 43. 43. 450 } sum
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCFunctionPCallCoroutine [
 
 	| s e |
@@ -175,11 +176,11 @@ LibLuaTest >> testCFunctionPCallCoroutine [
 		assert: e equals: 'hello'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCairoPango [
 
 	| ll |
-	ll := LibLua uniqueInstance.
+	ll := LibLua uniqueInstance implementationPrimitive.
 
 	ll withOpenedLibsStateDo: [ :L |
 		| canvas code |
@@ -212,7 +213,7 @@ LibLuaTest >> testCairoPango [
 			open ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCommandsUsingLuaAPI [
 
 	| result random r |
@@ -241,7 +242,7 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 	self assert: result equals: r key
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCommandsUsingLuaDefs [
 
 	| result |
@@ -257,7 +258,7 @@ LibLuaTest >> testCommandsUsingLuaDefs [
 	self assert: result equals: 4
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 
 	| result |
@@ -273,7 +274,7 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 	self assert: result equals: 'create'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 
 	| result |
@@ -300,7 +301,7 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 		assert: result size equals: 2
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCopy [
 
 	| result original |
@@ -343,7 +344,7 @@ LibLuaTest >> testCopy [
 		assert: result size equals: 3
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testCopyCompare [
 
 	| outer inner |
@@ -365,7 +366,7 @@ LibLuaTest >> testCopyCompare [
 		assert: inner equals: 1
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testDictionary [
 
 	| d |
@@ -378,7 +379,7 @@ LibLuaTest >> testDictionary [
 	self assert: (d at: d) identicalTo: d
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testGetGlobal_ENV [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -400,7 +401,7 @@ LibLuaTest >> testGetGlobal_ENV [
 		self assert: (tbl at: #_VERSION) equals: 'Lua 5.4' ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testGetInfoPrint [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -417,7 +418,7 @@ LibLuaTest >> testGetInfoPrint [
 		self assert: (tbl at: #what) equals: 'C' ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testHeapBench [
 
 	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun heap position indexer code |
@@ -500,7 +501,7 @@ LibLuaTest >> testHeapBench [
 		assert: smalltalkTimeToRun < pythonTimeToRun"
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |
@@ -513,7 +514,7 @@ LibLuaTest >> testLoadThenPCall [
 	self assert: code equals: 0
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallThenToString [
 
 	| error code |
@@ -532,7 +533,7 @@ LibLuaTest >> testLoadThenPCallThenToString [
 		'[string "(function (a, b) return error("hello") end) (..."]:1: hello'
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallWithReturnInteger [
 
 	| code seven |
@@ -552,7 +553,7 @@ LibLuaTest >> testLoadThenPCallWithReturnInteger [
 		assert: seven equals: 8
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallWithReturnIntegerFail [
 
 	| code seven witness |
@@ -574,7 +575,7 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerFail [
 		assert: seven equals: witness
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
 
 	| code seven |
@@ -594,7 +595,7 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
 		assert: seven equals: 8
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallWithReturnNumber [
 
 	| code seven |
@@ -614,7 +615,7 @@ LibLuaTest >> testLoadThenPCallWithReturnNumber [
 		assert: seven equals: 8.2
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallWithReturnNumberFail [
 
 	| code seven witness |
@@ -636,7 +637,7 @@ LibLuaTest >> testLoadThenPCallWithReturnNumberFail [
 		assert: seven equals: witness
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCallWithReturnString [
 
 	| code seven |
@@ -653,7 +654,7 @@ LibLuaTest >> testLoadThenPCallWithReturnString [
 		assert: seven equals: '7 hello '
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testLuaSeti [
 
 	| list random array |
@@ -672,7 +673,7 @@ LibLuaTest >> testLuaSeti [
 	self assert: '#(' , list , ')' equals: array asString
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testNewCloseState [
 
 	| three |
@@ -683,7 +684,7 @@ LibLuaTest >> testNewCloseState [
 	self assert: three equals: 3
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testNewWithOpenLibs [
 
 	| three |
@@ -694,7 +695,7 @@ LibLuaTest >> testNewWithOpenLibs [
 	self assert: three equals: 3
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromArray [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -725,7 +726,7 @@ LibLuaTest >> testReadFromArray [
 				 yourself) ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromBoolean [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -743,7 +744,7 @@ LibLuaTest >> testReadFromBoolean [
 		self assert: result ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromInteger [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -755,7 +756,7 @@ LibLuaTest >> testReadFromInteger [
 		self assert: result equals: 12345 ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromNil [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -767,7 +768,7 @@ LibLuaTest >> testReadFromNil [
 		self assert: result equals: nil ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromNumber [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -779,7 +780,7 @@ LibLuaTest >> testReadFromNumber [
 		self assert: result equals: 12345.1 ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromString [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -791,7 +792,7 @@ LibLuaTest >> testReadFromString [
 		self assert: result equals: 'nil' ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testReadFromTable [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
@@ -811,7 +812,7 @@ LibLuaTest >> testReadFromTable [
 				 yourself) ]
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testRecursiveTables [
 
 	| tbl t u |
@@ -844,7 +845,7 @@ LibLuaTest >> testRecursiveTables [
 		assert: (u at: u) identicalTo: u"
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testSearchPath [
 
 	| list longFlag |
@@ -875,7 +876,7 @@ LibLuaTest >> testSearchPath [
 	self assert: longFlag equals: 1
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testSetGlobalMySinAsCallback [
 
 	| code result called |
@@ -909,7 +910,7 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 		assert: result equals: 3 sin
 ]
 
-{ #category : #tests }
+{ #category : 'tests' }
 LibLuaTest >> testTableMap [
 
 	| list |

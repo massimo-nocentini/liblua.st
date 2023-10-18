@@ -1,17 +1,18 @@
 Class {
-	#name : #LibLuaAbstractTest,
-	#superclass : #TestCase,
-	#category : #'LibLua-Tests'
+	#name : 'LibLuaAbstractTest',
+	#superclass : 'TestCase',
+	#category : 'LibLua-Tests',
+	#package : 'LibLua-Tests'
 }
 
-{ #category : #testing }
+{ #category : 'testing' }
 LibLuaAbstractTest class >> isAbstract [
 
 	^ true
 ]
 
-{ #category : #'ffi lib' }
+{ #category : 'ffi lib' }
 LibLuaAbstractTest >> liblua [
 
-	^ LibLua uniqueInstance
+	^ LibLua uniqueInstance implementationPrimitive
 ]

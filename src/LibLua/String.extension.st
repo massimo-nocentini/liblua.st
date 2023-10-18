@@ -4,7 +4,7 @@ Extension { #name : 'String' }
 String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local [
 
 	| ll |
-	ll := LibLua uniqueInstance.
+	ll := LibLua uniqueInstance implementationPrimitive.
 
 	^ ll withOpenedLibsStateDo: [ :L |
 		  ll
