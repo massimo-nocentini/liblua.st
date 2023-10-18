@@ -57,14 +57,9 @@ String >> pushOnLua: state liblua: liblua [
 ]
 
 { #category : '*LibLua' }
-String >> strtok: str delimiters: delimiters inclusive: boolean [
-
-	<primitive: 'primitive_strtok_r' module: 'LuaPlugin'>
-	self primitiveFail
-]
-
-{ #category : '*LibLua' }
 String >> strtok: delimiters inclusive: boolean [
 
-	^ self strtok: self delimiters: delimiters inclusive: boolean
+	
+	<primitive: 'primitive_strtok_r' module: 'LuaPlugin'>
+	self primitiveFail
 ]
