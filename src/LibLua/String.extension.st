@@ -45,9 +45,9 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 ]
 
 { #category : '*LibLua' }
-String >> primitiveLines [
+String >> linesIncludeEmptySubstrings: shouldInclude [
 
-	^ self strtok: self class crlf inclusive: true
+	^ self strtok: self class crlf inclusive: shouldInclude
 ]
 
 { #category : '*LibLua' }
