@@ -26,20 +26,20 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 
 	| flag formatted |
 	flag := ll
-		        lua_pushvalue: L at: 1;
+		        lua: L pushvalue: 1;
 		        lua: L pushstring: self;
-		        lua_pushinteger: L value: timer asUnixTime;
+		        lua: L pushinteger: timer asUnixTime;
 		        lua: L pushstring: locale;
-		        lua_pushinteger: L value: timer offset asSeconds;
+		        lua: L pushinteger: timer offset asSeconds;
 		        lua: L pushstring: timer timeZone abbreviation;
-		        lua_pushboolean: L value: local;
+		        lua: L pushbooleanAsInteger: local;
 		        lua_pcall: L nargs: 6 nresults: 1.
 
 	self assert: flag == ll LUA_OK.
 
 	formatted := ll lua: L tostring: -1.
 
-	ll lua_pop: L nelements: 1.
+	ll lua: L pop: 1.
 
 	^ formatted
 ]

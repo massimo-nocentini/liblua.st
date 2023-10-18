@@ -368,7 +368,7 @@ LibLuaFFIImplementation >> _on: state at: i cache: cache [
 		| dict keysAreIntegers length |
 		self lua: state len: i.
 		length := self lua_tointeger: state at: -1.
-		self lua_pop: state nelements: 1.
+		self lua: state pop: 1.
 		keysAreIntegers := true.
 		dict := Dictionary new.
 		self table: state at: i do: [ :k :v | 
@@ -530,6 +530,54 @@ LibLuaFFIImplementation >> lua: L next: idx [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pcallArgumentsSize: nargs resultsSize: nresults msgh: errfunc [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pcall,
+
+		int lua_pcall (lua_State *L, int nargs, int nresults, int msgh);
+
+	Calls a function (or a callable object) in protected mode.
+
+	Both nargs and nresults have the same meaning as in lua_call. 
+	If there are no errors during the call, lua_pcall behaves exactly 
+	like lua_call. However, if there is any error, lua_pcall catches 
+	it, pushes a single value on the stack (the error object), and returns 
+	an error code. Like lua_call, lua_pcall always removes the function and 
+	its arguments from the stack.
+
+	If msgh is 0, then the error object returned on the stack is exactly the 
+	original error object. Otherwise, msgh is the stack index of a message handler. 
+	(This index cannot be a pseudo-index.) In case of runtime errors, this handler 
+	will be called with the error object and its return value will be the object 
+	returned on the stack by lua_pcall.
+
+	Typically, the message handler is used to add more debug information to the error 
+	object, such as a stack traceback. Such information cannot be gathered after the 
+	return of lua_pcall, since by then the stack has unwound.
+
+	The lua_pcall function returns one of the following status codes: 
+	LUA_OK, LUA_ERRRUN, LUA_ERRMEM, or LUA_ERRERR."
+
+	^ self
+		  lua_pcallk: L
+		  nargs: nargs
+		  nresults: nresults
+		  msgh: errfunc
+		  ctx: 0
+		  k: ExternalAddress null
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pop: n [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pop,
+	
+		void lua_pop (lua_State *L, int n);
+		
+	Pops n elements from the stack. It is implemented as a macro over lua_settop."
+
+	^ self lua_settop: L at: n negated - 1
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L push: fn cclosure: n [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcclosure,
 	
@@ -568,6 +616,19 @@ LibLuaFFIImplementation >> lua: L push: fn cclosure: n [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pushbooleanAsInteger: b [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
+	
+		void lua_pushboolean (lua_State *L, int b);
+	
+	Pushes a boolean value with value b onto the stack."
+
+	^ self
+		  ffiCall: #( void lua_pushboolean #( void #* L #, int b ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushcfunction: fn [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcfunction,
@@ -582,12 +643,38 @@ LibLuaFFIImplementation >> lua: L pushcfunction: fn [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pushinteger: n [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
+	
+		void lua_pushinteger (lua_State *L, lua_Integer n);
+
+	Pushes an integer with value n onto the stack."
+
+	^ self
+		  ffiCall: #( void lua_pushinteger #( void #* L #, long n ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushstring: s [
 	"const char *lua_pushstring (lua_State *L, const char *s)"
 
 	^ self
 		  ffiCall:
 		  #( const char #* lua_pushstring #( void #* L #, const char #* s ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pushvalue: index [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
+	
+		void lua_pushvalue (lua_State *L, int index);
+	
+	Pushes a copy of the element at the given index onto the stack."
+
+	^ self
+		  ffiCall: #( void lua_pushvalue #( void #* L #, int index ) )
 		  module: LibLua
 ]
 
@@ -788,9 +875,9 @@ LibLuaFFIImplementation >> luaL_dostring: L chunk: s [
 	^ status = self LUA_OK
 		  ifTrue: [ 
 			  self
-				  lua_pcall: L
-				  nargs: 0
-				  nresults: self LUA_MULTRET
+				  lua: L
+				  pcallArgumentsSize: 0
+				  resultsSize: self LUA_MULTRET
 				  msgh: 0 ]
 		  ifFalse: [ status ]
 ]
@@ -812,12 +899,6 @@ LibLuaFFIImplementation >> luaL_loadstring: L chunk: s [
 		  ffiCall:
 		  #( int luaL_loadstring #( void #* L #, const char #* s ) )
 		  module: LibLua
-]
-
-{ #category : 'API - auxiliary' }
-LibLuaFFIImplementation >> luaL_newstate [
-
-	^ self ffiCall: #( void #* luaL_newstate #( void ) ) module: LibLua
 ]
 
 { #category : 'API - auxiliary' }
@@ -877,7 +958,7 @@ LibLuaFFIImplementation >> luaL_requiref: L name: modname let: varname onErrorDo
 		function: (self fficallbackOnBlock: [ :S | 
 				 luaCode := self
 					            on: S push: #require;
-					            "get the module name"lua_pushvalue: S at: -2;
+					            "get the module name"lua: S pushvalue: -2;
 					            lua_pcall: S nargs: 1 nresults: 1.
 				 1 ])
 		global: false asBit.
@@ -887,6 +968,12 @@ LibLuaFFIImplementation >> luaL_requiref: L name: modname let: varname onErrorDo
 		ifFalse: [ aBlock cull: L ].
 
 	^ nil
+]
+
+{ #category : 'API - auxiliary' }
+LibLuaFFIImplementation >> luaLnewstate [
+
+	^ self ffiCall: #( void #* #luaL_newstate #( void ) ) module: LibLua
 ]
 
 { #category : 'API - C' }
@@ -1095,47 +1182,10 @@ LibLuaFFIImplementation >> lua_pcall: L nargs: nargs lets: names [
 LibLuaFFIImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
 
 	^ self
-		  lua_pcall: L
-		  nargs: nargs
-		  nresults: nresults
+		  lua: L
+		  pcallArgumentsSize: nargs
+		  resultsSize: nresults
 		  msgh: 0
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pcall: L nargs: nargs nresults: nresults msgh: errfunc [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pcall,
-
-		int lua_pcall (lua_State *L, int nargs, int nresults, int msgh);
-
-	Calls a function (or a callable object) in protected mode.
-
-	Both nargs and nresults have the same meaning as in lua_call. 
-	If there are no errors during the call, lua_pcall behaves exactly 
-	like lua_call. However, if there is any error, lua_pcall catches 
-	it, pushes a single value on the stack (the error object), and returns 
-	an error code. Like lua_call, lua_pcall always removes the function and 
-	its arguments from the stack.
-
-	If msgh is 0, then the error object returned on the stack is exactly the 
-	original error object. Otherwise, msgh is the stack index of a message handler. 
-	(This index cannot be a pseudo-index.) In case of runtime errors, this handler 
-	will be called with the error object and its return value will be the object 
-	returned on the stack by lua_pcall.
-
-	Typically, the message handler is used to add more debug information to the error 
-	object, such as a stack traceback. Such information cannot be gathered after the 
-	return of lua_pcall, since by then the stack has unwound.
-
-	The lua_pcall function returns one of the following status codes: 
-	LUA_OK, LUA_ERRRUN, LUA_ERRMEM, or LUA_ERRERR."
-
-	^ self
-		  lua_pcallk: L
-		  nargs: nargs
-		  nresults: nresults
-		  msgh: errfunc
-		  ctx: 0
-		  k: ExternalAddress null
 ]
 
 { #category : 'API - C' }
@@ -1164,43 +1214,6 @@ LibLuaFFIImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: m
 		  ffiCall:
 			  #( int lua_pcallk #( void #* L #, int nargs #, int nresults
 			        #, int msgh #, int ctx #, void #* k ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pop: L nelements: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pop,
-	
-		void lua_pop (lua_State *L, int n);
-		
-	Pops n elements from the stack. It is implemented as a macro over lua_settop."
-
-	^ self lua_settop: L at: n negated - 1
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pushboolean: L value: b [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
-	
-		void lua_pushboolean (lua_State *L, int b);
-	
-	Pushes a boolean value with value b onto the stack."
-
-	^ self
-		  ffiCall: #( void lua_pushboolean #( void #* L #, int b ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pushinteger: L value: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushinteger,
-	
-		void lua_pushinteger (lua_State *L, lua_Integer n);
-
-	Pushes an integer with value n onto the stack."
-
-	^ self
-		  ffiCall: #( void lua_pushinteger #( void #* L #, long n ) )
 		  module: LibLua
 ]
 
@@ -1235,19 +1248,6 @@ LibLuaFFIImplementation >> lua_pushnumber: L value: n [
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pushvalue: L at: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
-	
-		void lua_pushvalue (lua_State *L, int index);
-	
-	Pushes a copy of the element at the given index onto the stack."
-
-	^ self
-		  ffiCall: #( void lua_pushvalue #( void #* L #, int index ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua_register: state name: name cfunction: f [
 
 	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
@@ -1277,7 +1277,7 @@ LibLuaFFIImplementation >> lua_remove: L at: idx [
 
 	^ self
 		  lua_rotate: L at: idx positions: -1;
-		  lua_pop: L nelements: 1
+		  lua: L pop: 1
 ]
 
 { #category : 'API - C' }
@@ -1529,7 +1529,7 @@ LibLuaFFIImplementation >> table: L at: idx do: aBlock [
 	[ (self lua: L next: index) = 0 ] whileFalse: [ 
 		aBlock value: -2 value: -1.
 
-		self lua_pop: L nelements: 1 ]
+		self lua: L pop: 1 ]
 ]
 
 { #category : 'API' }
@@ -1544,7 +1544,7 @@ LibLuaFFIImplementation >> withOpenedLibsStateDo: aBlock [
 LibLuaFFIImplementation >> withStateDo: aBlock [
 
 	| state |
-	state := self luaL_newstate.
+	state := self luaLnewstate.
 
 	^ [ aBlock value: state ] ensure: [ self lua_close: state ]
 ]
