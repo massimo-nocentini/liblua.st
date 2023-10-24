@@ -29,7 +29,7 @@ LibLuaPrimitiveImplementation >> lua: L pushboolean: b [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L pushbooleanAsInteger: b [
 
-	^ self lua: L pushboolean: b = 1
+	^ self lua: L pushboolean: 1 == b
 ]
 
 { #category : 'API - C' }
