@@ -1,3 +1,6 @@
+"
+I am the implementation that uses FFI calls.
+"
 Class {
 	#name : 'LibLuaFFIImplementation',
 	#superclass : 'Object',
@@ -629,6 +632,12 @@ LibLuaFFIImplementation >> lua: L push: fn cclosure: n [
 		  ffiCall:
 		  #( void lua_pushcclosure #( void #* L #, void #* fn #, int n ) )
 		  module: LibLua
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pushboolean: b [
+
+	^ self lua: L pushbooleanAsInteger: b asBit
 ]
 
 { #category : 'API - C' }

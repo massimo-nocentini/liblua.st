@@ -1,3 +1,6 @@
+"
+I am the implementation via a VM plugin.
+"
 Class {
 	#name : 'LibLuaPrimitiveImplementation',
 	#superclass : 'LibLuaFFIImplementation',
