@@ -419,89 +419,6 @@ LibLuaTest >> testGetInfoPrint [
 ]
 
 { #category : 'tests' }
-LibLuaTest >> testHeapBench [
-
-	| random array luaTimeToRun smalltalkTimeToRun kleinbergTardosTimeToRun heap position indexer code |
-	self
-		skip;
-		timeLimit: 1 minute.
-
-	random := Random seed: 541.
-	array := (1 to: 1e7) asArray shuffleBy: random.
-
-	self liblua withOpenedLibsStateDo: [ :state | 
-		| c |
-		self liblua
-			require: 'heapq' heapq: state;
-			require: 'heapkt' heapkt: state.
-
-		c := self liblua
-			     lua: state getglobal: 'heapq';
-			     lua_getfield: state at: -1 name: 'create';
-			     on: state push: array;
-			     lua_pcall: state nargs: 1 nresults: 1.
-
-		self assert: c equals: 0.
-
-		self liblua
-			lua_setglobal: state name: 'H';
-			lua: state getglobal: 'heapq';
-			lua_getfield: state at: -1 name: 'heapify';
-			lua: state getglobal: 'H'.
-
-		luaTimeToRun := [ 
-		                code := self liblua
-			                        lua_pcall: state
-			                        nargs: 1
-			                        nresults: 1.
-
-		                self assert: code equals: 0 ] timeToRun.
-
-		self assert: code equals: 0.
-
-		c := self liblua
-			     lua: state getglobal: 'heapkt';
-			     lua_getfield: state at: -1 name: 'new';
-			     on: state push: array;
-			     lua_pcall: state nargs: 1 nresults: 1.
-
-		self assert: c equals: 0.
-
-		self liblua
-			lua_setglobal: state name: 'H';
-			lua: state getglobal: 'heapkt';
-			lua_getfield: state at: -1 name: 'heapify';
-			lua: state getglobal: 'H'.
-
-		kleinbergTardosTimeToRun := [ 
-		                            code := self liblua
-			                                    lua_pcall: state
-			                                    nargs: 1
-			                                    nresults: 1 ] timeToRun.
-
-		self assert: code equals: 0 ].
-
-	position := Dictionary new.
-	indexer := [ :anObject :index | position at: anObject put: index ].
-
-	array withIndexDo: indexer.
-	heap := Heap new
-		        indexUpdateBlock: indexer;
-		        sortBlock: [ :a :b | a < b ];
-		        setCollection: array copy tally: array size;
-		        yourself.
-
-	smalltalkTimeToRun := [ heap reSort ] timeToRun.
-	"pythonTimeToRun := [ CTHeapQ new heapify: array ] timeToRun."
-	self halt
-	"self
-		assert: luaTimeToRun < smalltalkTimeToRun;
-		assert: kleinbergTardosTimeToRun < smalltalkTimeToRun;
-		assert: position size equals: array size ;
-		assert: smalltalkTimeToRun < pythonTimeToRun"
-]
-
-{ #category : 'tests' }
 LibLuaTest >> testLoadThenPCall [
 
 	| code |
@@ -884,7 +801,7 @@ LibLuaTest >> testTableMap [
 
 	| list |
 	self liblua withOpenedLibsStateDo: [ :state |
-		self liblua require: 'op' operator: state.
+		self liblua luaL_requiref: state name: 'operator' let: 'op'.
 
 		list := self liblua
 			        luaL_dostring: state chunk: 'list = {5, 4, 3, 2, 1}';

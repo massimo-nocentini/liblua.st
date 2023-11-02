@@ -1493,24 +1493,6 @@ LibLuaFFIImplementation >> on: state push: anObject [
 ]
 
 { #category : 'API' }
-LibLuaFFIImplementation >> require: name heapkt: state [
-
-	^ self luaL_dostring: state chunk: name , ' = require "heapkt"'
-]
-
-{ #category : 'API' }
-LibLuaFFIImplementation >> require: name heapq: state [
-
-	^ self luaL_dostring: state chunk: name , ' = require "heapq"'
-]
-
-{ #category : 'API' }
-LibLuaFFIImplementation >> require: name operator: state [
-
-	^ self luaL_dostring: state chunk: name , ' = require "operator"'
-]
-
-{ #category : 'API' }
 LibLuaFFIImplementation >> table: L at: idx do: aBlock [
 
 	"A typical table traversal looks like this:
