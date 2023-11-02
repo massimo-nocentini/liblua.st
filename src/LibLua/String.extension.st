@@ -32,7 +32,7 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 		        lua: L pushstring: locale;
 		        lua: L pushinteger: timer offset asSeconds;
 		        lua: L pushstring: timer timeZone abbreviation;
-		        lua: L pushbooleanAsInteger: local;
+		        on: L push: local;
 		        lua_pcall: L nargs: 6 nresults: 1.
 
 	self assert: flag == ll LUA_OK.

@@ -447,6 +447,22 @@ LibLuaFFIImplementation >> lua: L get: index i: i [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L getglobal: name [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
+	
+		int lua_getglobal (lua_State *L, const char *name);
+	
+	Pushes onto the stack the value of the global name. 
+
+	Returns the type of that value."
+
+	^ self
+		  ffiCall:
+		  #( int lua_getglobal #( void #* L #, const char #* name ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L gettable: index [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_gettable,
 	
@@ -1109,22 +1125,6 @@ LibLuaFFIImplementation >> lua_getfield: L at: index name: k remove: shouldRemov
 	shouldRemove ifTrue: [ self lua_remove: L at: tblindex ].
 
 	^ type
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_getglobal: L name: name [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
-	
-		int lua_getglobal (lua_State *L, const char *name);
-	
-	Pushes onto the stack the value of the global name. 
-
-	Returns the type of that value."
-
-	^ self
-		  ffiCall:
-		  #( int lua_getglobal #( void #* L #, const char #* name ) )
-		  module: LibLua
 ]
 
 { #category : 'API - C' }

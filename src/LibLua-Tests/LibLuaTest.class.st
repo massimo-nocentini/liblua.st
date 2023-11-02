@@ -266,7 +266,7 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 		          self liblua
 			          luaL_dostring: state chunk: self commandDefLuaSource;
 			          luaL_dostring: state chunk: self commandsLuaSource;
-			          lua_getglobal: state name: 'commands';
+			          lua: state getglobal: 'commands';
 			          lua: state get: -1 i: 1;
 			          lua_getfield: state at: -1 name: 'name';
 			          lua: state tostring: -1 ].
@@ -284,7 +284,7 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 		self liblua
 			luaL_dostring: state chunk: self commandDefLuaSource;
 			luaL_dostring: state chunk: self commandsLuaSource;
-			lua_getglobal: state name: 'commands';
+			lua: state getglobal: 'commands';
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
@@ -312,7 +312,7 @@ LibLuaTest >> testCopy [
 		self liblua
 			luaL_dostring: state chunk: 'tbl = { hello = 3.14, "!" }';
 			luaL_dostring: state chunk: 'tbl[ { } ] = 2';
-			lua_getglobal: state name: 'tbl';
+			lua: state getglobal: 'tbl';
 			lua_pushnil: state;
 			lua: state copy: -2 to: -1;
 			table: state at: -1 do: [ :k :v | 
@@ -351,7 +351,7 @@ LibLuaTest >> testCopyCompare [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		outer := self liblua
 			         luaL_dostring: state chunk: 'tbl = { nested = { } }';
-			         lua_getglobal: state name: 'tbl';
+			         lua: state getglobal: 'tbl';
 			         lua_pushnil: state;
 			         lua: state copy: -2 to: -1;
 			         lua_compare_eq: state index: -2 anotherIndex: -1.
@@ -392,7 +392,7 @@ LibLuaTest >> testGetGlobal_ENV [
 
 		"to cleanup the workaround."
 		self liblua
-			lua_getglobal: state name: 'myENV';
+			lua: state getglobal: 'myENV';
 			lua_pushnil: state;
 			lua_setfield: state at: -2 name: 'myENV'.
 
@@ -412,7 +412,7 @@ LibLuaTest >> testGetInfoPrint [
 				chunk: 'print_info = debug.getinfo (debug.getinfo)' ].
 
 		tbl := self liblua
-			       lua_getglobal: state name: 'print_info';
+			       lua: state getglobal: 'print_info';
 			       on: state at: -1.
 
 		self assert: (tbl at: #what) equals: 'C' ]
@@ -436,7 +436,7 @@ LibLuaTest >> testHeapBench [
 			require: 'heapkt' heapkt: state.
 
 		c := self liblua
-			     lua_getglobal: state name: 'heapq';
+			     lua: state getglobal: 'heapq';
 			     lua_getfield: state at: -1 name: 'create';
 			     on: state push: array;
 			     lua_pcall: state nargs: 1 nresults: 1.
@@ -445,9 +445,9 @@ LibLuaTest >> testHeapBench [
 
 		self liblua
 			lua_setglobal: state name: 'H';
-			lua_getglobal: state name: 'heapq';
+			lua: state getglobal: 'heapq';
 			lua_getfield: state at: -1 name: 'heapify';
-			lua_getglobal: state name: 'H'.
+			lua: state getglobal: 'H'.
 
 		luaTimeToRun := [ 
 		                code := self liblua
@@ -460,7 +460,7 @@ LibLuaTest >> testHeapBench [
 		self assert: code equals: 0.
 
 		c := self liblua
-			     lua_getglobal: state name: 'heapkt';
+			     lua: state getglobal: 'heapkt';
 			     lua_getfield: state at: -1 name: 'new';
 			     on: state push: array;
 			     lua_pcall: state nargs: 1 nresults: 1.
@@ -469,9 +469,9 @@ LibLuaTest >> testHeapBench [
 
 		self liblua
 			lua_setglobal: state name: 'H';
-			lua_getglobal: state name: 'heapkt';
+			lua: state getglobal: 'heapkt';
 			lua_getfield: state at: -1 name: 'heapify';
-			lua_getglobal: state name: 'H'.
+			lua: state getglobal: 'H'.
 
 		kleinbergTardosTimeToRun := [ 
 		                            code := self liblua
