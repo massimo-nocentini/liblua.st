@@ -30,7 +30,7 @@ LibLuaPrimitiveImplementation >> lua: L pushboolean: b [
 ]
 
 { #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua: L pushbooleanAsInteger: b [
+LibLuaPrimitiveImplementation >> lua: L pushbooleanAsBit: b [
 
 	^ self lua: L pushboolean: true asBit == b
 ]

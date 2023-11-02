@@ -396,12 +396,11 @@ LibLuaFFIImplementation >> _on: state at: i cache: cache [
 ]
 
 { #category : 'API' }
-LibLuaFFIImplementation >> appendOnLuaRepositoryOnPackagePathOf: state [
+LibLuaFFIImplementation >> append: dir onPackagePathOfLua: state [
 
 	^ self
 		  luaL_dostring: state
-		  chunk:
-		  'package.path = package.path .. ";/usr/local/share/lua/5.4/?.lua"'
+		  chunk: 'package.path = package.path .. ";' , dir , '"'
 ]
 
 { #category : 'API' }
@@ -637,11 +636,11 @@ LibLuaFFIImplementation >> lua: L push: fn cclosure: n [
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushboolean: b [
 
-	^ self lua: L pushbooleanAsInteger: b asBit
+	^ self lua: L pushbooleanAsBit: b asBit
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua: L pushbooleanAsInteger: b [
+LibLuaFFIImplementation >> lua: L pushbooleanAsBit: b [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushboolean,
 	
 		void lua_pushboolean (lua_State *L, int b);

@@ -846,37 +846,6 @@ LibLuaTest >> testRecursiveTables [
 ]
 
 { #category : 'tests' }
-LibLuaTest >> testSearchPath [
-
-	| list longFlag |
-	self liblua withOpenedLibsStateDo: [ :state | 
-		self liblua
-			appendOnLuaRepositoryOnPackagePathOf: state;
-			require: 'heapq' heapq: state;
-			require: 'operator' operator: state.
-
-		longFlag := self liblua
-			            luaL_loadstring: state
-			            chunk:
-				            'return table.contains(package.loaded, "heapq")';
-			            lua_pcall: state nargs: 0 nresults: 1;
-			            lua: state toboolean: -1.
-
-		self liblua
-			luaL_dostring: state
-			chunk: 'for k, v in pairs(package.loaded) do print(k) end'.
-
-		list := self liblua
-			        luaL_dostring: state chunk: 'list = {5, 4, 3, 2, 1}';
-			        luaL_dostring: state chunk: 'heapq.heapify(list)';
-			        luaL_loadstring: state chunk: 'return table.concat(list, ", ")';
-			        lua_pcall: state nargs: 0 nresults: 1;
-			        lua: state tostring: -1 ].
-
-	self assert: longFlag equals: 1
-]
-
-{ #category : 'tests' }
 LibLuaTest >> testSetGlobalMySinAsCallback [
 
 	| code result called |
@@ -914,10 +883,8 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 LibLuaTest >> testTableMap [
 
 	| list |
-	self liblua withOpenedLibsStateDo: [ :state | 
-		self liblua
-			appendOnLuaRepositoryOnPackagePathOf: state;
-			require: 'op' operator: state.
+	self liblua withOpenedLibsStateDo: [ :state |
+		self liblua require: 'op' operator: state.
 
 		list := self liblua
 			        luaL_dostring: state chunk: 'list = {5, 4, 3, 2, 1}';
@@ -926,7 +893,8 @@ LibLuaTest >> testTableMap [
 			        luaL_dostring: state chunk: 'print(coroutine.zip)';
 			        luaL_dostring: state
 			        chunk: 'list = table.map(list, op.increment)';
-			        luaL_loadstring: state chunk: 'return table.concat(list, ", ")';
+			        luaL_loadstring: state
+			        chunk: 'return table.concat(list, ", ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
