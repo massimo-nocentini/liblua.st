@@ -290,10 +290,10 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 				| keyType valueType |
 				keyType := self liblua
 					           lua_typename: state
-					           type: (self liblua lua_type: state at: k).
+					           type: (self liblua lua: state type: k).
 				valueType := self liblua
 					             lua_typename: state
-					             type: (self liblua lua_type: state at: v).
+					             type: (self liblua lua: state type: v).
 				result add: keyType -> valueType ] ].
 
 	self
@@ -320,19 +320,19 @@ LibLuaTest >> testCopy [
 				| keyType valueType |
 				keyType := self liblua
 					           lua_typename: state
-					           type: (self liblua lua_type: state at: k).
+					           type: (self liblua lua: state type: k).
 				valueType := self liblua
 					             lua_typename: state
-					             type: (self liblua lua_type: state at: v).
+					             type: (self liblua lua: state type: v).
 				result add: keyType -> valueType ];
 			table: state at: -2 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
 					           lua_typename: state
-					           type: (self liblua lua_type: state at: k).
+					           type: (self liblua lua: state type: k).
 				valueType := self liblua
 					             lua_typename: state
-					             type: (self liblua lua_type: state at: v).
+					             type: (self liblua lua: state type: v).
 				original add: keyType -> valueType ] ].
 
 	self

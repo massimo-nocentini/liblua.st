@@ -350,7 +350,7 @@ LibLuaFFIImplementation >> LUA_YIELD [
 LibLuaFFIImplementation >> _on: state at: i cache: cache [
 
 	| typeid |
-	typeid := self lua_type: state at: i.
+	typeid := self lua: state type: i.
 
 	typeid = self LUA_TNIL ifTrue: [ ^ nil ].
 
@@ -885,6 +885,22 @@ LibLuaFFIImplementation >> lua: L tostring: idx [
 	^ self lua: L to: idx lstring: ExternalAddress null
 ]
 
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L type: index [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
+	
+		int lua_type (lua_State *L, int index);
+	
+	Returns the type of the value in the given valid index, or LUA_TNONE 
+	for a non-valid but acceptable index. The types returned by lua_type are coded 
+	by the following constants defined in lua.h: LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, 
+	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
+
+	^ self
+		  ffiCall: #( int lua_type #( void #* L #, int index ) )
+		  module: LibLua
+]
+
 { #category : 'API - auxiliary' }
 LibLuaFFIImplementation >> luaL: L check: arg lstring: l [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_checklstring,
@@ -1416,25 +1432,9 @@ LibLuaFFIImplementation >> lua_touserdata: L at: index [
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua_type: L at: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
-	
-		int lua_type (lua_State *L, int index);
-	
-	Returns the type of the value in the given valid index, or LUA_TNONE 
-	for a non-valid but acceptable index. The types returned by lua_type are coded 
-	by the following constants defined in lua.h: LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, 
-	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
-
-	^ self
-		  ffiCall: #( int lua_type #( void #* L #, int index ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua_typename: L at: i [
 
-	^ self lua_typename: L type: (self lua_type: L at: i)
+	^ self lua_typename: L type: (self lua: L type: i)
 ]
 
 { #category : 'API - C' }
