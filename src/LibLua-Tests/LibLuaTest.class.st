@@ -39,7 +39,7 @@ LibLuaTest >> average: state [
 	n := self liblua lua_gettop: state.
 	sum := 0.0.
 
-	1 to: n do: [ :i | sum := sum + (self liblua lua_tonumber: state at: i) ].
+	1 to: n do: [ :i | sum := sum + (self liblua lua: state tonumber: i) ].
 
 	self liblua
 		lua_pushnumber: state value: sum / n;
@@ -131,8 +131,6 @@ end
 LibLuaTest >> testCFunctionAverage [
 
 	| avg sum |
-	self skip.
-
 	self liblua withOpenedLibsStateDo: [ :state |
 		| average |
 		average := self liblua fficallbackOnBlock: [ :s | self average: s ].
@@ -150,8 +148,8 @@ LibLuaTest >> testCFunctionAverage [
 			luaL: state loadstring: 'return foo(12, 43, 43, 450)';
 			lua_pcall: state nargs: 0 nresults: 2.
 
-		avg := self liblua lua_tonumber: state at: -2.
-		sum := self liblua lua_tonumber: state at: -1 ].
+		avg := self liblua lua: state tonumber: -2.
+		sum := self liblua lua: state tonumber: -1 ].
 
 	self
 		assert: avg equals: { 12. 43. 43. 450 } average;

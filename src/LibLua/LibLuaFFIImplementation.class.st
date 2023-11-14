@@ -363,7 +363,7 @@ LibLuaFFIImplementation >> _on: state at: i cache: cache [
 	typeid = self LUA_TNUMBER ifTrue: [ 
 		^ (self lua: state isinteger: i) = 1
 			  ifTrue: [ self lua_tointeger: state at: i ]
-			  ifFalse: [ self lua_tonumber: state at: i ] ].
+			  ifFalse: [ self lua: state tonumber: i ] ].
 
 	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
 
@@ -783,6 +783,12 @@ LibLuaFFIImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock [
 	^ (pointer boolean8AtOffset: 0)
 		  ifTrue: [ value ]
 		  ifFalse: aBlock
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L tonumber: idx [
+
+	^ self lua_tonumberx: L at: idx isnumpointer: ExternalAddress null
 ]
 
 { #category : 'API - C' }
@@ -1364,12 +1370,6 @@ LibLuaFFIImplementation >> lua_tointeger: L at: index [
 	Equivalent to lua_tointegerx with isnum equal to NULL."
 
 	^ self lua: L to: index integerx: ExternalAddress null
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_tonumber: L at: idx [
-
-	^ self lua_tonumberx: L at: idx isnumpointer: ExternalAddress null
 ]
 
 { #category : 'API - C' }
