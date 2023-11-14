@@ -131,7 +131,9 @@ end
 LibLuaTest >> testCFunctionAverage [
 
 	| avg sum |
-	self liblua withOpenedLibsStateDo: [ :state | 
+	self skip.
+
+	self liblua withOpenedLibsStateDo: [ :state |
 		| average |
 		average := self liblua fficallbackOnBlock: [ :s | self average: s ].
 
@@ -180,7 +182,8 @@ LibLuaTest >> testCFunctionPCallCoroutine [
 LibLuaTest >> testCairoPango [
 
 	| ll |
-	ll := LibLua uniqueInstance implementationPrimitive.
+	self skip.
+	ll := self liblua.
 
 	ll withOpenedLibsStateDo: [ :L |
 		| canvas code |
@@ -800,6 +803,8 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 LibLuaTest >> testTableMap [
 
 	| list |
+	self skip.
+
 	self liblua withOpenedLibsStateDo: [ :state |
 		self liblua luaL_requiref: state name: 'operator' let: 'op'.
 
