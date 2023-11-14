@@ -732,6 +732,24 @@ LibLuaFFIImplementation >> lua: state register: name cfunction: f [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L set: idx field: k [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
+		
+		void lua_setfield (lua_State *L, int index, const char *k);
+		
+	Does the equivalent to t[k] = v, where t is the value at the given 
+	index and v is the value on the top of the stack.
+
+	This function pops the value from the stack. As in Lua, this function 
+	may trigger a metamethod for the ""newindex"" event (see §2.4, 	https://www.lua.org/manual/5.4/manual.html#2.4)."
+
+	^ self
+		  ffiCall:
+		  #( void lua_setfield #( void #* L #, int idx #, const char #* k ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L set: index i: i [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
 	
@@ -1322,24 +1340,6 @@ LibLuaFFIImplementation >> lua_rotate: L at: idx positions: n [
 
 	^ self
 		  ffiCall: #( void lua_rotate #( void #* L #, int idx #, int n ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_setfield: L at: idx name: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
-		
-		void lua_setfield (lua_State *L, int index, const char *k);
-		
-	Does the equivalent to t[k] = v, where t is the value at the given 
-	index and v is the value on the top of the stack.
-
-	This function pops the value from the stack. As in Lua, this function 
-	may trigger a metamethod for the ""newindex"" event (see §2.4, 	https://www.lua.org/manual/5.4/manual.html#2.4)."
-
-	^ self
-		  ffiCall:
-		  #( void lua_setfield #( void #* L #, int idx #, const char #* k ) )
 		  module: LibLua
 ]
 

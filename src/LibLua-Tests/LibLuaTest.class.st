@@ -90,22 +90,22 @@ LibLuaTest >> pushCommandTableOnLua: state random: random acc: aKey [
 
 	name := self liblua lua: state get: -2 i: 1.
 	self assert: name equals: self liblua LUA_TSTRING.
-	self liblua lua_setfield: state at: -2 name: 'name'.
+	self liblua lua: state set: -2 field: 'name'.
 
 	s := random next.
 	aKey key: aKey key + s.
 
 	self liblua
 		on: state push: s;
-		lua_setfield: state at: -2 name: 'context'.
+		lua: state set: -2 field: 'context'.
 
 	self liblua
 		lua: state get: -2 i: 2;
-		lua_setfield: state at: -2 name: 'followups'.
+		lua: state set: -2 field: 'followups'.
 
 	self liblua
 		on: state push: 'noop';
-		lua_setfield: state at: -2 name: 'action'.
+		lua: state set: -2 field: 'action'.
 
 	^ 1 "number of results"
 ]
@@ -395,7 +395,7 @@ LibLuaTest >> testGetGlobal_ENV [
 		self liblua
 			lua: state getglobal: 'myENV';
 			lua_pushnil: state;
-			lua_setfield: state at: -2 name: 'myENV'.
+			lua: state set: -2 field: 'myENV'.
 
 		tbl := self liblua on: state at: -1.
 
