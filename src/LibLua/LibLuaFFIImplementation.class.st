@@ -728,7 +728,7 @@ LibLuaFFIImplementation >> lua: state register: name cfunction: f [
 
 	^ self
 		  lua: state pushcfunction: f;
-		  lua_setglobal: state name: name
+		  lua: state setglobal: name
 ]
 
 { #category : 'API - C' }
@@ -745,6 +745,20 @@ LibLuaFFIImplementation >> lua: L set: index i: i [
 
 	^ self
 		  ffiCall: #( void lua_seti #( void #* L #, int index #, long i ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L setglobal: name [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_setglobal,
+	
+		void lua_setglobal (lua_State *L, const char *name);
+
+	Pops a value from the stack and sets it as the new value of global name."
+
+	^ self
+		  ffiCall:
+		  #( void lua_setglobal #( void #* L #, const char #* name ) )
 		  module: LibLua
 ]
 
@@ -1023,7 +1037,7 @@ LibLuaFFIImplementation >> luaL_requiref: L name: modname let: varname onErrorDo
 		global: false asBit.
 
 	luaCode == self LUA_OK
-		ifTrue: [ self lua_setglobal: L name: varname ]
+		ifTrue: [ self lua: L setglobal: varname ]
 		ifFalse: [ aBlock cull: L ].
 
 	^ nil
@@ -1216,7 +1230,7 @@ LibLuaFFIImplementation >> lua_pcall: L nargs: nargs lets: names [
 	flag := self lua_pcall: L nargs: nargs nresults: names size.
 
 	flag = self LUA_OK ifTrue: [ 
-		names reverseDo: [ :var | self lua_setglobal: L name: var asString ] ].
+		names reverseDo: [ :var | self lua: L setglobal: var asString ] ].
 
 	^ flag
 ]
@@ -1326,20 +1340,6 @@ LibLuaFFIImplementation >> lua_setfield: L at: idx name: k [
 	^ self
 		  ffiCall:
 		  #( void lua_setfield #( void #* L #, int idx #, const char #* k ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_setglobal: L name: name [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_setglobal,
-	
-		void lua_setglobal (lua_State *L, const char *name);
-
-	Pops a value from the stack and sets it as the new value of global name."
-
-	^ self
-		  ffiCall:
-		  #( void lua_setglobal #( void #* L #, const char #* name ) )
 		  module: LibLua
 ]
 

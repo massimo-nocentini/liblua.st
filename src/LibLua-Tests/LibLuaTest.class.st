@@ -233,7 +233,7 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 					          pushCommandTableOnLua: ongoingState
 					          random: random
 					          acc: r ];
-			          lua_setglobal: state name: 'command';
+			          lua: state setglobal: 'command';
 			          luaL: state dostring: self recSumLuaSource;
 			          luaL: state dostring: self commandsLuaSource;
 			          luaL: state loadstring: 'return recSum(commands)';
@@ -582,7 +582,7 @@ LibLuaTest >> testLuaSeti [
 	list := self liblua withOpenedLibsStateDo: [ :state | 
 		        self liblua
 			        on: state push: array;
-			        lua_setglobal: state name: 'array';
+			        lua: state setglobal: 'array';
 			        luaL: state
 			        loadstring: 'return  table.concat(array, " ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
@@ -781,7 +781,7 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 
 			1 "number of results" ].
 
-		self liblua lua_setglobal: state name: 'mysin'.
+		self liblua lua: state setglobal: 'mysin'.
 
 		self liblua luaL: state loadstring: 'return mysin(3)'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
