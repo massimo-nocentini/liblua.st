@@ -289,11 +289,11 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
-					           lua_typename: state
-					           type: (self liblua lua: state type: k).
+					           lua: state
+					           typename: (self liblua lua: state type: k).
 				valueType := self liblua
-					             lua_typename: state
-					             type: (self liblua lua: state type: v).
+					             lua: state
+					             typename: (self liblua lua: state type: v).
 				result add: keyType -> valueType ] ].
 
 	self
@@ -319,20 +319,20 @@ LibLuaTest >> testCopy [
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
-					           lua_typename: state
-					           type: (self liblua lua: state type: k).
+					           lua: state
+					           typename: (self liblua lua: state type: k).
 				valueType := self liblua
-					             lua_typename: state
-					             type: (self liblua lua: state type: v).
+					             lua: state
+					             typename: (self liblua lua: state type: v).
 				result add: keyType -> valueType ];
 			table: state at: -2 do: [ :k :v | 
 				| keyType valueType |
 				keyType := self liblua
-					           lua_typename: state
-					           type: (self liblua lua: state type: k).
+					           lua: state
+					           typename: (self liblua lua: state type: k).
 				valueType := self liblua
-					             lua_typename: state
-					             type: (self liblua lua: state type: v).
+					             lua: state
+					             typename: (self liblua lua: state type: v).
 				original add: keyType -> valueType ] ].
 
 	self
@@ -355,12 +355,12 @@ LibLuaTest >> testCopyCompare [
 			         lua: state getglobal: 'tbl';
 			         lua_pushnil: state;
 			         lua: state copy: -2 to: -1;
-			         lua_compare_eq: state index: -2 anotherIndex: -1.
+			         lua: state compare: -2 eq: -1.
 
 		inner := self liblua
 			         lua: state get: -2 field: 'nested';
 			         lua: state get: -2 field: 'nested';
-			         lua_compare_eq: state index: -2 anotherIndex: -1 ].
+			         lua: state compare: -2 eq: -1 ].
 
 	self
 		assert: outer equals: 1;
@@ -749,8 +749,6 @@ LibLuaTest >> testRecursiveTables [
 			       ll lua_pcall: state nargs: 0 nresults: 1 ].
 
 		       self liblua on: state at: -1 ].
-
-	tbl inspect.
 
 	t := tbl at: #t.
 	u := tbl at: #u.

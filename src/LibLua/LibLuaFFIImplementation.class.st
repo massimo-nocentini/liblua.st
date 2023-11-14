@@ -417,6 +417,40 @@ LibLuaFFIImplementation >> fficallbackOnBlock: aBlock [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L compare: index1 another: index2 operator: op [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
+	
+		int lua_compare (lua_State *L, int index1, int index2, int op);
+	
+	Compares two Lua values. Returns 1 if the value at index index1 satisfies 
+	op when compared with the value at index index2, following the semantics of 
+	the corresponding Lua operator (that is, it may call metamethods). 
+	Otherwise returns 0. Also returns 0 if any of the indices is not valid.
+
+	The value of op must be one of the following constants:
+
+		• LUA_OPEQ: compares for equality (==)
+		• LUA_OPLT: compares for less than (<)
+		• LUA_OPLE: compares for less or equal (<=)"
+
+	^ self
+		  ffiCall:
+		  #( int lua_compare #( void #* L #, int index1 #, int index2 #, int
+		        op ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L compare: index1 eq: index2 [
+
+	^ self
+		  lua: L
+		  compare: index1
+		  another: index2
+		  operator: self LUA_OPEQ
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L copy: fromidx to: toidx [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
 	
@@ -901,6 +935,20 @@ LibLuaFFIImplementation >> lua: L type: index [
 		  module: LibLua
 ]
 
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L typename: tp [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
+	
+		const char *lua_typename (lua_State *L, int tp);
+	
+	Returns the name of the type encoded by the value tp, which must 
+	be one the values returned by lua_type."
+
+	^ self
+		  ffiCall: #( const char #* lua_typename #( void #* L #, int tp ) )
+		  module: LibLua
+]
+
 { #category : 'API - auxiliary' }
 LibLuaFFIImplementation >> luaL: L check: arg lstring: l [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_checklstring,
@@ -1134,46 +1182,12 @@ LibLuaFFIImplementation >> lua_close: L [
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua_compare: L index: index1 anotherIndex: index2 operator: op [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
-	
-		int lua_compare (lua_State *L, int index1, int index2, int op);
-	
-	Compares two Lua values. Returns 1 if the value at index index1 satisfies 
-	op when compared with the value at index index2, following the semantics of 
-	the corresponding Lua operator (that is, it may call metamethods). 
-	Otherwise returns 0. Also returns 0 if any of the indices is not valid.
-
-	The value of op must be one of the following constants:
-
-		• LUA_OPEQ: compares for equality (==)
-		• LUA_OPLT: compares for less than (<)
-		• LUA_OPLE: compares for less or equal (<=)"
-
-	^ self
-		  ffiCall:
-		  #( int lua_compare #( void #* L #, int index1 #, int index2 #, int
-		        op ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_compare_eq: L index: index1 anotherIndex: index2 [
-
-	^ self
-		  lua_compare: L
-		  index: index1
-		  anotherIndex: index2
-		  operator: self LUA_OPEQ
-]
-
-{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua_compare_le: L index: index1 anotherIndex: index2 [
 
 	^ self
-		  lua_compare: L
-		  index: index1
-		  anotherIndex: index2
+		  lua: L
+		  compare: index1
+		  another: index2
 		  operator: self LUA_OPLE
 ]
 
@@ -1181,9 +1195,9 @@ LibLuaFFIImplementation >> lua_compare_le: L index: index1 anotherIndex: index2 
 LibLuaFFIImplementation >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 
 	^ self
-		  lua_compare: L
-		  index: index1
-		  anotherIndex: index2
+		  lua: L
+		  compare: index1
+		  another: index2
 		  operator: self LUA_OPLT
 ]
 
@@ -1434,21 +1448,7 @@ LibLuaFFIImplementation >> lua_touserdata: L at: index [
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_typename: L at: i [
 
-	^ self lua_typename: L type: (self lua: L type: i)
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_typename: L type: tp [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
-	
-		const char *lua_typename (lua_State *L, int tp);
-	
-	Returns the name of the type encoded by the value tp, which must 
-	be one the values returned by lua_type."
-
-	^ self
-		  ffiCall: #( const char #* lua_typename #( void #* L #, int tp ) )
-		  module: LibLua
+	^ self lua: L typename: (self lua: L type: i)
 ]
 
 { #category : 'API' }
