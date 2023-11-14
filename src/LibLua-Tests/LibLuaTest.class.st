@@ -137,7 +137,7 @@ LibLuaTest >> testCFunctionAverage [
 		| average |
 		average := self liblua fficallbackOnBlock: [ :s | self average: s ].
 
-		self liblua lua_register: state name: 'foo' cfunction: average.
+		self liblua lua: state register: 'foo' cfunction: average.
 
 		"We push here some values on the stack to test the behaviour of #lua_gettop: 
 		 when the stack contains some more values other than the arguments for the 

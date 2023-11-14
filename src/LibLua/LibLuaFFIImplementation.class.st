@@ -703,6 +703,22 @@ LibLuaFFIImplementation >> lua: L pushvalue: index [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: state register: name cfunction: f [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
+	
+		void lua_register (lua_State *L, const char *name, lua_CFunction f);
+
+	Sets the C function f as the new value of global name. It is defined as a macro:
+
+  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
+
+	^ self
+		  lua: state pushcfunction: f;
+		  lua_setglobal: state name: name
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L set: index i: i [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
 	
@@ -1253,22 +1269,6 @@ LibLuaFFIImplementation >> lua_pushnumber: L value: n [
 	^ self
 		  ffiCall: #( void lua_pushnumber #( void #* L #, double n ) )
 		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_register: state name: name cfunction: f [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
-	
-		void lua_register (lua_State *L, const char *name, lua_CFunction f);
-
-	Sets the C function f as the new value of global name. It is defined as a macro:
-
-  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
-
-	^ self
-		  lua: state pushcfunction: f;
-		  lua_setglobal: state name: name
 ]
 
 { #category : 'API - C' }
