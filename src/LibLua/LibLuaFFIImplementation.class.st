@@ -897,33 +897,7 @@ LibLuaFFIImplementation >> luaL: L loadfile: filename x: mode [
 ]
 
 { #category : 'API - auxiliary' }
-LibLuaFFIImplementation >> luaL_dostring: L chunk: s [
-
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
-	
-		int luaL_dostring (lua_State *L, const char *str);
-	
-	Loads and runs the given string. It is defined as the following macro:
-
-     (luaL_loadstring(L, str) || lua_pcall(L, 0, LUA_MULTRET, 0))
-
-	It returns LUA_OK if there are no errors, or an error code in case of errors (see §4.4.1)."
-
-	| status |
-	status := self luaL_loadstring: L chunk: s.
-
-	^ status = self LUA_OK
-		  ifTrue: [ 
-			  self
-				  lua: L
-				  pcallArgumentsSize: 0
-				  resultsSize: self LUA_MULTRET
-				  msgh: 0 ]
-		  ifFalse: [ status ]
-]
-
-{ #category : 'API - auxiliary' }
-LibLuaFFIImplementation >> luaL_loadstring: L chunk: s [
+LibLuaFFIImplementation >> luaL: L loadstring: s [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadstring,
 	
 		int luaL_loadstring (lua_State *L, const char *s);
@@ -939,6 +913,32 @@ LibLuaFFIImplementation >> luaL_loadstring: L chunk: s [
 		  ffiCall:
 		  #( int luaL_loadstring #( void #* L #, const char #* s ) )
 		  module: LibLua
+]
+
+{ #category : 'API - auxiliary' }
+LibLuaFFIImplementation >> luaL_dostring: L chunk: s [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
+	
+		int luaL_dostring (lua_State *L, const char *str);
+	
+	Loads and runs the given string. It is defined as the following macro:
+
+     (luaL_loadstring(L, str) || lua_pcall(L, 0, LUA_MULTRET, 0))
+
+	It returns LUA_OK if there are no errors, or an error code in case of errors (see §4.4.1)."
+
+	| status |
+	status := self luaL: L loadstring: s.
+
+	^ status = self LUA_OK
+		  ifTrue: [ 
+			  self
+				  lua: L
+				  pcallArgumentsSize: 0
+				  resultsSize: self LUA_MULTRET
+				  msgh: 0 ]
+		  ifFalse: [ status ]
 ]
 
 { #category : 'API - auxiliary' }

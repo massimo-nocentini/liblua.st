@@ -147,7 +147,7 @@ LibLuaTest >> testCFunctionAverage [
 			lua: state pushstring: 'hello'.
 
 		self liblua
-			luaL_loadstring: state chunk: 'return foo(12, 43, 43, 450)';
+			luaL: state loadstring: 'return foo(12, 43, 43, 450)';
 			lua_pcall: state nargs: 0 nresults: 2.
 
 		avg := self liblua lua_tonumber: state at: -2.
@@ -167,7 +167,7 @@ LibLuaTest >> testCFunctionPCallCoroutine [
 			luaL_dostring: state
 			chunk:
 				'co = coroutine.create(function (...) print(pcall(coroutine.yield, ...)) end)';
-			luaL_loadstring: state chunk: 'return coroutine.resume(co, "hello")';
+			luaL: state loadstring: 'return coroutine.resume(co, "hello")';
 			lua_pcall: state nargs: 0 nresults: 2.
 
 		s := self liblua lua: state toboolean: -2.
@@ -238,7 +238,7 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 			          lua_setglobal: state name: 'command';
 			          luaL_dostring: state chunk: self recSumLuaSource;
 			          luaL_dostring: state chunk: self commandsLuaSource;
-			          luaL_loadstring: state chunk: 'return recSum(commands)';
+			          luaL: state loadstring: 'return recSum(commands)';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          lua: state tonumberx: -1 ifNotNumber: [ Error signal ] ].
 
@@ -254,7 +254,7 @@ LibLuaTest >> testCommandsUsingLuaDefs [
 			          luaL_dostring: state chunk: self commandDefLuaSource;
 			          luaL_dostring: state chunk: self recSumLuaSource;
 			          luaL_dostring: state chunk: self commandsLuaSource;
-			          luaL_loadstring: state chunk: 'return recSum(commands)';
+			          luaL: state loadstring: 'return recSum(commands)';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          lua: state tointegerx: -1 ifNotInteger: [ Error signal ] ].
 
@@ -427,8 +427,8 @@ LibLuaTest >> testLoadThenPCall [
 	| code |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk: 'do a = 3 + 4; print("The result is: ", a) end'.
+			luaL: state
+			loadstring: 'do a = 3 + 4; print("The result is: ", a) end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 0 ].
 
 	self assert: code equals: 0
@@ -440,8 +440,8 @@ LibLuaTest >> testLoadThenPCallThenToString [
 	| error code |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk: '(function (a, b) return error("hello") end) (3, 4)'.
+			luaL: state
+			loadstring: '(function (a, b) return error("hello") end) (3, 4)'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 0.
 		error := self liblua lua: state tostring: -1 ].
 
@@ -459,8 +459,8 @@ LibLuaTest >> testLoadThenPCallWithReturnInteger [
 	| code seven |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk:
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return a + 1 end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 		seven := self liblua
@@ -481,8 +481,8 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerFail [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk:
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return "just a simple string" end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 		seven := self liblua
@@ -501,8 +501,8 @@ LibLuaTest >> testLoadThenPCallWithReturnIntegerInString [
 	| code seven |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk:
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return tostring(a + 1) end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 		seven := self liblua
@@ -521,8 +521,8 @@ LibLuaTest >> testLoadThenPCallWithReturnNumber [
 	| code seven |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk:
+			luaL: state
+			loadstring:
 			'do a = 3 + 4.2; print("The result is: ", a); return a + 1 end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 		seven := self liblua
@@ -543,8 +543,8 @@ LibLuaTest >> testLoadThenPCallWithReturnNumberFail [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk:
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return "just a simple string" end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 		seven := self liblua
@@ -563,8 +563,8 @@ LibLuaTest >> testLoadThenPCallWithReturnString [
 	| code seven |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_loadstring: state
-			chunk:
+			luaL: state
+			loadstring:
 			'do a = 3 + 4; print("The result is: ", a); return tostring(a) .. " hello " end'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 		seven := self liblua lua: state tostring: -1 ].
@@ -585,8 +585,8 @@ LibLuaTest >> testLuaSeti [
 		        self liblua
 			        on: state push: array;
 			        lua_setglobal: state name: 'array';
-			        luaL_loadstring: state
-			        chunk: 'return  table.concat(array, " ")';
+			        luaL: state
+			        loadstring: 'return  table.concat(array, " ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
@@ -621,21 +621,21 @@ LibLuaTest >> testReadFromArray [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return {1, 2, 3, 4, 5}';
+			          luaL: state loadstring: 'return {1, 2, 3, 4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: #( 1 2 3 4 5 ).
 
 		result := self liblua
-			          luaL_loadstring: state
-			          chunk: 'return {1, {1, 2, 3, 4, 5}, 3, 4, 5}';
+			          luaL: state
+			          loadstring: 'return {1, {1, 2, 3, 4, 5}, 3, 4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: #( 1 #( 1 2 3 4 5 ) 3 4 5 ).
 
 		result := self liblua
-			          luaL_loadstring: state
-			          chunk: 'return {[-1]=1, 2, nil, [100]=4, 5}';
+			          luaL: state
+			          loadstring: 'return {[-1]=1, 2, nil, [100]=4, 5}';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: (Dictionary new
@@ -652,13 +652,13 @@ LibLuaTest >> testReadFromBoolean [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return false';
+			          luaL: state loadstring: 'return false';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self deny: result.
 
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return true';
+			          luaL: state loadstring: 'return true';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result ]
@@ -670,7 +670,7 @@ LibLuaTest >> testReadFromInteger [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return 12345';
+			          luaL: state loadstring: 'return 12345';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: 12345 ]
@@ -682,7 +682,7 @@ LibLuaTest >> testReadFromNil [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return nil';
+			          luaL: state loadstring: 'return nil';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: nil ]
@@ -694,7 +694,7 @@ LibLuaTest >> testReadFromNumber [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return 12345.1';
+			          luaL: state loadstring: 'return 12345.1';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: 12345.1 ]
@@ -706,7 +706,7 @@ LibLuaTest >> testReadFromString [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_loadstring: state chunk: 'return "nil"';
+			          luaL: state loadstring: 'return "nil"';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: 'nil' ]
@@ -721,7 +721,7 @@ LibLuaTest >> testReadFromTable [
 			          luaL_dostring: state chunk: 'tbl = {1, 4}';
 			          luaL_dostring: state chunk: 'tbl[{}] = "hello"';
 			          luaL_dostring: state chunk: 'tbl[true] = { 1 }';
-			          luaL_loadstring: state chunk: 'return tbl';
+			          luaL: state loadstring: 'return tbl';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
 		self assert: result equals: (Dictionary new
@@ -738,7 +738,7 @@ LibLuaTest >> testRecursiveTables [
 	| tbl t u |
 	tbl := self liblua withOpenedLibsStateDo: [ :state | 
 		       self liblua assert: [ :ll | 
-			       ll luaL_loadstring: state chunk: '
+			       ll luaL: state loadstring: '
 		
 			local t, u = {  }, {  }
 			t.t, u[u] = t, u
@@ -785,7 +785,7 @@ LibLuaTest >> testSetGlobalMySinAsCallback [
 
 		self liblua lua_setglobal: state name: 'mysin'.
 
-		self liblua luaL_loadstring: state chunk: 'return mysin(3)'.
+		self liblua luaL: state loadstring: 'return mysin(3)'.
 		code := self liblua lua_pcall: state nargs: 0 nresults: 1.
 
 		result := self liblua
@@ -815,8 +815,8 @@ LibLuaTest >> testTableMap [
 			        luaL_dostring: state chunk: 'print(coroutine.zip)';
 			        luaL_dostring: state
 			        chunk: 'list = table.map(list, op.increment)';
-			        luaL_loadstring: state
-			        chunk: 'return table.concat(list, ", ")';
+			        luaL: state
+			        loadstring: 'return table.concat(list, ", ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
 			        lua: state tostring: -1 ].
 
