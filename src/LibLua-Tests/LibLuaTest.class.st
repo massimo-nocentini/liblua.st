@@ -42,8 +42,8 @@ LibLuaTest >> average: state [
 	1 to: n do: [ :i | sum := sum + (self liblua lua: state tonumber: i) ].
 
 	self liblua
-		lua_pushnumber: state value: sum / n;
-		lua_pushnumber: state value: sum.
+		lua: state pushnumber: sum / n;
+		lua: state pushnumber: sum.
 
 	^ 2
 ]

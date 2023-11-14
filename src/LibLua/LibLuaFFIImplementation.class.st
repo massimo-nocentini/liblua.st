@@ -680,6 +680,19 @@ LibLuaFFIImplementation >> lua: L pushinteger: n [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L pushnumber: n [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
+	
+		void lua_pushnumber (lua_State *L, lua_Number n);
+		
+	Pushes a float with value n onto the stack.	"
+
+	^ self
+		  ffiCall: #( void lua_pushnumber #( void #* L #, double n ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushstring: s [
 	"const char *lua_pushstring (lua_State *L, const char *s)"
 
@@ -1262,19 +1275,6 @@ LibLuaFFIImplementation >> lua_pushnil: L [
 	" void lua_pushnil (lua_State *L)"
 
 	^ self ffiCall: #( void lua_pushnil #( void #* L ) ) module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pushnumber: L value: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
-	
-		void lua_pushnumber (lua_State *L, lua_Number n);
-		
-	Pushes a float with value n onto the stack.	"
-
-	^ self
-		  ffiCall: #( void lua_pushnumber #( void #* L #, double n ) )
-		  module: LibLua
 ]
 
 { #category : 'API - C' }
