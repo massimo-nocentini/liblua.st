@@ -162,8 +162,8 @@ LibLuaTest >> testCFunctionPCallCoroutine [
 	| s e |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_dostring: state
-			chunk:
+			luaL: state
+			dostring:
 				'co = coroutine.create(function (...) print(pcall(coroutine.yield, ...)) end)';
 			luaL: state loadstring: 'return coroutine.resume(co, "hello")';
 			lua_pcall: state nargs: 0 nresults: 2.
@@ -234,8 +234,8 @@ LibLuaTest >> testCommandsUsingLuaAPI [
 					          random: random
 					          acc: r ];
 			          lua_setglobal: state name: 'command';
-			          luaL_dostring: state chunk: self recSumLuaSource;
-			          luaL_dostring: state chunk: self commandsLuaSource;
+			          luaL: state dostring: self recSumLuaSource;
+			          luaL: state dostring: self commandsLuaSource;
 			          luaL: state loadstring: 'return recSum(commands)';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          lua: state tonumberx: -1 ifNotNumber: [ Error signal ] ].
@@ -249,9 +249,9 @@ LibLuaTest >> testCommandsUsingLuaDefs [
 	| result |
 	result := self liblua withOpenedLibsStateDo: [ :state | 
 		          self liblua
-			          luaL_dostring: state chunk: self commandDefLuaSource;
-			          luaL_dostring: state chunk: self recSumLuaSource;
-			          luaL_dostring: state chunk: self commandsLuaSource;
+			          luaL: state dostring: self commandDefLuaSource;
+			          luaL: state dostring: self recSumLuaSource;
+			          luaL: state dostring: self commandsLuaSource;
 			          luaL: state loadstring: 'return recSum(commands)';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          lua: state tointegerx: -1 ifNotInteger: [ Error signal ] ].
@@ -265,8 +265,8 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 	| result |
 	result := self liblua withOpenedLibsStateDo: [ :state | 
 		          self liblua
-			          luaL_dostring: state chunk: self commandDefLuaSource;
-			          luaL_dostring: state chunk: self commandsLuaSource;
+			          luaL: state dostring: self commandDefLuaSource;
+			          luaL: state dostring: self commandsLuaSource;
 			          lua: state getglobal: 'commands';
 			          lua: state get: -1 i: 1;
 			          lua_getfield: state at: -1 name: 'name';
@@ -283,8 +283,8 @@ LibLuaTest >> testCommandsUsingLuaDefsTableDo [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_dostring: state chunk: self commandDefLuaSource;
-			luaL_dostring: state chunk: self commandsLuaSource;
+			luaL: state dostring: self commandDefLuaSource;
+			luaL: state dostring: self commandsLuaSource;
 			lua: state getglobal: 'commands';
 			table: state at: -1 do: [ :k :v | 
 				| keyType valueType |
@@ -311,8 +311,8 @@ LibLuaTest >> testCopy [
 
 	self liblua withOpenedLibsStateDo: [ :state | 
 		self liblua
-			luaL_dostring: state chunk: 'tbl = { hello = 3.14, "!" }';
-			luaL_dostring: state chunk: 'tbl[ { } ] = 2';
+			luaL: state dostring: 'tbl = { hello = 3.14, "!" }';
+			luaL: state dostring: 'tbl[ { } ] = 2';
 			lua: state getglobal: 'tbl';
 			lua_pushnil: state;
 			lua: state copy: -2 to: -1;
@@ -351,7 +351,7 @@ LibLuaTest >> testCopyCompare [
 	| outer inner |
 	self liblua withOpenedLibsStateDo: [ :state | 
 		outer := self liblua
-			         luaL_dostring: state chunk: 'tbl = { nested = { } }';
+			         luaL: state dostring: 'tbl = { nested = { } }';
 			         lua: state getglobal: 'tbl';
 			         lua_pushnil: state;
 			         lua: state copy: -2 to: -1;
@@ -387,8 +387,8 @@ LibLuaTest >> testGetGlobal_ENV [
 		| tbl |
 		self liblua assert: [ :ll | 
 			ll
-				luaL_dostring: state
-				chunk:
+				luaL: state
+				dostring:
 				'myENV = _ENV	-- workaround to have the global environment.' ].
 
 		"to cleanup the workaround."
@@ -409,8 +409,8 @@ LibLuaTest >> testGetInfoPrint [
 		| tbl |
 		self liblua assert: [ :ll | 
 			ll
-				luaL_dostring: state
-				chunk: 'print_info = debug.getinfo (debug.getinfo)' ].
+				luaL: state
+				dostring: 'print_info = debug.getinfo (debug.getinfo)' ].
 
 		tbl := self liblua
 			       lua: state getglobal: 'print_info';
@@ -716,9 +716,9 @@ LibLuaTest >> testReadFromTable [
 	self liblua withOpenedLibsStateDo: [ :state | 
 		| result |
 		result := self liblua
-			          luaL_dostring: state chunk: 'tbl = {1, 4}';
-			          luaL_dostring: state chunk: 'tbl[{}] = "hello"';
-			          luaL_dostring: state chunk: 'tbl[true] = { 1 }';
+			          luaL: state dostring: 'tbl = {1, 4}';
+			          luaL: state dostring: 'tbl[{}] = "hello"';
+			          luaL: state dostring: 'tbl[true] = { 1 }';
 			          luaL: state loadstring: 'return tbl';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
@@ -807,12 +807,12 @@ LibLuaTest >> testTableMap [
 		self liblua luaL_requiref: state name: 'operator' let: 'op'.
 
 		list := self liblua
-			        luaL_dostring: state chunk: 'list = {5, 4, 3, 2, 1}';
-			        luaL_dostring: state chunk: 'print(table.contains)';
-			        luaL_dostring: state chunk: 'print(op.increment)';
-			        luaL_dostring: state chunk: 'print(coroutine.zip)';
-			        luaL_dostring: state
-			        chunk: 'list = table.map(list, op.increment)';
+			        luaL: state dostring: 'list = {5, 4, 3, 2, 1}';
+			        luaL: state dostring: 'print(table.contains)';
+			        luaL: state dostring: 'print(op.increment)';
+			        luaL: state dostring: 'print(coroutine.zip)';
+			        luaL: state
+			        dostring: 'list = table.map(list, op.increment)';
 			        luaL: state
 			        loadstring: 'return table.concat(list, ", ")';
 			        lua_pcall: state nargs: 0 nresults: 1;
