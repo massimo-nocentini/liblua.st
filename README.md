@@ -1,9 +1,9 @@
-# LibLua-st
+# liblua.st
+
 Bindings to Lua lang for Pharo Smalltalk, load it with
 ```smalltalk
 Metacello new
     baseline: 'LibLuast';
-    repository: 'github://massimo-nocentini/LibLua-st';
+    repository: 'github://massimo-nocentini/liblua.st';
     load
 ```
-that will load https://github.com/massimo-nocentini/on-lua in turn.
