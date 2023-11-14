@@ -10,7 +10,7 @@ String >> formatDateAndTime: timer localeSpecifier: locale showLocalTime: local 
 		  ll
 			  luaL_requiref: L name: 'datetimeformatter';
 			  on: L push: #datetimeformatter;
-			  lua_getfield: L at: -1 name: 'compile_then_format';
+			  lua: L get: -1 field: 'compile_then_format';
 			  lua_remove: L at: 1. "remove the table for the module, leaving on the stack just the function."
 
 		  self

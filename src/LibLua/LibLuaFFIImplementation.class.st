@@ -432,6 +432,36 @@ LibLuaFFIImplementation >> lua: L copy: fromidx to: toidx [
 ]
 
 { #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L get: index field: k [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
+	
+		int lua_getfield (lua_State *L, int index, const char *k);
+	
+	Pushes onto the stack the value t[k], where t is the value at the given index. 
+	As in Lua, this function may trigger a metamethod for the ""index"" event 
+	(see https://www.lua.org/manual/5.4/manual.html#2.4).
+
+	Returns the type of the pushed value."
+
+	^ self
+		  ffiCall:
+		  #( int lua_getfield #( void #* L #, int index #, const char #* k ) )
+		  module: LibLua
+]
+
+{ #category : 'API - C' }
+LibLuaFFIImplementation >> lua: L get: index field: k remove: shouldRemove [
+
+	| type tblindex |
+	tblindex := self lua_absindex: L index: index.
+	type := self lua: L get: index field: k.
+
+	shouldRemove ifTrue: [ self lua_remove: L at: tblindex ].
+
+	^ type
+]
+
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L get: index i: i [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
 	
@@ -1170,36 +1200,6 @@ LibLuaFFIImplementation >> lua_error: L [
 	never returns (see luaL_error)."
 
 	^ self ffiCall: #( int lua_error #( void #* L ) ) module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_getfield: L at: index name: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
-	
-		int lua_getfield (lua_State *L, int index, const char *k);
-	
-	Pushes onto the stack the value t[k], where t is the value at the given index. 
-	As in Lua, this function may trigger a metamethod for the ""index"" event 
-	(see https://www.lua.org/manual/5.4/manual.html#2.4).
-
-	Returns the type of the pushed value."
-
-	^ self
-		  ffiCall:
-		  #( int lua_getfield #( void #* L #, int index #, const char #* k ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_getfield: L at: index name: k remove: shouldRemove [
-
-	| type tblindex |
-	tblindex := self lua_absindex: L index: index.
-	type := self lua_getfield: L at: index name: k.
-
-	shouldRemove ifTrue: [ self lua_remove: L at: tblindex ].
-
-	^ type
 ]
 
 { #category : 'API - C' }

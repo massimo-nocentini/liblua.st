@@ -189,7 +189,7 @@ LibLuaTest >> testCairoPango [
 
 		ll
 			on: L push: #cairo;
-			lua_getfield: L at: -1 name: 'write'.
+			lua: L get: -1 field: 'write'.
 
 		canvas := RSCanvas new yourself.
 		"   add: (RSBox new
@@ -269,7 +269,7 @@ LibLuaTest >> testCommandsUsingLuaDefsReadingTableBack [
 			          luaL: state dostring: self commandsLuaSource;
 			          lua: state getglobal: 'commands';
 			          lua: state get: -1 i: 1;
-			          lua_getfield: state at: -1 name: 'name';
+			          lua: state get: -1 field: 'name';
 			          lua: state tostring: -1 ].
 
 	self assert: result equals: 'create'
@@ -358,8 +358,8 @@ LibLuaTest >> testCopyCompare [
 			         lua_compare_eq: state index: -2 anotherIndex: -1.
 
 		inner := self liblua
-			         lua_getfield: state at: -2 name: 'nested';
-			         lua_getfield: state at: -2 name: 'nested';
+			         lua: state get: -2 field: 'nested';
+			         lua: state get: -2 field: 'nested';
 			         lua_compare_eq: state index: -2 anotherIndex: -1 ].
 
 	self
