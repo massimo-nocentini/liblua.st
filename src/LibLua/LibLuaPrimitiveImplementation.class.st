@@ -396,14 +396,6 @@ LibLuaPrimitiveImplementation >> _on: state at: i cache: cache [
 ]
 
 { #category : 'API' }
-LibLuaPrimitiveImplementation >> append: dir onPackagePathOfLua: state [
-
-	^ self
-		  luaL: state
-		  dostring: 'package.path = package.path .. ";' , dir , '"'
-]
-
-{ #category : 'API' }
 LibLuaPrimitiveImplementation >> assert: aBlock [
 
 	^ super assert: (aBlock cull: self) = self LUA_OK
@@ -411,36 +403,9 @@ LibLuaPrimitiveImplementation >> assert: aBlock [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L compare: index1 another: index2 operator: op [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,
-	
-		int lua_compare (lua_State *L, int index1, int index2, int op);
-	
-	Compares two Lua values. Returns 1 if the value at index index1 satisfies 
-	op when compared with the value at index index2, following the semantics of 
-	the corresponding Lua operator (that is, it may call metamethods). 
-	Otherwise returns 0. Also returns 0 if any of the indices is not valid.
 
-	The value of op must be one of the following constants:
-
-		• LUA_OPEQ: compares for equality (==)
-		• LUA_OPLT: compares for less than (<)
-		• LUA_OPLE: compares for less or equal (<=)"
-
-	^ self
-		  ffiCall:
-		  #( int lua_compare #( void #* L #, int index1 #, int index2 #, int
-		        op ) )
-		  module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua: L compare: index1 eq: index2 [
-
-	^ self
-		  lua: L
-		  compare: index1
-		  another: index2
-		  operator: self LUA_OPEQ
+	<primitive: 'primitive_lua_compare' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
