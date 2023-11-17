@@ -60,3 +60,19 @@ LibLuaAbstractImplementation >> lua: L compare: index1 eq: index2 [
 		  another: index2
 		  operator: self LUA_OPEQ
 ]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> luaL: L loadstring: s [
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadstring,
+	
+		int luaL_loadstring (lua_State *L, const char *s);
+		
+	Loads a string as a Lua chunk. This function uses lua_load to load the 
+	chunk in the zero-terminated string s.
+
+	This function returns the same results as lua_load.
+
+	Also as lua_load, this function only loads the chunk; it does not run it."
+
+	self subclassResponsibility
+]
