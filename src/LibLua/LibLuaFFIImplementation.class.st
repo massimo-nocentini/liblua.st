@@ -3,7 +3,7 @@ I am the implementation that uses FFI calls.
 "
 Class {
 	#name : 'LibLuaFFIImplementation',
-	#superclass : 'Object',
+	#superclass : 'LibLuaAbstractImplementation',
 	#category : 'LibLua',
 	#package : 'LibLua'
 }
