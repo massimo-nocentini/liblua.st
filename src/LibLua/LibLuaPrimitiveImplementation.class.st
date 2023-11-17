@@ -409,13 +409,6 @@ LibLuaPrimitiveImplementation >> assert: aBlock [
 	^ super assert: (aBlock cull: self) = self LUA_OK
 ]
 
-{ #category : 'API' }
-LibLuaPrimitiveImplementation >> fficallbackOnBlock: aBlock [
-
-	^ (FFICallback signature: #( int #( const void * a ) ) block: aBlock)
-		  getHandle
-]
-
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L compare: index1 another: index2 operator: op [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_compare,

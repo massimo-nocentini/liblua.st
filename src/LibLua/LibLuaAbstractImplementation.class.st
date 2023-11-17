@@ -7,3 +7,10 @@ Class {
 	#category : 'LibLua',
 	#package : 'LibLua'
 }
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> fficallbackOnBlock: aBlock [
+
+	^ (FFICallback signature: #( int #( const void * a ) ) block: aBlock)
+		  getHandle
+]
