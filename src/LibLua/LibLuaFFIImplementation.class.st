@@ -422,15 +422,6 @@ LibLuaFFIImplementation >> lua: L copy: fromidx to: toidx [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L get: index field: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
-	
-		int lua_getfield (lua_State *L, int index, const char *k);
-	
-	Pushes onto the stack the value t[k], where t is the value at the given index. 
-	As in Lua, this function may trigger a metamethod for the ""index"" event 
-	(see https://www.lua.org/manual/5.4/manual.html#2.4).
-
-	Returns the type of the pushed value."
 
 	^ self
 		  ffiCall:
