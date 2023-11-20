@@ -375,7 +375,7 @@ LibLuaTest >> testDictionary [
 
 	d
 		at: d put: d;
-		at: Object new put: Float goldenRatio.
+		at: Object new put: 1.618.
 
 	self assert: (d at: d) identicalTo: d
 ]

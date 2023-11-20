@@ -410,17 +410,9 @@ LibLuaPrimitiveImplementation >> lua: L compare: index1 another: index2 operator
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L copy: fromidx to: toidx [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
-	
-		void lua_copy (lua_State *L, int fromidx, int toidx);
-	
-	Copies the element at index fromidx into the valid index toidx, replacing the 
-	value at that position. Values at other positions are not affected."
 
-	^ self
-		  ffiCall:
-		  #( void lua_copy #( void #* L #, int fromidx #, int toidx ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_copy' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }

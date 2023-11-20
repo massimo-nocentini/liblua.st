@@ -62,6 +62,18 @@ LibLuaAbstractImplementation >> lua: L compare: index1 eq: index2 [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L copy: fromidx to: toidx [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
+	
+		void lua_copy (lua_State *L, int fromidx, int toidx);
+	
+	Copies the element at index fromidx into the valid index toidx, replacing the 
+	value at that position. Values at other positions are not affected."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,

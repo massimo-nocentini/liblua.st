@@ -413,12 +413,6 @@ LibLuaFFIImplementation >> lua: L compare: index1 another: index2 operator: op [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L copy: fromidx to: toidx [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_copy,
-	
-		void lua_copy (lua_State *L, int fromidx, int toidx);
-	
-	Copies the element at index fromidx into the valid index toidx, replacing the 
-	value at that position. Values at other positions are not affected."
 
 	^ self
 		  ffiCall:
