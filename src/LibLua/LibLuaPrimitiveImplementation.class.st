@@ -395,12 +395,6 @@ LibLuaPrimitiveImplementation >> _on: state at: i cache: cache [
 	^ self lua_typename: state at: i
 ]
 
-{ #category : 'API' }
-LibLuaPrimitiveImplementation >> assert: aBlock [
-
-	^ super assert: (aBlock cull: self) = self LUA_OK
-]
-
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L compare: index1 another: index2 operator: op [
 
@@ -423,18 +417,6 @@ LibLuaPrimitiveImplementation >> lua: L get: index field: k [
 ]
 
 { #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua: L get: index field: k remove: shouldRemove [
-
-	| type tblindex |
-	tblindex := self lua_absindex: L index: index.
-	type := self lua: L get: index field: k.
-
-	shouldRemove ifTrue: [ self lua_remove: L at: tblindex ].
-
-	^ type
-]
-
-{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L get: index i: i [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
 	
@@ -446,9 +428,8 @@ LibLuaPrimitiveImplementation >> lua: L get: index i: i [
 
 	Returns the type of the pushed value."
 
-	^ self
-		  ffiCall: #( int lua_geti #( void #* L #, int index #, long i ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_geti' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
@@ -461,10 +442,8 @@ LibLuaPrimitiveImplementation >> lua: L getglobal: name [
 
 	Returns the type of that value."
 
-	^ self
-		  ffiCall:
-		  #( int lua_getglobal #( void #* L #, const char #* name ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_getglobal' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
