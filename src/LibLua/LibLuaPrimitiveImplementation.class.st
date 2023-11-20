@@ -460,9 +460,8 @@ LibLuaPrimitiveImplementation >> lua: L gettable: index [
 
 	Returns the type of the pushed value."
 
-	^ self
-		  ffiCall: #( int lua_gettable #( void #* L #, int index ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_gettable' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
@@ -474,9 +473,8 @@ LibLuaPrimitiveImplementation >> lua: L isinteger: index [
 	Returns 1 if the value at the given index is an integer 
 	(that is, the value is a number and is represented as an integer), and 0 otherwise."
 
-	^ self
-		  ffiCall: #( int lua_isinteger #( void #* L #, int index ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_gettable' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
@@ -489,9 +487,8 @@ LibLuaPrimitiveImplementation >> lua: L len: index [
 	the '#' operator in Lua (see §3.4.7) and may trigger a metamethod for 
 	the ""length"" event (see §2.4). The result is pushed on the stack."
 
-	^ self
-		  ffiCall: #( void lua_len #( void #* L #, int index ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_len' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
@@ -524,9 +521,9 @@ LibLuaPrimitiveImplementation >> lua: L next: idx [
 	This function may raise an error if the given key is neither nil nor present in the table. 
 	See function next for the caveats of modifying the table during its traversal."
 
-	^ self
-		  ffiCall: #( int lua_next #( void #* L #, int idx ) )
-		  module: LibLua
+	
+	<primitive: 'primitive_lua_len' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
