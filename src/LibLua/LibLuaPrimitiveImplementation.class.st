@@ -473,7 +473,7 @@ LibLuaPrimitiveImplementation >> lua: L isinteger: index [
 	Returns 1 if the value at the given index is an integer 
 	(that is, the value is a number and is represented as an integer), and 0 otherwise."
 
-	<primitive: 'primitive_lua_gettable' module: 'LuaPlugin'>
+	<primitive: 'primitive_lua_isinteger' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
@@ -521,8 +521,7 @@ LibLuaPrimitiveImplementation >> lua: L next: idx [
 	This function may raise an error if the given key is neither nil nor present in the table. 
 	See function next for the caveats of modifying the table during its traversal."
 
-	
-	<primitive: 'primitive_lua_len' module: 'LuaPlugin'>
+	<primitive: 'primitive_lua_next' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
