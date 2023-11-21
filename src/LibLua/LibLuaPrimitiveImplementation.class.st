@@ -418,15 +418,6 @@ LibLuaPrimitiveImplementation >> lua: L get: index field: k [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L get: index i: i [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_geti,
-	
-		int lua_geti (lua_State *L, int index, lua_Integer i);
-	
-	Pushes onto the stack the value t[i], where t is the value at the given index. 
-	As in Lua, this function may trigger a metamethod for the ""index"" event 
-	(see https://www.lua.org/manual/5.4/manual.html#2.4).
-
-	Returns the type of the pushed value."
 
 	<primitive: 'primitive_lua_geti' module: 'LuaPlugin'>
 	self primitiveFail
@@ -434,13 +425,6 @@ LibLuaPrimitiveImplementation >> lua: L get: index i: i [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L getglobal: name [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_getglobal,
-	
-		int lua_getglobal (lua_State *L, const char *name);
-	
-	Pushes onto the stack the value of the global name. 
-
-	Returns the type of that value."
 
 	<primitive: 'primitive_lua_getglobal' module: 'LuaPlugin'>
 	self primitiveFail
@@ -448,17 +432,6 @@ LibLuaPrimitiveImplementation >> lua: L getglobal: name [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L gettable: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_gettable,
-	
-		int lua_gettable (lua_State *L, int index);
-	
-	Pushes onto the stack the value t[k], where t is the value at 
-	the given index and k is the value on the top of the stack.
-
-	This function pops the key from the stack, pushing the resulting value 
-	in its place. As in Lua, this function may trigger a metamethod for the 'index' event (see §2.4).
-
-	Returns the type of the pushed value."
 
 	<primitive: 'primitive_lua_gettable' module: 'LuaPlugin'>
 	self primitiveFail
@@ -466,12 +439,6 @@ LibLuaPrimitiveImplementation >> lua: L gettable: index [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L isinteger: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_isinteger,
-	
-		int lua_isinteger (lua_State *L, int index);
-		
-	Returns 1 if the value at the given index is an integer 
-	(that is, the value is a number and is represented as an integer), and 0 otherwise."
 
 	<primitive: 'primitive_lua_isinteger' module: 'LuaPlugin'>
 	self primitiveFail
@@ -479,13 +446,6 @@ LibLuaPrimitiveImplementation >> lua: L isinteger: index [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L len: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_len,
-	
-		void lua_len (lua_State *L, int index);
-		
-	Returns the length of the value at the given index. It is equivalent to 
-	the '#' operator in Lua (see §3.4.7) and may trigger a metamethod for 
-	the ""length"" event (see §2.4). The result is pushed on the stack."
 
 	<primitive: 'primitive_lua_len' module: 'LuaPlugin'>
 	self primitiveFail
@@ -493,33 +453,6 @@ LibLuaPrimitiveImplementation >> lua: L len: index [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L next: idx [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_next,
-	
-		int lua_next (lua_State *L, int idx);
-	
-	Pops a key from the stack, and pushes a key–value pair from the table at the given index, 
-	the ""next"" pair after the given key. If there are no more elements in the table, 
-	then lua_next returns 0 and pushes nothing.
-
-	A typical table traversal looks like this:
-
-     /* table is in the stack at index 't' */
-     lua_pushnil(L);  /* first key */
-     while (lua_next(L, t) != 0) {
-       /* uses 'key' (at index -2) and 'value' (at index -1) */
-       printf(""%s - %s\n"",
-              lua_typename(L, lua_type(L, -2)),
-              lua_typename(L, lua_type(L, -1)));
-       /* removes 'value'; keeps 'key' for next iteration */
-       lua_pop(L, 1);
-     }
-
-	While traversing a table, avoid calling lua_tolstring directly on a key, 
-	unless you know that the key is actually a string. Recall that lua_tolstring may change 
-	the value at the given index; this confuses the next call to lua_next.
-
-	This function may raise an error if the given key is neither nil nor present in the table. 
-	See function next for the caveats of modifying the table during its traversal."
 
 	<primitive: 'primitive_lua_next' module: 'LuaPlugin'>
 	self primitiveFail
@@ -541,35 +474,6 @@ LibLuaPrimitiveImplementation >> lua: L pop: n [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L push: fn cclosure: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcclosure,
-	
-		void lua_pushcclosure (lua_State *L, lua_CFunction fn, int n);
-	
-	Pushes a new C closure onto the stack. 
-	
-	This function receives a pointer to a C function and pushes onto the 
-	stack a Lua value of type function that, when called, invokes the corresponding 
-	C function. The parameter n tells how many upvalues this function will have 
-	(see https://www.lua.org/manual/5.4/manual.html#4.2).
-
-	Any function to be callable by Lua must follow the correct protocol to receive 
-	its parameters and return its results (see 
-	https://www.lua.org/manual/5.4/manual.html#lua_CFunction).
-
-	When a C function is created, it is possible to associate some values with it, 
-	the so called upvalues; these upvalues are then accessible to the function whenever 
-	it is called. This association is called a C closure (see §4.2). To create a C 
-	closure, first the initial values for its upvalues must be pushed onto the stack. 
-	(When there are multiple upvalues, the first value is pushed first.) 
-	
-	Then lua_pushcclosure is called to create and push the C function onto the stack, 
-	with the argument n telling how many values will be associated with the function. 
-	lua_pushcclosure also pops these values from the stack.
-	
-	The maximum value for n is 255.
-
-	When n is zero, this function creates a light C function, which is just a pointer 
-	to the C function. In that case, it never raises a memory error."
 
 	<primitive: 'primitive_lua_pushcclosure' module: 'LuaPlugin'>
 	self primitiveFail
@@ -580,12 +484,6 @@ LibLuaPrimitiveImplementation >> lua: L pushboolean: b [
 
 	<primitive: 'primitive_lua_pushboolean' module: 'LuaPlugin'>
 	self primitiveFail
-]
-
-{ #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua: L pushbooleanAsBit: b [
-
-	^ self lua: L pushboolean: true asBit == b
 ]
 
 { #category : 'API - C' }
@@ -604,15 +502,9 @@ LibLuaPrimitiveImplementation >> lua: L pushinteger: n [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L pushnumber: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
-	
-		void lua_pushnumber (lua_State *L, lua_Number n);
-		
-	Pushes a float with value n onto the stack.	"
 
-	^ self
-		  ffiCall: #( void lua_pushnumber #( void #* L #, double n ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_pushnumber' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
