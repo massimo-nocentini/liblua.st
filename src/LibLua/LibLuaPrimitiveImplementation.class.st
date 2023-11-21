@@ -571,10 +571,8 @@ LibLuaPrimitiveImplementation >> lua: L push: fn cclosure: n [
 	When n is zero, this function creates a light C function, which is just a pointer 
 	to the C function. In that case, it never raises a memory error."
 
-	^ self
-		  ffiCall:
-		  #( void lua_pushcclosure #( void #* L #, void #* fn #, int n ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_pushcclosure' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
