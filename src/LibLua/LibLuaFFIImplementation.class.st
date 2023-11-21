@@ -531,7 +531,6 @@ LibLuaFFIImplementation >> lua: L pushnumber: n [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushstring: s [
-	"const char *lua_pushstring (lua_State *L, const char *s)"
 
 	^ self
 		  ffiCall:
@@ -541,11 +540,6 @@ LibLuaFFIImplementation >> lua: L pushstring: s [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushvalue: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
-	
-		void lua_pushvalue (lua_State *L, int index);
-	
-	Pushes a copy of the element at the given index onto the stack."
 
 	^ self
 		  ffiCall: #( void lua_pushvalue #( void #* L #, int index ) )
@@ -555,14 +549,6 @@ LibLuaFFIImplementation >> lua: L pushvalue: index [
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: state register: name cfunction: f [
 
-	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
-	
-		void lua_register (lua_State *L, const char *name, lua_CFunction f);
-
-	Sets the C function f as the new value of global name. It is defined as a macro:
-
-  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
-
 	^ self
 		  lua: state pushcfunction: f;
 		  lua: state setglobal: name
@@ -570,15 +556,6 @@ LibLuaFFIImplementation >> lua: state register: name cfunction: f [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L set: idx field: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
-		
-		void lua_setfield (lua_State *L, int index, const char *k);
-		
-	Does the equivalent to t[k] = v, where t is the value at the given 
-	index and v is the value on the top of the stack.
-
-	This function pops the value from the stack. As in Lua, this function 
-	may trigger a metamethod for the ""newindex"" event (see §2.4, 	https://www.lua.org/manual/5.4/manual.html#2.4)."
 
 	^ self
 		  ffiCall:
@@ -588,15 +565,6 @@ LibLuaFFIImplementation >> lua: L set: idx field: k [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L set: index i: i [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
-	
-		void lua_seti (lua_State *L, int index, lua_Integer i);
-	
-	Does the equivalent to t[n] = v, where t is the value at the given 
-	index and v is the value on the top of the stack.
-
-	This function pops the value from the stack. As in Lua, this function may 
-	trigger a metamethod for the 'newindex' event (see §2.4)."
 
 	^ self
 		  ffiCall: #( void lua_seti #( void #* L #, int index #, long i ) )

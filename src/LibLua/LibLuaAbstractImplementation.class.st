@@ -333,6 +333,77 @@ LibLuaAbstractImplementation >> lua: L pushnumber: n [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L pushstring: s [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushstring
+		
+		const char *lua_pushstring (lua_State *L, const char *s);
+		
+	Pushes the zero-terminated string pointed to by s onto the stack. 
+	Lua will make or reuse an internal copy of the given string, 
+	so the memory at s can be freed or reused immediately after the function returns.
+
+	Returns a pointer to the internal copy of the string (see §4.1.3).
+
+	If s is NULL, pushes nil and returns NULL."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L pushvalue: index [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushvalue,
+	
+		void lua_pushvalue (lua_State *L, int index);
+	
+	Pushes a copy of the element at the given index onto the stack."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: state register: name cfunction: f [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
+	
+		void lua_register (lua_State *L, const char *name, lua_CFunction f);
+
+	Sets the C function f as the new value of global name. It is defined as a macro:
+
+  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L set: idx field: k [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
+		
+		void lua_setfield (lua_State *L, int index, const char *k);
+		
+	Does the equivalent to t[k] = v, where t is the value at the given 
+	index and v is the value on the top of the stack.
+
+	This function pops the value from the stack. As in Lua, this function 
+	may trigger a metamethod for the ""newindex"" event (see §2.4, 	https://www.lua.org/manual/5.4/manual.html#2.4)."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L set: index i: i [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
+	
+		void lua_seti (lua_State *L, int index, lua_Integer i);
+	
+	Does the equivalent to t[n] = v, where t is the value at the given 
+	index and v is the value on the top of the stack.
+
+	This function pops the value from the stack. As in Lua, this function may 
+	trigger a metamethod for the 'newindex' event (see §2.4)."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,

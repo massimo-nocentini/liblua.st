@@ -502,9 +502,15 @@ LibLuaPrimitiveImplementation >> lua: L pushinteger: n [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L pushnumber: n [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
+	
+		void lua_pushnumber (lua_State *L, lua_Number n);
+		
+	Pushes a float with value n onto the stack.	"
 
-	<primitive: 'primitive_lua_pushnumber' module: 'LuaPlugin'>
-	self primitiveFail
+	^ self
+		  ffiCall: #( void lua_pushnumber #( void #* L #, double n ) )
+		  module: LibLua
 ]
 
 { #category : 'API - C' }
@@ -524,17 +530,8 @@ LibLuaPrimitiveImplementation >> lua: L pushvalue: index [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: state register: name cfunction: f [
 
-	"From https://www.lua.org/manual/5.4/manual.html#lua_register,
-	
-		void lua_register (lua_State *L, const char *name, lua_CFunction f);
-
-	Sets the C function f as the new value of global name. It is defined as a macro:
-
-  		#define lua_register(L,n,f) (lua_pushcfunction(L, f), lua_setglobal(L, n))"
-
-	^ self
-		  lua: state pushcfunction: f;
-		  lua: state setglobal: name
+	<primitive: 'primitive_lua_register' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
