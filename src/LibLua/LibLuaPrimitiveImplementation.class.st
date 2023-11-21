@@ -502,15 +502,9 @@ LibLuaPrimitiveImplementation >> lua: L pushinteger: n [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L pushnumber: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnumber,
-	
-		void lua_pushnumber (lua_State *L, lua_Number n);
-		
-	Pushes a float with value n onto the stack.	"
 
-	^ self
-		  ffiCall: #( void lua_pushnumber #( void #* L #, double n ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_pushnumber' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
@@ -536,51 +530,23 @@ LibLuaPrimitiveImplementation >> lua: state register: name cfunction: f [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L set: idx field: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_setfield,
-		
-		void lua_setfield (lua_State *L, int index, const char *k);
-		
-	Does the equivalent to t[k] = v, where t is the value at the given 
-	index and v is the value on the top of the stack.
 
-	This function pops the value from the stack. As in Lua, this function 
-	may trigger a metamethod for the ""newindex"" event (see §2.4, 	https://www.lua.org/manual/5.4/manual.html#2.4)."
-
-	^ self
-		  ffiCall:
-		  #( void lua_setfield #( void #* L #, int idx #, const char #* k ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_setfield' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L set: index i: i [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_seti,
-	
-		void lua_seti (lua_State *L, int index, lua_Integer i);
-	
-	Does the equivalent to t[n] = v, where t is the value at the given 
-	index and v is the value on the top of the stack.
 
-	This function pops the value from the stack. As in Lua, this function may 
-	trigger a metamethod for the 'newindex' event (see §2.4)."
-
-	^ self
-		  ffiCall: #( void lua_seti #( void #* L #, int index #, long i ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_seti' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L setglobal: name [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_setglobal,
-	
-		void lua_setglobal (lua_State *L, const char *name);
 
-	Pops a value from the stack and sets it as the new value of global name."
-
-	^ self
-		  ffiCall:
-		  #( void lua_setglobal #( void #* L #, const char #* name ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_setglobal' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }

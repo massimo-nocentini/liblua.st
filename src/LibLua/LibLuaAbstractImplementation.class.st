@@ -404,6 +404,17 @@ LibLuaAbstractImplementation >> lua: L set: index i: i [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L setglobal: name [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_setglobal,
+	
+		void lua_setglobal (lua_State *L, const char *name);
+
+	Pops a value from the stack and sets it as the new value of global name."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
