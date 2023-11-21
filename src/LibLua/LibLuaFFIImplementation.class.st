@@ -622,14 +622,6 @@ LibLuaFFIImplementation >> lua: L pushbooleanAsBit: b [
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L pushcfunction: fn [
 
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pushcfunction,
-	
-		void lua_pushcfunction (lua_State *L, lua_CFunction f);
-	
-	Pushes a C function onto the stack. 
-	
-	This function is equivalent to lua_pushcclosure with no upvalues."
-
 	^ self lua: L push: fn cclosure: 0
 ]
 
