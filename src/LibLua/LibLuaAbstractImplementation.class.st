@@ -866,13 +866,11 @@ LibLuaAbstractImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock 
 LibLuaAbstractImplementation >> lua: L tolstring: idx do: block [
 
 	| pointer string |
-	pointer := ExternalAddress allocate: 8.
+	pointer := ByteArray new: 8.
 
 	string := self lua: L to: idx lstring: pointer.
 
-	block value: string value: (pointer unsignedLongLongAt: 1).
-
-	pointer free
+	^ block value: string value: (pointer unsignedLongLongAt: 1)
 ]
 
 { #category : 'API - C' }
