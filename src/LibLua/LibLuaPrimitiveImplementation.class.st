@@ -352,41 +352,6 @@ LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname function: openf 
 ]
 
 { #category : 'API - auxiliary' }
-LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname let: varname [
-
-	^ self
-		  luaL_requiref: L
-		  name: modname
-		  let: varname
-		  onErrorDo: [ :S | 
-			  | errorMsg |
-			  errorMsg := self on: S at: -1.
-			  self error: errorMsg ]
-]
-
-{ #category : 'API - auxiliary' }
-LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname let: varname onErrorDo: aBlock [
-
-	| luaCode |
-	self
-		luaL_requiref: L
-		name: modname
-		function: (self fficallbackOnBlock: [ :S | 
-				 luaCode := self
-					            on: S push: #require;
-					            "get the module name"lua: S pushvalue: -2;
-					            lua_pcall: S nargs: 1 nresults: 1.
-				 1 ])
-		global: false asBit.
-
-	luaCode == self LUA_OK
-		ifTrue: [ self lua: L setglobal: varname ]
-		ifFalse: [ aBlock cull: L ].
-
-	^ nil
-]
-
-{ #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaLnewstate [
 
 	<primitive: 'primitive_luaL_newstate' module: 'LuaPlugin'>
