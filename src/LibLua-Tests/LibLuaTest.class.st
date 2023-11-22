@@ -835,14 +835,15 @@ LibLuaTest >> test_lua_tointegerx [
 
 	self liblua withOpenedLibsStateDo: [ :state |
 		| orig witness |
+		witness := 42.
 		orig := self liblua
-			        on: state push: 42;
+			        on: state push: witness;
 			        lua: state tointegerx: -1 ifNotInteger: [ self fail ].
-		self assert: orig equals: 42.
+		self assert: orig equals: witness.
 
-		witness := Object new.
+		witness := 'hello'.
 		orig := self liblua
-			        on: state push: 'hello';
+			        on: state push: witness;
 			        lua: state tointegerx: -1 ifNotInteger: [ witness ].
 		self assert: orig equals: witness ]
 ]

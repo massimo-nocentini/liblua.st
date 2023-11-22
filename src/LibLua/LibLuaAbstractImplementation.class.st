@@ -859,7 +859,7 @@ LibLuaAbstractImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock 
 
 	^ (pointer booleanAt: 1)
 		  ifTrue: [ value ]
-		  ifFalse: [ aBlock cull: value ]
+		  ifFalse: [ aBlock value ]
 ]
 
 { #category : 'API' }
