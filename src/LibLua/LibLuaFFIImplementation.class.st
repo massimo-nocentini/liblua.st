@@ -367,7 +367,6 @@ LibLuaFFIImplementation >> luaL: L loadstring: s [
 
 { #category : 'API - auxiliary' }
 LibLuaFFIImplementation >> luaL_openlibs: L [
-	"void (luaL_openlibs) (lua_State *L);"
 
 	^ self ffiCall: #( void luaL_openlibs #( void #* L ) ) module: LibLua
 ]

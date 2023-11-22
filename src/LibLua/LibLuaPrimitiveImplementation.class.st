@@ -319,9 +319,9 @@ LibLuaPrimitiveImplementation >> luaL: L loadstring: s [
 
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL_openlibs: L [
-	"void (luaL_openlibs) (lua_State *L);"
 
-	^ self ffiCall: #( void luaL_openlibs #( void #* L ) ) module: LibLua
+	<primitive: 'primitive_luaL_openlibs' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }

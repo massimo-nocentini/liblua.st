@@ -967,6 +967,17 @@ LibLuaAbstractImplementation >> luaL: L loadstring: s [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> luaL_openlibs: L [
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_openlibs,
+	
+		void luaL_openlibs (lua_State *L);
+
+	Opens all standard Lua libraries into the given state."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
 	
