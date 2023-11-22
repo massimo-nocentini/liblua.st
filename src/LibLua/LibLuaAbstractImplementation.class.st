@@ -8,6 +8,393 @@ Class {
 	#package : 'LibLua'
 }
 
+{ #category : 'constants - thread status' }
+LibLuaAbstractImplementation >> LUA_ERRERR [
+
+	^ 5
+]
+
+{ #category : 'constants - thread status' }
+LibLuaAbstractImplementation >> LUA_ERRMEM [
+
+	^ 4
+]
+
+{ #category : 'constants - thread status' }
+LibLuaAbstractImplementation >> LUA_ERRRUN [
+
+	^ 2
+]
+
+{ #category : 'constants - thread status' }
+LibLuaAbstractImplementation >> LUA_ERRSYNTAX [
+
+	^ 3
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCCOLLECT [
+
+	^ 2
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCCOUNT [
+
+	^ 3
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCCOUNTB [
+
+	^ 4
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCGEN [
+
+	^ 10
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCINC [
+
+	^ 11
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCISRUNNING [
+
+	^ 9
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCRESTART [
+
+	^ 1
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCSETPAUSE [
+
+	^ 6
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCSETSTEPMUL [
+
+	^ 7
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCSTEP [
+
+	^ 5
+]
+
+{ #category : 'constants - gc' }
+LibLuaAbstractImplementation >> LUA_GCSTOP [
+
+	^ 0
+]
+
+{ #category : 'constants - event codes' }
+LibLuaAbstractImplementation >> LUA_HOOKCALL [
+
+	^ 0
+]
+
+{ #category : 'constants - event codes' }
+LibLuaAbstractImplementation >> LUA_HOOKCOUNT [
+
+	^ 3
+]
+
+{ #category : 'constants - event codes' }
+LibLuaAbstractImplementation >> LUA_HOOKLINE [
+
+	^ 2
+]
+
+{ #category : 'constants - event codes' }
+LibLuaAbstractImplementation >> LUA_HOOKRET [
+
+	^ 1
+]
+
+{ #category : 'constants - event codes' }
+LibLuaAbstractImplementation >> LUA_HOOKTAILCALL [
+
+	^ 4
+]
+
+{ #category : 'constants - event masks' }
+LibLuaAbstractImplementation >> LUA_MASKCALL [
+
+	^ 1 << self LUA_HOOKCALL
+]
+
+{ #category : 'constants - event masks' }
+LibLuaAbstractImplementation >> LUA_MASKCOUNT [
+
+	^ 1 << self LUA_HOOKCOUNT
+]
+
+{ #category : 'constants - event masks' }
+LibLuaAbstractImplementation >> LUA_MASKLINE [
+
+	^ 1 << self LUA_HOOKLINE
+]
+
+{ #category : 'constants - event masks' }
+LibLuaAbstractImplementation >> LUA_MASKRET [
+
+	^ 1 << self LUA_HOOKRET
+]
+
+{ #category : 'constants - generic' }
+LibLuaAbstractImplementation >> LUA_MINSTACK [
+
+	^ 20
+]
+
+{ #category : 'constants - generic' }
+LibLuaAbstractImplementation >> LUA_MULTRET [
+
+	"option for multiple returns in 'lua_pcall' and 'lua_call'"
+
+	^ -1
+]
+
+{ #category : 'constants - generic' }
+LibLuaAbstractImplementation >> LUA_NUMTYPES [
+
+	^ 9
+]
+
+{ #category : 'constants - thread status' }
+LibLuaAbstractImplementation >> LUA_OK [
+
+	^ 0
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPADD [
+
+	^ 0
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPBAND [
+
+	^ 7
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPBNOT [
+
+	^ 13
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPBOR [
+
+	^ 8
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPBXOR [
+
+	^ 9
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPDIV [
+
+	^ 5
+]
+
+{ #category : 'constants - comparison' }
+LibLuaAbstractImplementation >> LUA_OPEQ [
+
+	^ 0
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPIDIV [
+
+	^ 6
+]
+
+{ #category : 'constants - comparison' }
+LibLuaAbstractImplementation >> LUA_OPLE [
+
+	^ 2
+]
+
+{ #category : 'constants - comparison' }
+LibLuaAbstractImplementation >> LUA_OPLT [
+
+	^ 1
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPMOD [
+
+	^ 3
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPMUL [
+
+	^ 2
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPPOW [
+
+	^ 4
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPSHL [
+
+	^ 10
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPSHR [
+
+	^ 11
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPSUB [
+
+	^ 1
+]
+
+{ #category : 'constants - arith functions' }
+LibLuaAbstractImplementation >> LUA_OPUNM [
+
+	^ 12
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TBOOLEAN [
+
+	^ 1
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TFUNCTION [
+
+	^ 6
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TLIGHTUSERDATA [
+
+	^ 2
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TNIL [
+
+	^ 0
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TNONE [
+
+	^ -1
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TNUMBER [
+
+	^ 3
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TSTRING [
+
+	^ 4
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TTABLE [
+
+	^ 5
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TTHREAD [
+
+	^ 8
+]
+
+{ #category : 'constants - types' }
+LibLuaAbstractImplementation >> LUA_TUSERDATA [
+
+	^ 7
+]
+
+{ #category : 'constants - thread status' }
+LibLuaAbstractImplementation >> LUA_YIELD [
+
+	^ 1
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> _on: state at: i cache: cache [
+
+	| typeid |
+	typeid := self lua: state type: i.
+
+	typeid = self LUA_TNIL ifTrue: [ ^ nil ].
+
+	typeid = self LUA_TBOOLEAN ifTrue: [ 
+		^ (self lua: state toboolean: i) = 1 ].
+
+	(typeid = self LUA_TLIGHTUSERDATA or: [ typeid = self LUA_TUSERDATA ]) 
+		ifTrue: [ ^ self lua_touserdata: state at: i ].
+
+	typeid = self LUA_TNUMBER ifTrue: [ 
+		^ (self lua: state isinteger: i) = 1
+			  ifTrue: [ self lua_tointeger: state at: i ]
+			  ifFalse: [ self lua: state tonumber: i ] ].
+
+	typeid = self LUA_TSTRING ifTrue: [ ^ self lua: state tostring: i ].
+
+	typeid = self LUA_TTABLE ifTrue: [ 
+		| dict keysAreIntegers length |
+		self lua: state len: i.
+		length := self lua_tointeger: state at: -1.
+		self lua: state pop: 1.
+		keysAreIntegers := true.
+		dict := Dictionary new.
+		self table: state at: i do: [ :k :v | 
+			| key value |
+			key := self on: state at: k cache: cache.
+			value := self on: state at: v cache: cache.
+
+			dict at: key put: value.
+			keysAreIntegers := keysAreIntegers and: [ 
+				                   key isInteger and: [ 
+					                   key between: 1 and: length ] ] ].
+
+		^ keysAreIntegers
+			  ifTrue: [ 
+				  | array |
+				  array := Array new: dict size.
+				  dict keysAndValuesDo: [ :k :v | array at: k put: v ].
+				  array ]
+			  ifFalse: [ dict ] ].
+
+	^ self lua_typename: state at: i
+]
+
 { #category : 'API' }
 LibLuaAbstractImplementation >> append: dir onPackageCPathOfLua: state [
 
@@ -486,6 +873,13 @@ LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 ]
 
 { #category : 'API' }
+LibLuaAbstractImplementation >> on: state assertLUAOK: aBlock [
+
+	(aBlock cull: self) = self LUA_OK ifFalse: [
+		self assert: false description: (self on: state at: -1) ]
+]
+
+{ #category : 'API' }
 LibLuaAbstractImplementation >> on: state at: i [
 
 	^ self on: state at: i cache: IdentityDictionary new
@@ -517,6 +911,36 @@ LibLuaAbstractImplementation >> on: state at: i cache: cache [
 LibLuaAbstractImplementation >> on: state push: anObject [
 
 	^ anObject pushOnLua: state liblua: self
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> table: L at: idx do: aBlock [
+
+	"A typical table traversal looks like this:
+
+     /* table is in the stack at index 't' */
+     lua_pushnil(L);  /* first key */
+     while (lua_next(L, t) != 0) {
+       /* uses 'key' (at index -2) and 'value' (at index -1) */
+       printf(""%s - %s\n"",
+              lua_typename(L, lua_type(L, -2)),
+              lua_typename(L, lua_type(L, -1)));
+       /* removes 'value'; keeps 'key' for next iteration */
+       lua_pop(L, 1);
+     }
+	"
+
+	| index |
+	self lua_pushnil: L.
+
+	index := idx negative
+		         ifTrue: [ idx - 1 ]
+		         ifFalse: [ idx ].
+
+	[ (self lua: L next: index) = 0 ] whileFalse: [ 
+		aBlock value: -2 value: -1.
+
+		self lua: L pop: 1 ]
 ]
 
 { #category : 'API' }
