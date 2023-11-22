@@ -182,18 +182,9 @@ LibLuaPrimitiveImplementation >> lua: L to: idx lstring: len [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L toboolean: idx [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_toboolean,
-	
-		int lua_toboolean (lua_State *L, int idx);
-		
-	Converts the Lua value at the given index to a C boolean value (0 or 1). 
-	Like all tests in Lua, lua_toboolean returns true for any Lua value different 
-	from false and nil; otherwise it returns false. (If you want to accept only 
-	actual boolean values, use lua_isboolean to test the value's type.)"
 
-	^ self
-		  ffiCall: #( int lua_toboolean #( void #* L #, int idx ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_toboolean' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
