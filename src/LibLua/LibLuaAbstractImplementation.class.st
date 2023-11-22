@@ -415,6 +415,21 @@ LibLuaAbstractImplementation >> lua: L setglobal: name [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L to: idx integerx: isnum [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tointegerx,
+	
+		lua_Integer lua_tointegerx (lua_State *L, int index, int *isnum);
+
+	Converts the Lua value at the given index to the signed integral type lua_Integer. 
+	The Lua value must be an integer, or a number or string convertible to an integer 
+	(see §3.4.3); otherwise, lua_tointegerx returns 0.
+
+	If isnum is not NULL, its referent is assigned a boolean value that indicates whether the operation succeeded."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
@@ -442,6 +457,17 @@ LibLuaAbstractImplementation >> luaL: L loadstring: s [
 	This function returns the same results as lua_load.
 
 	Also as lua_load, this function only loads the chunk; it does not run it."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_tointeger: L at: index [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
+	
+		lua_Integer lua_tointeger (lua_State *L, int index);
+		
+	Equivalent to lua_tointegerx with isnum equal to NULL."
 
 	self subclassResponsibility
 ]

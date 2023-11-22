@@ -551,12 +551,9 @@ LibLuaPrimitiveImplementation >> lua: L setglobal: name [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L to: idx integerx: isnum [
-	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
 
-	^ self
-		  ffiCall:
-		  #( long lua_tointegerx #( void #* L #, int idx #, void #* isnum ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_tointegerx' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
@@ -1069,13 +1066,8 @@ LibLuaPrimitiveImplementation >> lua_settop: L at: idx [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_tointeger: L at: index [
 
-	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
-	
-		lua_Integer lua_tointeger (lua_State *L, int index);
-		
-	Equivalent to lua_tointegerx with isnum equal to NULL."
-
-	^ self lua: L to: index integerx: ExternalAddress null
+	<primitive: 'primitive_lua_tointeger' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }

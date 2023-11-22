@@ -582,7 +582,6 @@ LibLuaFFIImplementation >> lua: L setglobal: name [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L to: idx integerx: isnum [
-	"lua_Integer     (lua_tointegerx) (lua_State *L, int idx, int *isnum);"
 
 	^ self
 		  ffiCall:
@@ -1108,12 +1107,6 @@ LibLuaFFIImplementation >> lua_settop: L at: idx [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_tointeger: L at: index [
-
-	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
-	
-		lua_Integer lua_tointeger (lua_State *L, int index);
-		
-	Equivalent to lua_tointegerx with isnum equal to NULL."
 
 	^ self lua: L to: index integerx: ExternalAddress null
 ]
