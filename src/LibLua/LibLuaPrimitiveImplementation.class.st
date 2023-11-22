@@ -470,18 +470,6 @@ LibLuaPrimitiveImplementation >> lua_newtable: L [
 ]
 
 { #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua_pcall: L nargs: nargs lets: names [
-
-	| flag |
-	flag := self lua_pcall: L nargs: nargs nresults: names size.
-
-	flag = self LUA_OK ifTrue: [ 
-		names reverseDo: [ :var | self lua: L setglobal: var asString ] ].
-
-	^ flag
-]
-
-{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
 
 	^ self

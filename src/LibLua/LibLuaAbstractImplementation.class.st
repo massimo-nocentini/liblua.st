@@ -1046,6 +1046,18 @@ LibLuaAbstractImplementation >> lua_close: L [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
+
+	| flag |
+	flag := self lua_pcall: L nargs: nargs nresults: names size.
+
+	flag = self LUA_OK ifTrue: [ 
+		names reverseDo: [ :var | self lua: L setglobal: var asString ] ].
+
+	^ flag
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
 	
