@@ -525,14 +525,6 @@ LibLuaFFIImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pcall: L valueWithArguments: args lets: names [
-
-	args do: [ :arg | self on: L push: arg ].
-
-	^ self lua_pcall: L nargs: args size lets: names
-]
-
-{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
 	

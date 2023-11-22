@@ -1058,6 +1058,14 @@ LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_pcall: L valueWithArguments: args lets: names [
+
+	args do: [ :arg | self on: L push: arg ].
+
+	^ self lua_pcall: L nargs: args size lets: names
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
 	
