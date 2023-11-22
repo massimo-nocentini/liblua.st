@@ -325,12 +325,6 @@ LibLuaPrimitiveImplementation >> luaL_openlibs: L [
 ]
 
 { #category : 'API - auxiliary' }
-LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname [
-
-	^ self luaL_requiref: L name: modname let: modname
-]
-
-{ #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname function: openf global: glb [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
 	
@@ -377,26 +371,6 @@ LibLuaPrimitiveImplementation >> lua_close: L [
 
 	<primitive: 'primitive_lua_close' module: 'LuaPlugin'>
 	self primitiveFail
-]
-
-{ #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua_compare_le: L index: index1 anotherIndex: index2 [
-
-	^ self
-		  lua: L
-		  compare: index1
-		  another: index2
-		  operator: self LUA_OPLE
-]
-
-{ #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua_compare_lt: L index: index1 anotherIndex: index2 [
-
-	^ self
-		  lua: L
-		  compare: index1
-		  another: index2
-		  operator: self LUA_OPLT
 ]
 
 { #category : 'API - C' }

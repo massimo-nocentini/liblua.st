@@ -372,12 +372,6 @@ LibLuaFFIImplementation >> luaL_openlibs: L [
 ]
 
 { #category : 'API - auxiliary' }
-LibLuaFFIImplementation >> luaL_requiref: L name: modname [
-
-	^ self luaL_requiref: L name: modname let: modname
-]
-
-{ #category : 'API - auxiliary' }
 LibLuaFFIImplementation >> luaL_requiref: L name: modname function: openf global: glb [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
 	
@@ -422,26 +416,6 @@ LibLuaFFIImplementation >> lua_absindex: L index: idx [
 LibLuaFFIImplementation >> lua_close: L [
 
 	^ self ffiCall: #( void lua_close #( void #* L ) ) module: LibLua
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_compare_le: L index: index1 anotherIndex: index2 [
-
-	^ self
-		  lua: L
-		  compare: index1
-		  another: index2
-		  operator: self LUA_OPLE
-]
-
-{ #category : 'API - C' }
-LibLuaFFIImplementation >> lua_compare_lt: L index: index1 anotherIndex: index2 [
-
-	^ self
-		  lua: L
-		  compare: index1
-		  another: index2
-		  operator: self LUA_OPLT
 ]
 
 { #category : 'API - C' }
