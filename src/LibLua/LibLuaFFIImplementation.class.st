@@ -227,19 +227,6 @@ LibLuaFFIImplementation >> lua: L tonumber: idx [
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua: state tonumberx: idx ifNotNumber: aBlock [
-
-	| pointer value |
-	pointer := ByteArray new: 4.
-
-	value := self lua_tonumberx: state at: idx isnumpointer: pointer.
-
-	^ (pointer int32AtOffset: 0) = 1
-		  ifTrue: [ value ]
-		  ifFalse: aBlock
-]
-
-{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L tostring: idx [
 
 	^ self lua: L to: idx lstring: ExternalAddress null
@@ -704,7 +691,6 @@ LibLuaFFIImplementation >> lua_tointeger: L at: index [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_tonumberx: L at: idx isnumpointer: isnum [
-	"lua_Number lua_tonumberx (lua_State *L, int idx, int *pisnum)"
 
 	^ self
 		  ffiCall:
