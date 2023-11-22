@@ -862,3 +862,21 @@ LibLuaTest >> test_lua_tolstring [
 					assert: str equals: orig;
 					assert: size equals: orig size ] ]
 ]
+
+{ #category : 'tests' }
+LibLuaTest >> test_lua_tonumberx [
+
+	self liblua withOpenedLibsStateDo: [ :state |
+		| orig witness |
+		witness := 42.3.
+		orig := self liblua
+			        on: state push: witness;
+			        lua: state tonumberx: -1 ifNotNumber: [ self fail ].
+		self assert: orig equals: witness.
+
+		witness := 'hello'.
+		orig := self liblua
+			        on: state push: witness;
+			        lua: state tonumberx: -1 ifNotNumber: [ witness ].
+		self assert: orig equals: witness ]
+]

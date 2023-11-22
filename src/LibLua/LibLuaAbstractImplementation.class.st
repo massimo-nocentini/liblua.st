@@ -898,6 +898,31 @@ LibLuaAbstractImplementation >> lua: state tonumberx: idx ifNotNumber: aBlock [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L tostring: idx [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tostring,
+	
+		const char *lua_tostring (lua_State *L, int index);
+		
+	Equivalent to lua_tolstring with len equal to NULL.	"
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L type: index [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_type,
+	
+		int lua_type (lua_State *L, int index);
+	
+	Returns the type of the value in the given valid index, or LUA_TNONE 
+	for a non-valid but acceptable index. The types returned by lua_type are coded 
+	by the following constants defined in lua.h: LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, 
+	LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
