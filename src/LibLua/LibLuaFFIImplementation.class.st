@@ -489,16 +489,6 @@ LibLuaFFIImplementation >> lua_newtable: L [
 ]
 
 { #category : 'API - C' }
-LibLuaFFIImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
-
-	^ self
-		  lua: L
-		  pcallArgumentsSize: nargs
-		  resultsSize: nresults
-		  msgh: 0
-]
-
-{ #category : 'API - C' }
 LibLuaFFIImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
 	

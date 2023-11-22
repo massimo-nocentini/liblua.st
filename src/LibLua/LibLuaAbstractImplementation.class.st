@@ -1084,6 +1084,16 @@ LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
+
+	^ self
+		  lua: L
+		  pcallArgumentsSize: nargs
+		  resultsSize: nresults
+		  msgh: 0
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_pcall: L valueWithArguments: args lets: names [
 
 	args do: [ :arg | self on: L push: arg ].
@@ -1114,6 +1124,19 @@ LibLuaAbstractImplementation >> lua_tonumberx: L at: idx isnumpointer: isnum [
 
 	If isnum is not NULL, its referent is assigned a boolean value that indicates whether 
 	the operation succeeded."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_typename: L at: i [
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_typename,
+	
+		int luaL_typeerror (lua_State *L, int arg, const char *tname);
+		
+	Raises a type error for the argument arg of the C function that called it, 
+	using a standard message; tname is a ""name"" for the expected type. This 
+	function never returns."
 
 	self subclassResponsibility
 ]

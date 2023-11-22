@@ -444,16 +444,6 @@ LibLuaPrimitiveImplementation >> lua_newtable: L [
 ]
 
 { #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
-
-	^ self
-		  lua: L
-		  pcallArgumentsSize: nargs
-		  resultsSize: nresults
-		  msgh: 0
-]
-
-{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
 	
@@ -592,5 +582,6 @@ LibLuaPrimitiveImplementation >> lua_touserdata: L at: index [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_typename: L at: i [
 
-	^ self lua: L typename: (self lua: L type: i)
+	<primitive: 'primitive_luaL_typename' module: 'LuaPlugin'>
+	self primitiveFail
 ]
