@@ -817,6 +817,25 @@ LibLuaAbstractImplementation >> lua: L to: idx integerx: isnum [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L to: idx lstring: len [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tolstring,
+	
+		const char *lua_tolstring (lua_State *L, int index, size_t *len);
+
+	Converts the Lua value at the given index to a C string. If len is not NULL, 
+	it sets *len with the string length. The Lua value must be a string or a number; 
+	otherwise, the function returns NULL. If the value is a number, then lua_tolstring 
+	also changes the actual value in the stack to a string. (This change confuses 
+	lua_next when lua_tolstring is applied to keys during a table traversal.)
+
+	lua_tolstring returns a pointer to a string inside the Lua state (see §4.1.3). 
+	This string always has a zero ('\0') after its last character (as in C), 
+	but can contain other zeros in its body."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua: L toboolean: idx [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_toboolean,
 	

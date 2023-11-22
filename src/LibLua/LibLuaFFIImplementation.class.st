@@ -204,7 +204,6 @@ LibLuaFFIImplementation >> lua: L to: idx integerx: isnum [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua: L to: idx lstring: len [
-	"const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);"
 
 	^ self
 		  ffiCall:

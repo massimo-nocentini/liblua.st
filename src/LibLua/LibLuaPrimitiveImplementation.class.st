@@ -171,13 +171,9 @@ LibLuaPrimitiveImplementation >> lua: L to: idx integerx: isnum [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L to: idx lstring: len [
-	"const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);"
 
-	^ self
-		  ffiCall:
-		  #( const char #* lua_tolstring #( void #* L #, int idx #, void
-		        #* len ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_tolstring' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
