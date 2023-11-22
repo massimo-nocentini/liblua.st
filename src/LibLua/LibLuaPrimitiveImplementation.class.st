@@ -584,19 +584,6 @@ LibLuaPrimitiveImplementation >> lua: L toboolean: idx [
 ]
 
 { #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock [
-
-	| pointer value |
-	pointer := 0 pointer.
-
-	value := self lua: state to: idx integerx: pointer.
-
-	^ (pointer boolean8AtOffset: 0)
-		  ifTrue: [ value ]
-		  ifFalse: aBlock
-]
-
-{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L tonumber: idx [
 
 	^ self lua_tonumberx: L at: idx isnumpointer: ExternalAddress null
@@ -1127,40 +1114,6 @@ LibLuaPrimitiveImplementation >> on: state assertLUAOK: aBlock [
 ]
 
 { #category : 'API' }
-LibLuaPrimitiveImplementation >> on: state at: i [
-
-	^ self on: state at: i cache: IdentityDictionary new
-]
-
-{ #category : 'API' }
-LibLuaPrimitiveImplementation >> on: state at: i cache: cache [
-
-	| pointerAsInteger |
-	pointerAsInteger := (self lua_topointer: state at: i) asInteger.
-
-	^ pointerAsInteger = 0
-		  ifTrue: [ self _on: state at: i cache: cache ]
-		  ifFalse: [ 
-			  | witness obj |
-			  witness := Object new.
-			  obj := cache at: pointerAsInteger ifAbsentPut: [ witness ].
-
-			  obj == witness
-				  ifTrue: [ 
-					  | reified |
-					  reified := self _on: state at: i cache: cache.
-					  witness become: reified.
-					  witness ]
-				  ifFalse: [ obj "easy case: already seen so return it." ] ]
-]
-
-{ #category : 'API' }
-LibLuaPrimitiveImplementation >> on: state push: anObject [
-
-	^ anObject pushOnLua: state liblua: self
-]
-
-{ #category : 'API' }
 LibLuaPrimitiveImplementation >> table: L at: idx do: aBlock [
 
 	"A typical table traversal looks like this:
@@ -1188,21 +1141,4 @@ LibLuaPrimitiveImplementation >> table: L at: idx do: aBlock [
 		aBlock value: -2 value: -1.
 
 		self lua: L pop: 1 ]
-]
-
-{ #category : 'API' }
-LibLuaPrimitiveImplementation >> withOpenedLibsStateDo: aBlock [
-
-	^ self withStateDo: [ :state | 
-		  self luaL_openlibs: state.
-		  aBlock value: state ]
-]
-
-{ #category : 'API' }
-LibLuaPrimitiveImplementation >> withStateDo: aBlock [
-
-	| state |
-	state := self luaLnewstate.
-
-	^ [ aBlock value: state ] ensure: [ self lua_close: state ]
 ]

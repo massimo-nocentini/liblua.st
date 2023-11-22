@@ -430,6 +430,19 @@ LibLuaAbstractImplementation >> lua: L to: idx integerx: isnum [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock [
+
+	| pointer value |
+	pointer := 0 pointer.
+
+	value := self lua: state to: idx integerx: pointer.
+
+	^ (pointer boolean8AtOffset: 0)
+		  ifTrue: [ value ]
+		  ifFalse: aBlock
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
@@ -470,4 +483,55 @@ LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 	Equivalent to lua_tointegerx with isnum equal to NULL."
 
 	self subclassResponsibility
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> on: state at: i [
+
+	^ self on: state at: i cache: IdentityDictionary new
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> on: state at: i cache: cache [
+
+	| pointerAsInteger |
+	pointerAsInteger := (self lua_topointer: state at: i) asInteger.
+
+	^ pointerAsInteger = 0
+		  ifTrue: [ self _on: state at: i cache: cache ]
+		  ifFalse: [ 
+			  | witness obj |
+			  witness := Object new.
+			  obj := cache at: pointerAsInteger ifAbsentPut: [ witness ].
+
+			  obj == witness
+				  ifTrue: [ 
+					  | reified |
+					  reified := self _on: state at: i cache: cache.
+					  witness become: reified.
+					  witness ]
+				  ifFalse: [ obj "easy case: already seen so return it." ] ]
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> on: state push: anObject [
+
+	^ anObject pushOnLua: state liblua: self
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> withOpenedLibsStateDo: aBlock [
+
+	^ self withStateDo: [ :state | 
+		  self luaL_openlibs: state.
+		  aBlock value: state ]
+]
+
+{ #category : 'API' }
+LibLuaAbstractImplementation >> withStateDo: aBlock [
+
+	| state |
+	state := self luaLnewstate.
+
+	^ [ aBlock value: state ] ensure: [ self lua_close: state ]
 ]

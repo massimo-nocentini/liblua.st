@@ -664,13 +664,25 @@ LibLuaTest >> testReadFromBoolean [
 { #category : 'tests' }
 LibLuaTest >> testReadFromInteger [
 
-	self liblua withOpenedLibsStateDo: [ :state | 
+	self liblua withOpenedLibsStateDo: [ :state |
 		| result |
 		result := self liblua
 			          luaL: state loadstring: 'return 12345';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
-		self assert: result equals: 12345 ]
+		self assert: result equals: 12345.
+
+		result := self liblua
+			          luaL: state loadstring: 'return (1 << 60) - 1';
+			          lua_pcall: state nargs: 0 nresults: 1;
+			          on: state at: -1.
+		self assert: result equals: SmallInteger maxVal.
+
+		result := self liblua
+			          luaL: state loadstring: 'return (1 << 60)';
+			          lua_pcall: state nargs: 0 nresults: 1;
+			          on: state at: -1.
+		self assert: result equals: SmallInteger maxVal + 1 ]
 ]
 
 { #category : 'tests' }
