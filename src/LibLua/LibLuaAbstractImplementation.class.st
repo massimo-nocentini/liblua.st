@@ -978,6 +978,21 @@ LibLuaAbstractImplementation >> luaL_openlibs: L [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> luaLnewstate [
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_newstate,
+	
+		lua_State *luaL_newstate (void);
+		
+	Creates a new Lua state. It calls lua_newstate with an allocator based on the 
+	ISO C allocation functions and then sets a warning function and a panic function 
+	(see §4.4) that print messages to the standard error output.
+
+	Returns the new state, or NULL if there is a memory allocation error."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
 	
