@@ -831,6 +831,23 @@ LibLuaTest >> testTableMap [
 ]
 
 { #category : 'tests' }
+LibLuaTest >> test_lua_tointegerx [
+
+	self liblua withOpenedLibsStateDo: [ :state |
+		| orig witness |
+		orig := self liblua
+			        on: state push: 42;
+			        lua: state tointegerx: -1 ifNotInteger: [ self fail ].
+		self assert: orig equals: 42.
+
+		witness := Object new.
+		orig := self liblua
+			        on: state push: 'hello';
+			        lua: state tointegerx: -1 ifNotInteger: [ witness ].
+		self assert: orig equals: witness ]
+]
+
+{ #category : 'tests' }
 LibLuaTest >> test_lua_tolstring [
 
 	self liblua withOpenedLibsStateDo: [ :state |

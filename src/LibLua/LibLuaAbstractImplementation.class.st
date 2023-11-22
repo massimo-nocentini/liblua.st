@@ -853,13 +853,13 @@ LibLuaAbstractImplementation >> lua: L toboolean: idx [
 LibLuaAbstractImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock [
 
 	| pointer value |
-	pointer := 0 pointer.
+	pointer := ByteArray new: 4.
 
 	value := self lua: state to: idx integerx: pointer.
 
-	^ (pointer boolean8AtOffset: 0)
+	^ (pointer booleanAt: 1)
 		  ifTrue: [ value ]
-		  ifFalse: aBlock
+		  ifFalse: [ aBlock cull: value ]
 ]
 
 { #category : 'API' }
