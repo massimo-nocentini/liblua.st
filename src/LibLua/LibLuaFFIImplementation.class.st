@@ -400,12 +400,6 @@ LibLuaFFIImplementation >> luaLnewstate [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_absindex: L index: idx [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_absindex,
-	
-		int lua_absindex (lua_State *L, int idx);	[-0, +0, –]
-	
-	Converts the acceptable index idx into an equivalent absolute 
-	index (that is, one that does not depend on the stack size)."
 
 	^ self
 		  ffiCall: #( int lua_absindex #( void #* L #, int idx ) )
