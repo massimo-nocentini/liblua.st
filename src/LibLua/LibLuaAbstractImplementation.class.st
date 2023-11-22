@@ -923,6 +923,18 @@ LibLuaAbstractImplementation >> lua: L type: index [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L typename: tp [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
+	
+		const char *lua_typename (lua_State *L, int tp);
+	
+	Returns the name of the type encoded by the value tp, which must 
+	be one the values returned by lua_type."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,

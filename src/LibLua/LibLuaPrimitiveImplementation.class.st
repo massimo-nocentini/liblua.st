@@ -206,16 +206,9 @@ LibLuaPrimitiveImplementation >> lua: L type: index [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L typename: tp [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_typename,
-	
-		const char *lua_typename (lua_State *L, int tp);
-	
-	Returns the name of the type encoded by the value tp, which must 
-	be one the values returned by lua_type."
 
-	^ self
-		  ffiCall: #( const char #* lua_typename #( void #* L #, int tp ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_typename' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }
