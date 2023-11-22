@@ -829,3 +829,18 @@ LibLuaTest >> testTableMap [
 
 	self assert: list equals: '6, 5, 4, 3, 2'
 ]
+
+{ #category : 'tests' }
+LibLuaTest >> test_lua_tolstring [
+
+	self liblua withOpenedLibsStateDo: [ :state |
+		| orig |
+		orig := String loremIpsum.
+
+		self liblua
+			on: state push: orig;
+			lua: state tolstring: -1 do: [ :str :size |
+				self
+					assert: str equals: orig;
+					assert: size equals: orig size ] ]
+]
