@@ -874,6 +874,17 @@ LibLuaAbstractImplementation >> lua: L tolstring: idx do: block [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua: L tonumber: idx [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_tonumber,
+	
+		lua_Number lua_tonumber (lua_State *L, int index);
+	
+	Equivalent to lua_tonumberx with isnum equal to NULL."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,

@@ -186,7 +186,8 @@ LibLuaPrimitiveImplementation >> lua: L toboolean: idx [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua: L tonumber: idx [
 
-	^ self lua_tonumberx: L at: idx isnumpointer: ExternalAddress null
+	<primitive: 'primitive_lua_tonumber' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
