@@ -410,7 +410,8 @@ LibLuaPrimitiveImplementation >> lua_absindex: L index: idx [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_close: L [
 
-	^ self ffiCall: #( void lua_close #( void #* L ) ) module: LibLua
+	<primitive: 'primitive_lua_close' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
