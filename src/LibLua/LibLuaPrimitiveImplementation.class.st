@@ -413,19 +413,9 @@ LibLuaPrimitiveImplementation >> lua_remove: L at: idx [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_rotate: L at: idx positions: n [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_rotate,
-	
-		void lua_rotate (lua_State *L, int idx, int n);
-	
-	Rotates the stack elements between the valid index idx and the top of the stack. 
-	The elements are rotated n positions in the direction of the top, for a positive n, 
-	or -n positions in the direction of the bottom, for a negative n. The absolute value 
-	of n must not be greater than the size of the slice being rotated. This function 
-	cannot be called with a pseudo-index, because a pseudo-index is not an actual stack position."
 
-	^ self
-		  ffiCall: #( void lua_rotate #( void #* L #, int idx #, int n ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_rotate' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
