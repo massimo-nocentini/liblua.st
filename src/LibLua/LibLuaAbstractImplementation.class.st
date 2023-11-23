@@ -444,7 +444,7 @@ LibLuaAbstractImplementation >> lua: L compare: index1 another: index2 operator:
 	self subclassResponsibility
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua: L compare: index1 eq: index2 [
 
 	^ self
@@ -481,7 +481,7 @@ LibLuaAbstractImplementation >> lua: L get: index field: k [
 	self subclassResponsibility
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua: L get: index field: k remove: shouldRemove [
 
 	| type tblindex |
@@ -849,7 +849,7 @@ LibLuaAbstractImplementation >> lua: L toboolean: idx [
 	self subclassResponsibility
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua: state tointegerx: idx ifNotInteger: aBlock [
 
 	| pointer value |
@@ -884,7 +884,7 @@ LibLuaAbstractImplementation >> lua: L tonumber: idx [
 	self subclassResponsibility
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua: state tonumberx: idx ifNotNumber: aBlock [
 
 	| pointer value |
@@ -1061,7 +1061,7 @@ LibLuaAbstractImplementation >> luaL_openlibs: L [
 	self subclassResponsibility
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> luaL_requiref: L name: modname [
 
 	^ self luaL_requiref: L name: modname let: modname
@@ -1084,7 +1084,7 @@ LibLuaAbstractImplementation >> luaL_requiref: L name: modname function: openf g
 	self subclassResponsibility
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> luaL_requiref: L name: modname let: varname [
 
 	^ self
@@ -1097,7 +1097,7 @@ LibLuaAbstractImplementation >> luaL_requiref: L name: modname let: varname [
 			  self error: errorMsg ]
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> luaL_requiref: L name: modname let: varname onErrorDo: aBlock [
 
 	| luaCode |
@@ -1164,7 +1164,7 @@ LibLuaAbstractImplementation >> lua_close: L [
 	self subclassResponsibility
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua_compare_le: L index: index1 anotherIndex: index2 [
 
 	^ self
@@ -1174,7 +1174,7 @@ LibLuaAbstractImplementation >> lua_compare_le: L index: index1 anotherIndex: in
 		  operator: self LUA_OPLE
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua_compare_lt: L index: index1 anotherIndex: index2 [
 
 	^ self
@@ -1249,7 +1249,7 @@ LibLuaAbstractImplementation >> lua_newtable: L [
 	self subclassResponsibility
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 
 	| flag |
@@ -1261,7 +1261,7 @@ LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 	^ flag
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
 
 	^ self
@@ -1271,7 +1271,7 @@ LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs nresults: nresults [
 		  msgh: 0
 ]
 
-{ #category : 'API - C' }
+{ #category : 'API' }
 LibLuaAbstractImplementation >> lua_pcall: L valueWithArguments: args lets: names [
 
 	args do: [ :arg | self on: L push: arg ].

@@ -248,7 +248,7 @@ LibLuaFFIImplementation >> lua: L typename: tp [
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L check: arg lstring: l [
 
 	^ self
@@ -258,7 +258,7 @@ LibLuaFFIImplementation >> luaL: L check: arg lstring: l [
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L check: arg type: t [
 
 	^ self
@@ -267,7 +267,7 @@ LibLuaFFIImplementation >> luaL: L check: arg type: t [
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L checknumber: arg [
 
 	^ self
@@ -275,13 +275,13 @@ LibLuaFFIImplementation >> luaL: L checknumber: arg [
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L checkstring: arg [
 
 	^ self luaL: L check: arg lstring: ExternalAddress null
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L dostring: s [
 
 	| status |
@@ -297,13 +297,13 @@ LibLuaFFIImplementation >> luaL: L dostring: s [
 		  ifFalse: [ status ]
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L loadfile: filename [
 
 	^ self luaL: L loadfile: filename x: ExternalAddress null
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L loadfile: filename x: mode [
 
 	^ self
@@ -313,7 +313,7 @@ LibLuaFFIImplementation >> luaL: L loadfile: filename x: mode [
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL: L loadstring: s [
 
 	^ self
@@ -322,13 +322,13 @@ LibLuaFFIImplementation >> luaL: L loadstring: s [
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL_openlibs: L [
 
 	^ self ffiCall: #( void luaL_openlibs #( void #* L ) ) module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaL_requiref: L name: modname function: openf global: glb [
 
 	^ self
@@ -338,7 +338,7 @@ LibLuaFFIImplementation >> luaL_requiref: L name: modname function: openf global
 		  module: LibLua
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaFFIImplementation >> luaLnewstate [
 
 	^ self ffiCall: #( void #* #luaL_newstate #( void ) ) module: LibLua

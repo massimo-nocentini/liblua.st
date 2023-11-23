@@ -135,7 +135,7 @@ LibLuaPrimitiveImplementation >> lua: L pushvalue: index [
 ]
 
 { #category : 'API - C' }
-LibLuaPrimitiveImplementation >> lua: state register: name cfunction: f [
+LibLuaPrimitiveImplementation >> lua: L register: name cfunction: f [
 
 	<primitive: 'primitive_lua_register' module: 'LuaPlugin'>
 	self primitiveFail
@@ -211,77 +211,77 @@ LibLuaPrimitiveImplementation >> lua: L typename: tp [
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L check: arg lstring: l [
 
 	<primitive: 'primitive_luaL_checklstring' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L check: arg type: t [
 
 	<primitive: 'primitive_luaL_checktype' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L checknumber: arg [
 
 	<primitive: 'primitive_luaL_checknumber' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L checkstring: arg [
 
 	<primitive: 'primitive_luaL_checkstring' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L dostring: s [
 
 	<primitive: 'primitive_luaL_dostring' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L loadfile: filename [
 
 	<primitive: 'primitive_luaL_loadfile' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L loadfile: filename x: mode [
 
 	<primitive: 'primitive_luaL_loadfilex' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL: L loadstring: s [
 
 	<primitive: 'primitive_luaL_loadstring' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL_openlibs: L [
 
 	<primitive: 'primitive_luaL_openlibs' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname function: openf global: glb [
 
 	<primitive: 'primitive_luaL_requiref' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
-{ #category : 'API - auxiliary' }
+{ #category : 'API - C' }
 LibLuaPrimitiveImplementation >> luaLnewstate [
 
 	<primitive: 'primitive_luaL_newstate' module: 'LuaPlugin'>
