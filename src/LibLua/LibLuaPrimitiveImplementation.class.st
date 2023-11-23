@@ -245,15 +245,8 @@ LibLuaPrimitiveImplementation >> luaL: L checknumber: arg [
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL: L checkstring: arg [
 
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_checkstring,
-	
-		const char *luaL_checkstring (lua_State *L, int arg);
-	
-	Checks whether the function argument arg is a string and returns this string.
-
-	This function uses lua_tolstring to get its result, so all conversions and caveats of that function apply here."
-
-	^ self luaL: L check: arg lstring: ExternalAddress null
+	<primitive: 'primitive_luaL_checkstring' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }

@@ -950,6 +950,20 @@ LibLuaAbstractImplementation >> luaL: L check: arg lstring: l [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> luaL: L checkstring: arg [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_checkstring,
+	
+		const char *luaL_checkstring (lua_State *L, int arg);
+	
+	Checks whether the function argument arg is a string and returns this string.
+
+	This function uses lua_tolstring to get its result, so all conversions and caveats of that function apply here."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,
