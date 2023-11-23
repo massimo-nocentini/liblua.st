@@ -679,6 +679,12 @@ LibLuaTest >> testReadFromInteger [
 		self assert: result equals: SmallInteger maxVal.
 
 		result := self liblua
+			          luaL: state dostring: 'm = math.maxinteger; print(m)';
+			          on: state push: #m;
+			          on: state at: -1.
+		self assert: result equals: 1 << 63 - 1.
+
+		result := self liblua
 			          luaL: state loadstring: 'return (1 << 60)';
 			          lua_pcall: state nargs: 0 nresults: 1;
 			          on: state at: -1.
