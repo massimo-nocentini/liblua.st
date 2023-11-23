@@ -962,6 +962,18 @@ LibLuaAbstractImplementation >> luaL: L check: arg type: t [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> luaL: L checknumber: arg [
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_checknumber,
+	
+		lua_Number luaL_checknumber (lua_State *L, int arg);
+
+	Checks whether the function argument arg is a number and returns 
+	this number converted to a lua_Number. "
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L checkstring: arg [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_checkstring,

@@ -269,7 +269,6 @@ LibLuaFFIImplementation >> luaL: L check: arg type: t [
 
 { #category : 'API - auxiliary' }
 LibLuaFFIImplementation >> luaL: L checknumber: arg [
-	"lua_Number luaL_checknumber (lua_State *L, int arg)"
 
 	^ self
 		  ffiCall: #( double luaL_checknumber #( void #* L #, int arg ) )
