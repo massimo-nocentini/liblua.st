@@ -220,17 +220,9 @@ LibLuaPrimitiveImplementation >> luaL: L check: arg lstring: l [
 
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL: L check: arg type: t [
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_checktype,
-	
-		void luaL_checktype (lua_State *L, int arg, int t)
-		
-	Checks whether the function argument arg has type t. 
-	See lua_type for the encoding of types for t."
 
-	^ self
-		  ffiCall:
-		  #( void luaL_checktype #( void #* L #, int arg #, int t ) )
-		  module: LibLua
+	<primitive: 'primitive_luaL_checktype' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }
