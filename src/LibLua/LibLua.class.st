@@ -23,6 +23,18 @@ LibLua class >> initialize [
 ]
 
 { #category : 'creating' }
+LibLua class >> uniqueInstanceFFI [
+
+	^ self uniqueInstance implementationFFI
+]
+
+{ #category : 'creating' }
+LibLua class >> uniqueInstancePrimitive [
+
+	^ self uniqueInstance implementationPrimitive
+]
+
+{ #category : 'creating' }
 LibLua >> implementationFFI [
 
 	^ implementationFFI
