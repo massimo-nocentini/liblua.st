@@ -448,17 +448,9 @@ LibLuaPrimitiveImplementation >> lua_topointer: L at: idx [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_touserdata: L at: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
-	
-		void *lua_touserdata (lua_State *L, int index);
-	
-	If the value at the given index is a full userdata, returns its 
-	memory-block address. If the value is a light userdata, returns 
-	its value (a pointer). Otherwise, returns NULL."
 
-	^ self
-		  ffiCall: #( void #* lua_touserdata #( void #* L #, int index ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_topointer' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }

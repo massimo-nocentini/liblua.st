@@ -1326,6 +1326,19 @@ LibLuaAbstractImplementation >> lua_topointer: L at: idx [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_touserdata: L at: index [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_touserdata,
+	
+		void *lua_touserdata (lua_State *L, int index);
+	
+	If the value at the given index is a full userdata, returns its 
+	memory-block address. If the value is a light userdata, returns 
+	its value (a pointer). Otherwise, returns NULL."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_typename: L at: i [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_typename,
 	
