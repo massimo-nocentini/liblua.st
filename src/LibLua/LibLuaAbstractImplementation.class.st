@@ -951,6 +951,18 @@ LibLuaAbstractImplementation >> luaL: L dostring: s [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> luaL: L loadfile: filename [
+
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfile,
+	
+		int luaL_loadfile (lua_State *L, const char *filename);
+	
+	Equivalent to luaL_loadfilex with mode equal to NULL."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L loadfile: filename x: mode [
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfilex,
 	

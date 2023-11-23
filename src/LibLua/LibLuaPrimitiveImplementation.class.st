@@ -278,13 +278,8 @@ LibLuaPrimitiveImplementation >> luaL: L dostring: s [
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL: L loadfile: filename [
 
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_loadfile,
-	
-		int luaL_loadfile (lua_State *L, const char *filename);
-	
-	Equivalent to luaL_loadfilex with mode equal to NULL."
-
-	^ self luaL: L loadfile: filename x: ExternalAddress null
+	<primitive: 'primitive_luaL_loadfile' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }
