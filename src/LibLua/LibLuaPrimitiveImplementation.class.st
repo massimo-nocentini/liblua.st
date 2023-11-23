@@ -305,23 +305,9 @@ LibLuaPrimitiveImplementation >> luaL_openlibs: L [
 
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname function: openf global: glb [
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_requiref,
-	
-		void luaL_requiref (lua_State *L, const char *modname, lua_CFunction openf, int glb);
-	
-	If package.loaded[modname] is not true, calls the function openf with the 
-	string modname as an argument and sets the call result to package.loaded[modname], 
-	as if that function has been called through require.
 
-	If glb is true, also stores the module into the global modname.
-
-	Leaves a copy of the module on the stack."
-
-	^ self
-		  ffiCall:
-			  #( void luaL_requiref #( void #* L #, const char #* modname
-			        #, void #* openf #, int glb ) )
-		  module: LibLua
+	<primitive: 'primitive_luaL_openlibs' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }
