@@ -1184,6 +1184,19 @@ LibLuaAbstractImplementation >> lua_isnil: L at: index [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_newtable: L [
+
+	"From https://www.lua.org/manual/5.4/manual.html#lua_newtable,
+	
+		void lua_newtable (lua_State *L);
+		
+	Creates a new empty table and pushes it onto the stack. 
+	It is equivalent to lua_createtable(L, 0, 0)."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 
 	| flag |
