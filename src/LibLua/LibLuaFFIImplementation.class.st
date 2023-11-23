@@ -457,15 +457,6 @@ LibLuaFFIImplementation >> lua_pushnil: L [
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_remove: L at: idx [
 
-	"From https://www.lua.org/manual/5.4/manual.html#lua_remove,
-	
-		void lua_remove (lua_State *L, int index);
-	
-	Removes the element at the given valid index, shifting down the 
-	elements above this index to fill the gap. This function cannot be 
-	called with a pseudo-index, because a pseudo-index is not an actual 
-	stack position."
-
 	^ self
 		  lua_rotate: L at: idx positions: -1;
 		  lua: L pop: 1
