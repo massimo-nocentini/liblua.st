@@ -306,7 +306,7 @@ LibLuaPrimitiveImplementation >> luaL_openlibs: L [
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL_requiref: L name: modname function: openf global: glb [
 
-	<primitive: 'primitive_luaL_openlibs' module: 'LuaPlugin'>
+	<primitive: 'primitive_luaL_requiref' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
