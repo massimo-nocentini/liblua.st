@@ -419,17 +419,6 @@ LibLuaFFIImplementation >> lua_newtable: L [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
-	
-		int lua_pcallk (lua_State *L,
-  		                int nargs,
-      			          int nresults,
-         			       int msgh,
-            			    lua_KContext ctx,
-               			 lua_KFunction k);
-			
-	This function behaves exactly like #lua_pcall:, except that it allows the called function to yield 
-	(see https://www.lua.org/manual/5.4/manual.html#4.5)."
 
 	^ self
 		  ffiCall:

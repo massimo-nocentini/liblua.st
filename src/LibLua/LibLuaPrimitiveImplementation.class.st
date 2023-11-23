@@ -368,23 +368,9 @@ LibLuaPrimitiveImplementation >> lua_newtable: L [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: msgh ctx: ctx k: k [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_pcallk,
-	
-		int lua_pcallk (lua_State *L,
-  		                int nargs,
-      			          int nresults,
-         			       int msgh,
-            			    lua_KContext ctx,
-               			 lua_KFunction k);
-			
-	This function behaves exactly like #lua_pcall:, except that it allows the called function to yield 
-	(see https://www.lua.org/manual/5.4/manual.html#4.5)."
 
-	^ self
-		  ffiCall:
-			  #( int lua_pcallk #( void #* L #, int nargs #, int nresults
-			        #, int msgh #, int ctx #, void #* k ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_pcallk' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
