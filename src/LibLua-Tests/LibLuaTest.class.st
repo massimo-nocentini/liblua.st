@@ -683,6 +683,12 @@ LibLuaTest >> testReadFromInteger [
 			          on: state push: #m;
 			          on: state at: -1.
 		self assert: result equals: 1 << 63 - 1.
+		
+		result := self liblua
+			          luaL: state dostring: 'm = math.mininteger; print(m)';
+			          on: state push: #m;
+			          on: state at: -1.
+		self assert: result equals: (1 << 63) negated.
 
 		result := self liblua
 			          luaL: state loadstring: 'return (1 << 60)';
