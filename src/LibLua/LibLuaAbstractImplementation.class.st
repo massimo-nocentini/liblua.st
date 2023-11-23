@@ -1160,6 +1160,19 @@ LibLuaAbstractImplementation >> lua_error: L [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_gettop: L [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_gettop,
+	
+		int lua_gettop (lua_State *L);
+		
+	Returns the index of the top element in the stack. Because indices start at 1, 
+	this result is equal to the number of elements in the stack; 
+	in particular, 0 means an empty stack."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 
 	| flag |
