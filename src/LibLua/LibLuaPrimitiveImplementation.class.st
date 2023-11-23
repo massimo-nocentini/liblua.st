@@ -399,9 +399,9 @@ LibLuaPrimitiveImplementation >> lua_pushlightuserdata: L externalAddress: p [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_pushnil: L [
-	" void lua_pushnil (lua_State *L)"
 
-	^ self ffiCall: #( void lua_pushnil #( void #* L ) ) module: LibLua
+	<primitive: 'primitive_lua_newtable' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }

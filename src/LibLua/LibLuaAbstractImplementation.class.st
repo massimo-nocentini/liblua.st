@@ -1227,6 +1227,17 @@ LibLuaAbstractImplementation >> lua_pcall: L valueWithArguments: args lets: name
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_pushnil: L [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnil,
+	
+		void lua_pushnil (lua_State *L);
+
+	Pushes a nil value onto the stack. "
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_tointeger: L at: index [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_tointeger,
 	

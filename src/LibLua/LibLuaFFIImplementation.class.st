@@ -450,7 +450,6 @@ LibLuaFFIImplementation >> lua_pushlightuserdata: L externalAddress: p [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_pushnil: L [
-	" void lua_pushnil (lua_State *L)"
 
 	^ self ffiCall: #( void lua_pushnil #( void #* L ) ) module: LibLua
 ]
