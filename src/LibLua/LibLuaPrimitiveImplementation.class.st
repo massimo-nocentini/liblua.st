@@ -389,12 +389,9 @@ LibLuaPrimitiveImplementation >> lua_pcallk: L nargs: nargs nresults: nresults m
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_pushlightuserdata: L externalAddress: p [
-	"void lua_pushlightuserdata (lua_State *L, void *p)"
 
-	^ self
-		  ffiCall:
-		  #( void lua_pushlightuserdata #( void #* L #, void #* p ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_pushlightuserdata' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }

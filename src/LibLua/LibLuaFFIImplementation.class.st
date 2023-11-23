@@ -440,7 +440,6 @@ LibLuaFFIImplementation >> lua_pcallk: L nargs: nargs nresults: nresults msgh: m
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_pushlightuserdata: L externalAddress: p [
-	"void lua_pushlightuserdata (lua_State *L, void *p)"
 
 	^ self
 		  ffiCall:

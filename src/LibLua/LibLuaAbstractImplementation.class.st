@@ -1227,6 +1227,22 @@ LibLuaAbstractImplementation >> lua_pcall: L valueWithArguments: args lets: name
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_pushlightuserdata: L externalAddress: p [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_pushlightuserdata,
+	
+		void lua_pushlightuserdata (lua_State *L, void *p);
+
+	Pushes a light userdata onto the stack.
+
+	Userdata represent C values in Lua. A light userdata represents a pointer, a void*. 
+	It is a value (like a number): you do not create it, it has no individual metatable, 
+	and it is not collected (as it was never created). A light userdata is equal to ""any"" 
+	light userdata with the same C address."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_pushnil: L [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_pushnil,
 	
