@@ -935,6 +935,21 @@ LibLuaAbstractImplementation >> lua: L typename: tp [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> luaL: L check: arg lstring: l [
+	"From https://www.lua.org/manual/5.4/manual.html#luaL_checklstring,
+	
+		const char *luaL_checklstring (lua_State *L, int arg, size_t *l);
+	
+	Checks whether the function argument arg is a string and returns this string; 
+	if l is not NULL fills its referent with the string's length.
+
+	This function uses lua_tolstring to get its result, so all conversions and 
+	caveats of that function apply here."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> luaL: L dostring: s [
 
 	"From https://www.lua.org/manual/5.4/manual.html#luaL_dostring,

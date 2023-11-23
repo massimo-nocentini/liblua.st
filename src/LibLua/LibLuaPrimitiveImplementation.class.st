@@ -213,21 +213,9 @@ LibLuaPrimitiveImplementation >> lua: L typename: tp [
 
 { #category : 'API - auxiliary' }
 LibLuaPrimitiveImplementation >> luaL: L check: arg lstring: l [
-	"From https://www.lua.org/manual/5.4/manual.html#luaL_checklstring,
-	
-		const char *luaL_checklstring (lua_State *L, int arg, size_t *l);
-	
-	Checks whether the function argument arg is a string and returns this string; 
-	if l is not NULL fills its referent with the string's length.
 
-	This function uses lua_tolstring to get its result, so all conversions and 
-	caveats of that function apply here."
-
-	^ self
-		  ffiCall:
-			  #( const char #* luaL_checklstring #( void #* L #, int arg #, void
-			        #* l ) )
-		  module: LibLua
+	<primitive: 'primitive_luaL_checklstring' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - auxiliary' }
