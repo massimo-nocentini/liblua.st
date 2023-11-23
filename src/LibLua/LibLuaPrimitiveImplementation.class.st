@@ -354,15 +354,9 @@ LibLuaPrimitiveImplementation >> lua_gettop: L [
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_isnil: L at: index [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_isnil,
-	
-		int lua_isnil (lua_State *L, int index);
 
-	Returns 1 if the value at the given index is nil, and 0 otherwise."
-
-	^ self
-		  ffiCall: #( int lua_isnil #( void #* L #, int index ) )
-		  module: LibLua
+	<primitive: 'primitive_lua_isnil' module: 'LuaPlugin'>
+	self primitiveFail
 ]
 
 { #category : 'API - C' }
