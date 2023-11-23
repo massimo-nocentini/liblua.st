@@ -1147,6 +1147,19 @@ LibLuaAbstractImplementation >> lua_createtable: L narr: narr nrec: nrec [
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_error: L [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_error,
+	
+		int lua_error (lua_State *L);
+
+	Raises a Lua error, using the value on the top of the stack as 
+	the error object. This function does a long jump, and therefore 
+	never returns (see luaL_error)."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 
 	| flag |
