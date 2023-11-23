@@ -442,14 +442,14 @@ LibLuaPrimitiveImplementation >> lua_tonumberx: L at: idx isnumpointer: isnum [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_topointer: L at: idx [
 
-	<primitive: 'primitive_lua_touserdata' module: 'LuaPlugin'>
+	<primitive: 'primitive_lua_topointer' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_touserdata: L at: index [
 
-	<primitive: 'primitive_lua_topointer' module: 'LuaPlugin'>
+	<primitive: 'primitive_lua_touserdata' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
