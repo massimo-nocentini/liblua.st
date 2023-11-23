@@ -1132,6 +1132,21 @@ LibLuaAbstractImplementation >> lua_compare_lt: L index: index1 anotherIndex: in
 ]
 
 { #category : 'API - C' }
+LibLuaAbstractImplementation >> lua_createtable: L narr: narr nrec: nrec [
+	"From https://www.lua.org/manual/5.4/manual.html#lua_createtable,
+	
+		void lua_createtable (lua_State *L, int narr, int nrec);
+	
+	Creates a new empty table and pushes it onto the stack. Parameter narr is a hint 
+	for how many elements the table will have as a sequence; parameter nrec is a hint 
+	for how many other elements the table will have. Lua may use these hints to preallocate 
+	memory for the new table. This preallocation may help performance when you know 
+	in advance how many elements the table will have. Otherwise you can use the function `#lua_newtable:`."
+
+	self subclassResponsibility
+]
+
+{ #category : 'API - C' }
 LibLuaAbstractImplementation >> lua_pcall: L nargs: nargs lets: names [
 
 	| flag |
