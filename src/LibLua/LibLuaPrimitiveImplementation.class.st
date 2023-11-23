@@ -400,7 +400,7 @@ LibLuaPrimitiveImplementation >> lua_pushlightuserdata: L externalAddress: p [
 { #category : 'API - C' }
 LibLuaPrimitiveImplementation >> lua_pushnil: L [
 
-	<primitive: 'primitive_lua_newtable' module: 'LuaPlugin'>
+	<primitive: 'primitive_lua_pushnil' module: 'LuaPlugin'>
 	self primitiveFail
 ]
 
