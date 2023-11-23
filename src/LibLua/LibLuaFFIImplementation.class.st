@@ -472,15 +472,6 @@ LibLuaFFIImplementation >> lua_rotate: L at: idx positions: n [
 
 { #category : 'API - C' }
 LibLuaFFIImplementation >> lua_settop: L at: idx [
-	"From https://www.lua.org/manual/5.4/manual.html#lua_settop,
-	
-		void lua_settop (lua_State *L, int idx);
-		
-	Accepts any index, or 0, and sets the stack top to this index. If the new top is 
-	greater than the old one, then the new elements are filled with nil. If index is 0, 
-	then all stack elements are removed.
-
-	This function can run arbitrary code when removing an index marked as to-be-closed from the stack."
 
 	^ self
 		  ffiCall: #( void lua_settop #( void #* L #, int idx ) )
