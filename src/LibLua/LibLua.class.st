@@ -8,8 +8,8 @@ Class {
 		'implementation'
 	],
 	#classVars : [
-		'implementationFFI',
-		'implementationPrimitive'
+		'ImplementationFFI',
+		'ImplementationPrimitive'
 	],
 	#category : 'LibLua',
 	#package : 'LibLua'
@@ -18,37 +18,24 @@ Class {
 { #category : 'class initialization' }
 LibLua class >> initialize [
 
-	implementationFFI := LibLuaFFIImplementation new.
-	implementationPrimitive := LibLuaPrimitiveImplementation new
-]
-
-{ #category : 'creating' }
-LibLua class >> uniqueInstanceFFI [
-
-	^ self uniqueInstance implementationFFI
-]
-
-{ #category : 'creating' }
-LibLua class >> uniqueInstancePrimitive [
-
-	^ self uniqueInstance implementationPrimitive
+	ImplementationFFI := LibLuaFFIImplementation new.
+	ImplementationPrimitive := LibLuaPrimitiveImplementation new
 ]
 
 { #category : 'creating' }
 LibLua >> implementationFFI [
 
-	^ implementationFFI
+	^ ImplementationFFI
 ]
 
 { #category : 'creating' }
 LibLua >> implementationPrimitive [
 
-	^ implementationPrimitive
+	^ ImplementationPrimitive
 ]
 
 { #category : 'accessing - platform' }
 LibLua >> macLibraryName [
-
 	"According to https://blog.spreendigital.de/2020/05/24/how-to-compile-lua-5-4-0-as-a-mac-os-x-dynamic-library/, 
 	
 	$ make macosx test MYCFLAGS=""-arch x86_64""
@@ -62,7 +49,8 @@ LibLua >> macLibraryName [
 
 	"
 
-	^ 'liblua5.4.4.dylib'
+	^ FFIMacLibraryFinder findAnyLibrary:
+		  #( 'liblua.a' 'liblua5.4.7.dylib' )
 ]
 
 { #category : 'accessing - platform' }
@@ -82,7 +70,7 @@ $(LUA_A): $(BASE_O)
 	"
 
 	^ FFIUnix64LibraryFinder findAnyLibrary:
-		  { 'liblua5.4.6.so'. 'liblua5.4.4.so' }
+		  { 'liblua5.4.7.so'. 'liblua5.4.6.so'. 'liblua5.4.4.so' }
 ]
 
 { #category : 'accessing - platform' }
