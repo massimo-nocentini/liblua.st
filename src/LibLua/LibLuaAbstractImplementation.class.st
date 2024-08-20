@@ -466,6 +466,21 @@ LibLuaAbstractImplementation >> lua: L copy: fromidx to: toidx [
 	self subclassResponsibility
 ]
 
+{ #category : 'experimental - pthreads' }
+LibLuaAbstractImplementation >> lua: L do: str pthreadCallback: block [
+
+	| stateArray |
+	[
+	stateArray := self lua: L pthreadDoString: str.
+
+	[ (stateArray first signedCharAt: 1) = $b ] whileTrue: [
+		Processor yield ].
+
+	block cull: (stateArray second signedLongAt: 1) cull: L.
+
+	stateArray third free ] fork
+]
+
 { #category : 'API - C' }
 LibLuaAbstractImplementation >> lua: L get: index field: k [
 	"From https://www.lua.org/manual/5.4/manual.html#lua_getfield,
@@ -636,6 +651,13 @@ LibLuaAbstractImplementation >> lua: L pop: n [
 	Pops n elements from the stack. It is implemented as a macro over lua_settop."
 
 	self subclassResponsibility
+]
+
+{ #category : 'experimental - pthreads' }
+LibLuaAbstractImplementation >> lua: L pthreadDoString: str [
+
+	<primitive: 'primitive_lua_pthread' module: 'LuaPlugin'>
+	self primitiveFailed
 ]
 
 { #category : 'API - C' }
