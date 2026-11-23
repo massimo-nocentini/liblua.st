@@ -1,3 +1,6 @@
+"
+I am the abstract superclass of the tests of `LibLua`. My subclasses send `liblua` to get the implementation they test, the one via the VM plugin (`LibLuaPrimitiveImplementation`).
+"
 Class {
 	#name : 'LibLuaAbstractTest',
 	#superclass : 'TestCase',
