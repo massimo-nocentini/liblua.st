@@ -1,5 +1,5 @@
 "
-I bind functions in the Lua C API as described in https://www.lua.org/manual/5.4/.
+I bind functions in the Lua C API as described in [the Lua manual](https://www.lua.org/manual/5.4/).
 "
 Class {
 	#name : 'LibLua',

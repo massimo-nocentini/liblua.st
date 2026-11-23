@@ -1,5 +1,5 @@
 "
-A LibLuaTest is a test class for testing the behavior of LibLua
+A `LibLuaTest` is a test class for testing the behavior of `LibLua`
 "
 Class {
 	#name : 'LibLuaTest',
